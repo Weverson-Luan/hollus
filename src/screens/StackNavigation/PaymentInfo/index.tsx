@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
-import { useTheme } from "styled-components";
-import { useNavigation } from "@react-navigation/native";
+import React, {useEffect, useRef, useState} from 'react';
+import {Alert, FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {useTheme} from 'styled-components';
+import {useNavigation} from '@react-navigation/native';
 
 //icons
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 //components
-import { Button } from "../../../components/Button";
+import {Button} from '../../../components/Button';
 
 //styled-components
 import {
@@ -26,29 +26,29 @@ import {
   CardRightCol,
   CardErrorText,
   CardMaskedField,
-} from "./styles";
+} from './styles';
 import {
   deleteCard,
   getCards,
   postPayment,
   postSaveCard,
-} from "../../../context/hooks/Payment/usePayment";
-import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
-import { Input } from "../../../components/Input";
-import { ScrollView } from "react-native-gesture-handler";
-import { Ball } from "../../../components/Header/styles";
-import { ActivityIndication } from "../../../components/Spinner";
-import { RFValue } from "react-native-responsive-fontsize";
-import { CardView } from "react-native-credit-card-input";
-import cardValidator from "card-validator";
-import { Formik } from "formik";
-import { CCSchema } from "./Schema";
+} from '../../../context/hooks/Payment/usePayment';
+import ActionSheet, {ActionSheetRef} from 'react-native-actions-sheet';
+import {Input} from '../../../components/Input';
+import {ScrollView} from 'react-native-gesture-handler';
+import {Ball} from '../../../components/Header/styles';
+import {ActivityIndication} from '../../../components/Spinner';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {CardView} from 'react-native-credit-card-input';
+import cardValidator from 'card-validator';
+import {Formik} from 'formik';
+import {CCSchema} from './Schema';
 
-export function PaymentInfo({ route, navigation }) {
+export function PaymentInfo({route, navigation}) {
   const theme = useTheme();
   const [cards, setCards] = useState<Object>();
   const [cardInfo, setCardInfo] = useState();
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [enableSubmit, setEnableSubmit] = useState(false);
   const newCardActionSheet = useRef<ActionSheetRef>(null);
   const deleteCardActionSheet = useRef<ActionSheetRef>(null);
@@ -80,28 +80,28 @@ export function PaymentInfo({ route, navigation }) {
     });
   }
 
-  const formatCCBrand = (brand) => {
+  const formatCCBrand = brand => {
     if (
-      brand.indexOf("mastercard") !== -1 ||
-      brand.indexOf("MasterCard") !== -1
+      brand.indexOf('mastercard') !== -1 ||
+      brand.indexOf('MasterCard') !== -1
     )
-      return "master-card";
+      return 'master-card';
     if (
-      brand.indexOf("americanexpress") !== -1 ||
-      brand.indexOf("AmericanExpress") !== -1
+      brand.indexOf('americanexpress') !== -1 ||
+      brand.indexOf('AmericanExpress') !== -1
     )
-      return "american-express";
+      return 'american-express';
     if (
-      brand.indexOf("dinersclub") !== -1 ||
-      brand.indexOf("DinersClub") !== -1
+      brand.indexOf('dinersclub') !== -1 ||
+      brand.indexOf('DinersClub') !== -1
     )
-      return "diners-club";
+      return 'diners-club';
     return brand;
   };
 
   useEffect(() => {
     handleGetCards();
-    setName("");
+    setName('');
     setLoading(false);
     // console.log("asd");
     // console.log(route.params);
@@ -109,17 +109,16 @@ export function PaymentInfo({ route, navigation }) {
 
   return (
     <Main>
-      <View style={{ flexDirection: "column", justifyContent: "space-around" }}>
+      <View style={{flexDirection: 'column', justifyContent: 'space-around'}}>
         {cards?.length > 0 ? (
           <>
             <WrapperButtonNext>
               <View
                 style={{
-                  justifyContent: "space-evenly",
-                  flexDirection: "column",
-                  width: "100%",
-                }}
-              >
+                  justifyContent: 'space-evenly',
+                  flexDirection: 'column',
+                  width: '100%',
+                }}>
                 {/* <Button
           width="100%"
           height="45px"
@@ -130,35 +129,34 @@ export function PaymentInfo({ route, navigation }) {
           <Title>Pix</Title>
         </Button> */}
 
-                <Title style={{ marginBottom: 10, textAlign: "center" }}>
+                <Title style={{marginBottom: 10, textAlign: 'center'}}>
                   Cartões salvos
                 </Title>
                 <FlatList
                   data={cards}
                   scrollEnabled
-                  keyExtractor={(item) => item?.id}
+                  keyExtractor={item => item?.id}
                   style={{
-                    height: "100%",
-                    width: "100%",
+                    height: '100%',
+                    width: '100%',
                     marginVertical: 10,
                   }}
                   contentContainerStyle={{
-                    alignItems: "center",
+                    alignItems: 'center',
                   }}
-                  renderItem={({ item }) => (
+                  renderItem={({item}) => (
                     <TouchableOpacity
                       onPress={() => (
                         setCardToDelete(item),
                         deleteCardActionSheet.current.show()
-                      )}
-                    >
+                      )}>
                       <CardView
                         brand={formatCCBrand(item?.bandeira_nome)}
                         number={`**** **** **** ${item?.digitos_final}`}
                         // cvc={values.cvv}
                         // expiry={values.expiry}
                         // name={values.name}
-                        placeholder={{ name: "" }}
+                        placeholder={{name: ''}}
                       />
                     </TouchableOpacity>
                     // <CardBand
@@ -189,28 +187,25 @@ export function PaymentInfo({ route, navigation }) {
                   <View
                     style={{
                       paddingHorizontal: 20,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
                     <Text
                       style={{
                         marginVertical: 10,
                         color: theme.colors.gray_150,
-                        textAlign: "center",
+                        textAlign: 'center',
                         fontSize: 20,
-                      }}
-                    >
+                      }}>
                       Excluir cartão
                     </Text>
                     <Text
                       style={{
                         marginVertical: 10,
                         color: theme.colors.gray_150,
-                        textAlign: "center",
+                        textAlign: 'center',
                         fontSize: 15,
-                      }}
-                    >
+                      }}>
                       O cartão será removido da sua conta. Tem certeza?
                     </Text>
                     <CardBand
@@ -218,15 +213,14 @@ export function PaymentInfo({ route, navigation }) {
                         marginVertical: 10,
                         height: 175,
                         width: 300,
-                      }}
-                    >
+                      }}>
                       <View>
                         <TitleCard>
                           **** **** **** {cardToDelete?.digitos_final}
                         </TitleCard>
                       </View>
-                      <View style={{ height: "75%" }}>
-                        <TitleCardBand style={{ textAlign: "right" }}>
+                      <View style={{height: '75%'}}>
+                        <TitleCardBand style={{textAlign: 'right'}}>
                           {cardToDelete?.bandeira_nome}
                         </TitleCardBand>
                       </View>
@@ -236,16 +230,14 @@ export function PaymentInfo({ route, navigation }) {
                       background_color={theme.colors.red}
                       style={{
                         marginTop: 50,
-                        width: "50%",
+                        width: '50%',
                       }}
-                      onPress={() => handleDeleteCard()}
-                    >
+                      onPress={() => handleDeleteCard()}>
                       <Text
                         style={{
                           fontSize: 15,
-                          color: "white",
-                        }}
-                      >
+                          color: 'white',
+                        }}>
                         Remover
                       </Text>
                     </Button>
@@ -257,31 +249,28 @@ export function PaymentInfo({ route, navigation }) {
         ) : (
           <View
             style={{
-              height: "90%",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+              height: '90%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <Text>Nenhum cartão salvo ainda</Text>
           </View>
         )}
         <Button
           style={{
-            height: "7%",
-            width: "100%",
+            height: '7%',
+            width: '100%',
             backgroundColor: theme.colors.orange,
             marginBottom: RFValue(20),
           }}
           onPress={() => {
             newCardActionSheet.current?.show();
-          }}
-        >
+          }}>
           <Text
             style={{
               fontSize: 20,
-              color: "white",
-            }}
-          >
+              color: 'white',
+            }}>
             Adicionar cartão
           </Text>
         </Button>
@@ -290,50 +279,29 @@ export function PaymentInfo({ route, navigation }) {
         <View
           style={{
             paddingHorizontal: 20,
-            flexDirection: "column",
-          }}
-        >
+            flexDirection: 'column',
+          }}>
           <Text
             style={{
               marginVertical: 10,
               color: theme.colors.gray_150,
-              textAlign: "center",
+              textAlign: 'center',
               fontSize: 20,
-            }}
-          >
+            }}>
             Adicionar novo cartão
           </Text>
-          {/* <CreditCardInput
-            autoFocus
-            allowScroll
-            labels={{
-              number: "Número do cartão",
-              expiry: "Validade",
-              cvc: "CVV",
-              name: "Nome",
-            }}
-            placeholders={{
-              number: "1234 5678 1234 5678",
-              expiry: "MM/AA",
-              cvc: "CVV",
-              name: "Nome",
-            }}
-            onChange={(form) => setCardInfo(form)}
-            // onChange={(form) => console.log(form)}
-            requiresName
-          /> */}
+
           <CreditCardWrapper>
             <Formik
               initialValues={{
-                number: "",
-                cvv: "",
-                name: "",
-                expiry: "",
-                brand: "",
+                number: '',
+                cvv: '',
+                name: '',
+                expiry: '',
+                brand: '',
               }}
               validationSchema={CCSchema}
-              onSubmit={(values) => handleSaveCard(values)}
-            >
+              onSubmit={values => handleSaveCard(values)}>
               {({
                 handleChange,
                 handleBlur,
@@ -352,9 +320,9 @@ export function PaymentInfo({ route, navigation }) {
                     cvc={values.cvv}
                     expiry={values.expiry}
                     name={values.name}
-                    placeholder={{ name: "Nome", expiry: "MM/AA" }}
-                    labels={{ name: "Nome", expiry: "MES/ANO" }}
-                    focused={cvcFocused ? "cvc" : ""}
+                    placeholder={{name: 'Nome', expiry: 'MM/AA'}}
+                    labels={{name: 'Nome', expiry: 'MES/ANO'}}
+                    focused={cvcFocused ? 'cvc' : ''}
                   />
                   <CardRow>
                     <CardCol>
@@ -364,20 +332,20 @@ export function PaymentInfo({ route, navigation }) {
                         keyboardType="number-pad"
                         placeholder="Número do cartão"
                         maxLength={
-                          values.brand === "american-express" ? 19 : 20
+                          values.brand === 'american-express' ? 19 : 20
                         }
-                        style={{ color: `${errors.number ? "red" : "black"}` }}
-                        onChangeText={(text) => {
-                          setFieldValue("number", text);
+                        style={{color: `${errors.number ? 'red' : 'black'}`}}
+                        onChangeText={text => {
+                          setFieldValue('number', text);
                           cardValidator.number(text).isValid
                             ? null
-                            : setFieldError("number", "Cartão inválido");
+                            : setFieldError('number', 'Cartão inválido');
                           cardValidator.number(values.number)?.card?.type
                             ? setFieldValue(
-                                "brand",
-                                cardValidator.number(values.number).card.type
+                                'brand',
+                                cardValidator.number(values.number).card.type,
                               )
-                            : setFieldValue("brand", "");
+                            : setFieldValue('brand', '');
                         }}
                         ref={firstFieldRef}
                         onSubmitEditing={() => secondFieldRef.current.focus()}
@@ -387,17 +355,17 @@ export function PaymentInfo({ route, navigation }) {
                           /\d/,
                           /\d/,
                           /\d/,
-                          " ",
+                          ' ',
                           /\d/,
                           /\d/,
                           /\d/,
                           /\d/,
-                          " ",
+                          ' ',
                           /\d/,
                           /\d/,
                           /\d/,
                           /\d/,
-                          " ",
+                          ' ',
                           /\d/,
                           /\d/,
                           /\d/,
@@ -416,20 +384,20 @@ export function PaymentInfo({ route, navigation }) {
                         onSubmitEditing={() => thirdFieldRef.current.focus()}
                         blurOnSubmit={false}
                         value={values.expiry}
-                        mask={[/\d/, /\d/, "/", /\d/, /\d/]}
+                        mask={[/\d/, /\d/, '/', /\d/, /\d/]}
                         keyboardType="number-pad"
                         placeholder="Validade"
                         onChangeText={(masked, unmasked) => {
-                          setFieldValue("expiry", masked);
+                          setFieldValue('expiry', masked);
                           !cardValidator.expirationDate(masked, 2040).isValid &&
-                            setFieldError("expiry", "Data inválida");
+                            setFieldError('expiry', 'Data inválida');
                           // (values.brand === "american-express" ||
                           //   values.brand === "diners-club") &&
                           // values.expiry.length < 10
                           //   ? setFieldError("expiry", "Data inválida")
                           //   : null;
                         }}
-                        maxLength={values.brand === "american-express" ? 10 : 7}
+                        maxLength={values.brand === 'american-express' ? 10 : 7}
                       />
                       {errors.expiry && (
                         <CardErrorText>Validade inválida</CardErrorText>
@@ -444,10 +412,10 @@ export function PaymentInfo({ route, navigation }) {
                         blurOnSubmit={false}
                         keyboardType="number-pad"
                         placeholder="CVV"
-                        onChangeText={(text) => {
-                          setFieldValue("cvv", text);
+                        onChangeText={text => {
+                          setFieldValue('cvv', text);
                         }}
-                        maxLength={values.brand === "american-express" ? 4 : 3}
+                        maxLength={values.brand === 'american-express' ? 4 : 3}
                       />
                       {errors.cvv && (
                         <CardErrorText>CVV inválido</CardErrorText>
@@ -460,8 +428,8 @@ export function PaymentInfo({ route, navigation }) {
                         ref={fourthFieldRef}
                         blurOnSubmit={true}
                         placeholder="Nome"
-                        onChangeText={(text) => {
-                          setFieldValue("name", text);
+                        onChangeText={text => {
+                          setFieldValue('name', text);
                         }}
                       />
                     </CardCol>
@@ -479,8 +447,7 @@ export function PaymentInfo({ route, navigation }) {
                         marginTop: 10,
                       }}
                       disabled={!isValid || loading}
-                      onPress={() => handleSubmit()}
-                    >
+                      onPress={() => handleSubmit()}>
                       {loading ? (
                         <ActivityIndication />
                       ) : (
@@ -488,8 +455,7 @@ export function PaymentInfo({ route, navigation }) {
                           style={{
                             fontSize: 20,
                             color: theme.colors.white,
-                          }}
-                        >
+                          }}>
                           Adicionar
                         </Text>
                       )}

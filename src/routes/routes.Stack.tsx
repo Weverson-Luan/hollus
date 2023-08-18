@@ -22,6 +22,7 @@ import {
   RegisterTherapist,
   RegisterTherapistStep2,
 } from '../screens/StackNavigation/RegisterTherapist';
+import {CaretLeft} from 'phosphor-react-native';
 
 const Stack = createNativeStackNavigator<StackParamsList>();
 
@@ -65,11 +66,7 @@ function OpenRoutes() {
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               style={styles.buttonHeader}>
-              <Icon
-                name="chevron-left"
-                size={24}
-                color={theme.colors.orange_100}
-              />
+              <CaretLeft size={24} color={theme.colors.orange_100} />
               <Text style={styles.subtitleButtonHeader}>Voltar</Text>
             </TouchableOpacity>
           ),
@@ -90,11 +87,7 @@ function OpenRoutes() {
 
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon
-                name="chevron-left"
-                size={24}
-                color={theme.colors.orange_100}
-              />
+              <CaretLeft size={24} color={theme.colors.orange_100} />
             </TouchableOpacity>
           ),
         }}
@@ -114,11 +107,7 @@ function OpenRoutes() {
 
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon
-                name="chevron-left"
-                size={24}
-                color={theme.colors.orange_100}
-              />
+              <CaretLeft size={24} color={theme.colors.orange_100} />
             </TouchableOpacity>
           ),
         }}
@@ -138,11 +127,7 @@ function OpenRoutes() {
 
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon
-                name="chevron-left"
-                size={24}
-                color={theme.colors.orange_100}
-              />
+              <CaretLeft size={24} color={theme.colors.orange_100} />
             </TouchableOpacity>
           ),
 
@@ -203,11 +188,7 @@ function OpenRoutes() {
 
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon
-                name="chevron-left"
-                size={24}
-                color={theme.colors.orange_100}
-              />
+              <CaretLeft size={24} color={theme.colors.orange_100} />
             </TouchableOpacity>
           ),
         }}
@@ -227,11 +208,7 @@ function OpenRoutes() {
 
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon
-                name="chevron-left"
-                size={24}
-                color={theme.colors.orange_100}
-              />
+              <CaretLeft size={24} color={theme.colors.orange_100} />
             </TouchableOpacity>
           ),
         }}

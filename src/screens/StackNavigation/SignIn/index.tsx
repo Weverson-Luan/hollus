@@ -47,13 +47,12 @@ export function SignIn() {
   const theme = useTheme();
   const navigation = useNavigation();
   const auth = useAuth();
-  const isFocused = useIsFocused();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const {setAlert} = useAlert();
+
   const handleOnLogin = async (email: string, password: string) => {
     try {
       setLoading(true);
@@ -78,7 +77,7 @@ export function SignIn() {
   }, []);
 
   return (
-    <>
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
       {loading ? (
         <>
           <WrapperHeaderRadius>
@@ -181,6 +180,6 @@ export function SignIn() {
           </ContainerMain>
         </Container>
       )}
-    </>
+    </View>
   );
 }

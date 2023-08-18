@@ -19,6 +19,8 @@ declare global {
         terapeuta: any;
         categoria: any;
       }
+      RegisterTherapistStep2: undefined;
+      HomeAuth: undefined
     }
   }
 }

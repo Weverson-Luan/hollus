@@ -5,22 +5,7 @@ export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.white};
   flex: 1;
 `;
-export const WrapperHeader = styled.View`
-  margin-top: ${RFValue(22)}px;
-  width: 100%;
-  padding: ${RFValue(16)}px;
-  flex-direction: row;
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.orange_100};
-`;
-export const Icon = styled.TouchableOpacity`
-  width: ${RFValue(100)}px;
-`;
-export const TitleHeader = styled.Text`
-  font-size: ${RFValue(17)}px;
-  /* font-weight: 700; */
-  color: ${({ theme }) => theme.colors.white};
-`;
+
 export const WrapperImage = styled.View`
   width: 100%;
   flex-direction: row;

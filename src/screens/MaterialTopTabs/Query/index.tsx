@@ -5,14 +5,10 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 //icons
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-//services
-import {scheduledTheraphies} from '../../../services/api.fake.scheduled-terapias';
-
 //type routing
+
 //@ts-ignore
 import {StackParamsList} from '../../../routes/routes.Stack';
 
@@ -38,7 +34,6 @@ import {
   getAppointmentHistory,
   getNextAppointments,
 } from '../../../context/hooks/Appointment/useAppointment';
-import {ActivityIndication} from '../../../components/Spinner';
 import {ContentSpots, TitleSpots} from '../../StackNavigation/Therapist/styles';
 import MandalaSVG from '../../../assets/svg/mandala.svg';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -47,31 +42,16 @@ import {
   DotsThreeOutlineVertical,
   MapPin,
 } from 'phosphor-react-native';
+import {Loading} from '../../../components/Loading';
 type ScreenSearchProps = NativeStackNavigationProp<StackParamsList>;
 
-export function ScreenQuery({navigation, route}: any) {
+export function ScreenQuery() {
   const theme = useTheme();
   const navigationAuth = useNavigation<ScreenSearchProps>();
   const [loading, setLoading] = useState(false);
   const [next, setNext] = useState<any>({});
   const [past, setPast] = useState<any>({});
   const isFocused = useIsFocused();
-  const checkDayOfTheWeek = () => {
-    const today = new Date().getDay();
-    const weekday = [
-      'Domingo',
-      'Segunda',
-      'Terça',
-      'Quarta',
-      'Quinta',
-      'Sexta',
-      'Sàbado',
-    ];
-
-    //@ts-ignore
-    const appDay = new Date(app?.data_hora.replace(' ', 'T')).getDay();
-    return today === appDay - 1 ? 'Amanhã' : weekday[appDay];
-  };
 
   const getAppointments = async () => {
     setLoading(true);
@@ -89,13 +69,13 @@ export function ScreenQuery({navigation, route}: any) {
   }, [isFocused]);
 
   return (
-    <Container>
-      <Wrapper>
-        {loading ? (
-          <ActivityIndication />
-        ) : (
-          <>
-            {next?.length !== 0 && (
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Container>
+          <Wrapper>
+            <>
               <>
                 <WrapperTitle>
                   <Title>Próximas consultas</Title>
@@ -161,9 +141,7 @@ export function ScreenQuery({navigation, route}: any) {
                   />
                 </View>
               </>
-            )}
 
-            {past?.length !== 0 && (
               <>
                 <WrapperTitle>
                   <Title>Histórico de consultas</Title>
@@ -226,10 +204,10 @@ export function ScreenQuery({navigation, route}: any) {
                   )}
                 />
               </>
-            )}
-          </>
-        )}
-      </Wrapper>
-    </Container>
+            </>
+          </Wrapper>
+        </Container>
+      )}
+    </>
   );
 }
