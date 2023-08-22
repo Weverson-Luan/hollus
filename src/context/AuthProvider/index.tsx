@@ -30,42 +30,56 @@ const AuthProvider = ({children}: IAuthProvider) => {
   );
   const [products, setProducts] = useState<any>(productsMocked as any);
   const [successLogin, setSuccessLogin] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   const handlePersistLogin = async () => {
-    // console.log("trying to fetch token");
-    const res = await handlePersistLoginRequest();
-    // console.log(res.user);
-    if (res.success) {
-      setUser(res.user);
+    try {
+      const res = await handlePersistLoginRequest();
+      if (res.success) {
+        setUser(res.user);
+        return res.success;
+      }
       return res.success;
+    } catch (error) {
+      //tratamento de error
+    } finally {
+      setLoading(false);
     }
-    return res.success;
   };
 
-  useEffect(() => {
-    const handleUser = async () => {
+  const handleUser = async () => {
+    try {
       const user = await handleGetUserLocalStorage();
 
       if (user) {
         setUser(user);
-        const tryLogin = await handlePersistLogin();
-        // console.log(`persist ${tryLogin}`);
-        tryLogin ? setSuccessLogin(true) : setSuccessLogin(false);
+        const response = await handlePersistLogin();
+        if (response) {
+          setSuccessLogin(true);
+        } else {
+          setSuccessLogin(false);
+        }
       }
-    };
+    } catch (error) {
+      //tratamento de error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     handleUser();
-    // console.log("auth context");
   }, []);
 
   const handleGetUser = () => {
-    // console.log("get user");
     return user;
   };
 
   const handleAuthentication = async (email: string, password: string) => {
     try {
       const response = await handleLoginRequest(email, password);
-      if (response.token) {
+      console.log('kkk', response);
+      if (response?.token) {
         setUser(response.usuario);
         handleSetUserLocalStorage(response);
         setSuccessLogin(true);
@@ -97,6 +111,7 @@ const AuthProvider = ({children}: IAuthProvider) => {
         products,
         handleGetUser,
         successLogin,
+        isLoading,
       }}>
       {children}
     </AuthContext.Provider>

@@ -33,14 +33,10 @@ const UserRoleNavigation = ({role_id}: IUserRoleNavigationProps) => {
 export function AppRoutes() {
   const auth = useAuth();
 
-  useEffect(() => {
-    console.log(auth.handleGetUser());
-  }, []);
-
   return (
     <NavigationContainer ref={rootNavigationRef}>
       <AxiosInterceptor auth={auth}>
-        {auth.successLogin ? (
+        {auth?.successLogin ? (
           <UserRoleNavigation role_id={auth.handleGetUser().papel_id} />
         ) : (
           <OpenRoutes />

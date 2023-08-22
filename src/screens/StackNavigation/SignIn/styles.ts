@@ -49,7 +49,7 @@ export const ContainerMain = styled.View`
 `;
 export const WrapperInput = styled.View`
   width: 100%;
-  margin-bottom: 6px;
+
 `;
 export const LabelText = styled.Text`
   color: ${({ theme }) => theme.colors.black};
@@ -83,7 +83,6 @@ export const WrapperFooter = styled.View`
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin-top: ${RFValue(2)}px;
 `;
 export const TextNotAccount = styled.Text`
   color: ${({ theme }) => theme.colors.gray_150};

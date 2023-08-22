@@ -36,6 +36,7 @@ import ActionSheet, {ActionSheetRef} from 'react-native-actions-sheet';
 import {ActivityIndication} from '../../../components/Spinner';
 import {Api} from '../../../services/api';
 import useAlert from '../../../context/hooks/Alert/useAlert';
+import {CheckSquare} from 'phosphor-react-native';
 
 export function RegisterSeptOne() {
   const theme = useTheme();
@@ -453,10 +454,18 @@ export function RegisterSeptOne() {
                         setFieldValue('policiesAccept', !values.policiesAccept)
                       }
                       style={{marginRight: 10}}>
-                      <FontAwesome5Icon
-                        name={values.policiesAccept ? 'check-circle' : 'circle'}
-                        size={RFValue(20)}
-                      />
+                      {values.policiesAccept ? (
+                        <CheckSquare
+                          weight="fill"
+                          color={theme.colors.orange}
+                          size={RFValue(20)}
+                        />
+                      ) : (
+                        <CheckSquare
+                          color={theme.colors.gray_150}
+                          size={RFValue(20)}
+                        />
+                      )}
                     </TouchableOpacity>
                     <LabelInput>
                       Confirmo que li e concordo com os{' '}
