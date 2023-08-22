@@ -6,6 +6,8 @@ declare global {
     interface RootParamList extends StackParamsList {
       ForgotPassword: undefined;
       Register: undefined;
+      RegisterSeptOne: any;
+      RegisterTherapist: any
 
       FilterProducts: {};
       ShoppingCart: {};

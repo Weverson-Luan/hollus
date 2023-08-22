@@ -1,12 +1,12 @@
-import React from "react";
-import { useTheme } from "styled-components";
-import { useNavigation } from "@react-navigation/native";
+import React from 'react';
+import {useTheme} from 'styled-components';
+import {useNavigation} from '@react-navigation/native';
 
 // assets
-import RegisterSVG from "../../../assets/svg/cadastro.svg";
+import RegisterSVG from '../../../assets/svg/cadastro.svg';
 
 // components
-import { Button } from "../../../components/Button";
+import {Button} from '../../../components/Button';
 
 // style-components
 import {
@@ -19,7 +19,7 @@ import {
   TitleSearchTherapy,
   TitleAm,
   TitleSpace,
-} from "./styles";
+} from './styles';
 
 export function Register() {
   const theme = useTheme();
@@ -32,7 +32,7 @@ export function Register() {
       </WrapperImageSVG>
 
       <WrapperDescription>
-        <Title>olá,</Title>
+        <Title>Olá,</Title>
         <SubTitle>
           Para iniciarmos, escolha abaixo a opção que você se encaixa melhor
         </SubTitle>
@@ -44,8 +44,7 @@ export function Register() {
           height="45px"
           background_color={theme.colors.orange}
           border
-          onPress={() => navigation.navigate("RegisterSeptOne")}
-        >
+          onPress={() => navigation.navigate('RegisterSeptOne')}>
           <TitleSearchTherapy>Busco uma terapia</TitleSearchTherapy>
         </Button>
 
@@ -54,7 +53,7 @@ export function Register() {
           height="45px"
           background_color={theme.colors.white}
           border
-          onPress={() => navigation.navigate("RegisterTherapist")}
+          onPress={() => navigation.navigate('RegisterTherapist')}
           // onPress={() => navigation.navigate("RegisterTherapistStep2")}
         >
           <TitleAm>Sou um profissional</TitleAm>
@@ -64,8 +63,7 @@ export function Register() {
           width="100%"
           height="45px"
           background_color={theme.colors.white}
-          border
-        >
+          border>
           <TitleSpace>Sou um espaço ou empresa</TitleSpace>
         </Button>
       </WrapperButtons>

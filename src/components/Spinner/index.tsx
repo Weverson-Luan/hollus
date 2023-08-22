@@ -11,7 +11,7 @@ interface ActivityIndicationProps {
 export function ActivityIndication({
   color = 'default',
   bgColor = 'default',
-  size = 32,
+  size = 24,
 }: ActivityIndicationProps) {
   const theme = useTheme();
   return (

@@ -42,6 +42,7 @@ import {handlePersistLoginRequest} from '../../../context/hooks/Auth/util';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import useAlert from '../../../context/hooks/Alert/useAlert';
 import {View} from 'react-native';
+import {Loading} from '../../../components/Loading';
 
 export function SignIn() {
   const theme = useTheme();
@@ -72,114 +73,105 @@ export function SignIn() {
     }
   };
 
+  const handleVerify = () => {
+    if (auth.successLogin) {
+    }
+  };
+
   useEffect(() => {
+    handleVerify();
     !auth.successLogin ? setLoading(false) : null;
   }, []);
 
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      {loading ? (
-        <>
-          <WrapperHeaderRadius>
-            <WrapperHeaderIcon>
-              <Image
-                source={require('../../../assets/logo-full.png')}
-                style={{height: 85}}
-                resizeMode="contain"
-              />
-            </WrapperHeaderIcon>
-
-            <WrapperHeaderDescription>
-              <Title>Bem-vindo à Hollus!</Title>
-
-              <Subtitle>Plataforma especializada em terapias</Subtitle>
-            </WrapperHeaderDescription>
-          </WrapperHeaderRadius>
-
-          <ActivityIndication />
-        </>
+    <>
+      {auth.isLoading ? (
+        <Loading />
       ) : (
-        <Container contentContainerStyle={{justifyContent: 'space-between'}}>
-          <WrapperHeaderRadius>
-            <WrapperHeaderIcon>
-              <Image
-                source={require('../../../assets/logo-full.png')}
-                style={{height: 85}}
-                resizeMode="contain"
-              />
-            </WrapperHeaderIcon>
-
-            <WrapperHeaderDescription>
-              <Title>Bem-vindo à Hollus!</Title>
-
-              <Subtitle>Plataforma especializada em terapias</Subtitle>
-            </WrapperHeaderDescription>
-          </WrapperHeaderRadius>
-
-          <ContainerMain>
-            <WrapperInput>
-              <KeyboardAvoidingView>
-                <LabelText>E-mail</LabelText>
-                <Input
-                  placeholder="Digite o seu e-mail"
-                  placeholderTextColor={theme.colors.gray_80}
-                  width={'100%'}
-                  height={'50px'}
-                  color={theme.colors.white}
-                  autoCorrect={false}
-                  onChangeText={text => setEmail(text)}
-                  autoCapitalize="none"
+        <View style={{flex: 1, backgroundColor: '#fff'}}>
+          <Container contentContainerStyle={{justifyContent: 'space-between'}}>
+            <WrapperHeaderRadius>
+              <WrapperHeaderIcon>
+                <Image
+                  source={require('../../../assets/logo-full.png')}
+                  style={{height: 85}}
+                  resizeMode="contain"
                 />
+              </WrapperHeaderIcon>
 
-                <LabelText>Senha</LabelText>
-                <Input
-                  placeholder="Digite a sua senha"
-                  placeholderTextColor={theme.colors.gray_80}
-                  width={'100%'}
-                  height={'50px'}
-                  color={theme.colors.white}
-                  keyboardType={'default'}
-                  secureTextEntry={passwordVisible}
-                  autoCorrect={false}
-                  onChangeText={text => setPassword(text)}
-                  autoCapitalize="none"
-                />
-              </KeyboardAvoidingView>
-            </WrapperInput>
+              <WrapperHeaderDescription>
+                <Title>Bem-vindo à Hollus!</Title>
 
-            <WrapperForget
-              onPress={() => navigation.navigate('ForgotPassword')}>
-              <TextForget>Esqueceu a sua senha?</TextForget>
-            </WrapperForget>
+                <Subtitle>Plataforma especializada em terapias</Subtitle>
+              </WrapperHeaderDescription>
+            </WrapperHeaderRadius>
 
-            <WrapperButton>
-              <Button
-                width="100%"
-                height="45px"
-                background_color={
-                  loading ? theme.colors.white : theme.colors.orange
-                }
-                border
-                disabled={loading}
-                activeOpacity={0.7}
-                onPress={() => {
-                  handleOnLogin(email, password);
-                }}>
-                <TextButtonLogin>
-                  {loading ? <ActivityIndication /> : 'Login'}
-                </TextButtonLogin>
-              </Button>
-            </WrapperButton>
+            <ContainerMain>
+              <WrapperInput>
+                <KeyboardAvoidingView>
+                  <LabelText>E-mail</LabelText>
+                  <Input
+                    placeholder="Digite o seu e-mail"
+                    placeholderTextColor={theme.colors.gray_80}
+                    width={'100%'}
+                    height={'50px'}
+                    color={theme.colors.white}
+                    autoCorrect={false}
+                    onChangeText={text => setEmail(text)}
+                    autoCapitalize="none"
+                  />
 
-            <WrapperFooter>
-              <TextNotAccount>Não tem uma conta ?</TextNotAccount>
-              <WrapperRegister onPress={() => navigation.navigate('Register')}>
-                <TextRegister>Cadastre-se gratuitamente!</TextRegister>
-              </WrapperRegister>
-            </WrapperFooter>
-          </ContainerMain>
-        </Container>
+                  <LabelText>Senha</LabelText>
+                  <Input
+                    placeholder="Digite a sua senha"
+                    placeholderTextColor={theme.colors.gray_80}
+                    width={'100%'}
+                    height={'50px'}
+                    color={theme.colors.white}
+                    keyboardType={'default'}
+                    secureTextEntry={passwordVisible}
+                    autoCorrect={false}
+                    onChangeText={text => setPassword(text)}
+                    autoCapitalize="none"
+                  />
+                </KeyboardAvoidingView>
+              </WrapperInput>
+
+              <WrapperForget
+                onPress={() => navigation.navigate('ForgotPassword')}>
+                <TextForget>Esqueceu a sua senha?</TextForget>
+              </WrapperForget>
+
+              <WrapperButton>
+                <Button
+                  width="100%"
+                  height="45px"
+                  background_color={
+                    loading ? theme.colors.white : theme.colors.orange
+                  }
+                  border
+                  disabled={loading}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    handleOnLogin(email, password);
+                  }}>
+                  <TextButtonLogin>
+                    {loading ? <ActivityIndication /> : 'Login'}
+                  </TextButtonLogin>
+                </Button>
+              </WrapperButton>
+
+              <WrapperFooter>
+                <TextNotAccount>Não tem uma conta ?</TextNotAccount>
+                <WrapperRegister
+                  onPress={() => navigation.navigate('Register')}>
+                  <TextRegister>Cadastre-se gratuitamente!</TextRegister>
+                </WrapperRegister>
+              </WrapperFooter>
+            </ContainerMain>
+          </Container>
+        </View>
       )}
-    </View>
+    </>
   );
 }
