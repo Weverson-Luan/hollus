@@ -73,7 +73,7 @@ export function AuthenticateBottomTabsNavigation() {
           tabBarIcon: ({color, size}) => (
             <HouseLine size={size} color={color} />
           ),
-          title: 'kk',
+          title: 'Home',
           //@ts-ignore
           logo: true,
           light: true,

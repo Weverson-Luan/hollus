@@ -44,6 +44,7 @@ import {
   ScheduleAppointment3,
   ScheduleAppointment4,
 } from '../../screens/StackNavigation/ScheduleAppointment';
+import {User} from 'phosphor-react-native';
 
 const Drawer = createDrawerNavigator();
 
@@ -88,34 +89,15 @@ export function ClientStackProfileRoutes() {
         options={{title: 'Perfil', headerShown: true}}
         component={UserPanel}
       />
-      {/* <Stack.Screen
-        name="Therapist"
-        component={Therapist}
-        options={{
-          title: "Terapeuta",
-        }}
-      /> */}
       <Stack.Screen
         name="EditProfile"
         component={EditProfileClient}
         options={{
-          // headerRight: (
-          //   <TouchableOpacity
-          //     onPress={() => navigation.navigate("TherapistInfo")}
-          //   >
-          //     <Text style={styles.rightHeaderText}>Ver perfil</Text>
-          //   </TouchableOpacity>
-          // ),
           title: 'Editar Perfil',
+          //@ts-ignore
           right: {
             to: 'TherapistInfo',
-            icon: (
-              <AntDesign
-                name="user"
-                size={RFValue(20)}
-                color={theme.colors.white}
-              />
-            ),
+            icon: <User size={RFValue(20)} color={theme.colors.white} />,
           },
         }}
       />

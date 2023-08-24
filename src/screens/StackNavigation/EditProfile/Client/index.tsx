@@ -114,6 +114,7 @@ export function EditProfileClient() {
 
   const handleGetUserInfo = async () => {
     try {
+      setLoading(true);
       const {data}: IUserInfoResponseApi = await getMyInfo();
 
       if (data) {
@@ -133,11 +134,12 @@ export function EditProfileClient() {
 
   const saveInfo = async (values: any) => {
     try {
+      console.log('antes', values);
       setLoading(true);
       const response = await Api.post('v1/user/my-info', values);
-      console.log('Response', response.data);
-      if (response.data) {
-        handleGetUserInfo();
+      if (response?.data?.data) {
+        const responseMyInfo = await getMyInfo();
+        setMyInfo(responseMyInfo.data);
       }
     } catch (error) {
       //tratamento de eror

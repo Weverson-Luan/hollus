@@ -36,7 +36,7 @@ import {
   ProfileButton,
   ProfileButtonText,
 } from './styles';
-import {ActivityIndicator, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, PermissionsAndroid, View} from 'react-native';
 import {Form, Formik, useFormik} from 'formik';
 import {EditProfileSchema} from './schema';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -44,9 +44,14 @@ import axios from 'axios';
 import MaskInput from 'react-native-mask-input';
 import {Button} from '../../../../components/Button';
 import {Input} from '../../../../components/Input';
-import {LabelInput} from '../../RegisterSeptOne/styles';
+import {
+  LabelInput,
+  LabelInputError,
+  WrapperLabel,
+} from '../../RegisterSeptOne/styles';
 import {ActivityIndication} from '../../../../components/Spinner';
 import {Api} from '../../../../services/api';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {
   Photo,
   PhotoChangeText,
@@ -56,10 +61,11 @@ import {
 // import * as ImagePicker from "expo-image-picker";
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import useAlert from '../../../../context/hooks/Alert/useAlert';
+import {Loading} from '../../../../components/Loading';
 
-export function EditProfileTherapist({route, navigation}) {
+export function EditProfileTherapist() {
   const theme = useTheme();
-  const [myInfo, setMyInfo] = useState({
+  const [myInfo, setMyInfo] = useState<any>({
     id: '',
     sobre: '',
     experiencias: '',
@@ -85,13 +91,19 @@ export function EditProfileTherapist({route, navigation}) {
   const isFocused = useIsFocused();
   const [loadingCep, setLoadingCep] = useState(false);
   const [cep, setCep] = useState('');
-  const [enderecoInfo, setEnderecoInfo] = useState({});
+  const [enderecoInfo, setEnderecoInfo] = useState({
+    logradouro: '',
+    bairro: '',
+    localidade: '',
+    uf: '',
+  });
   const [apiError, setApiError] = useState();
   const [newValues, setNewValues] = useState(myInfo);
   const {setAlert} = useAlert();
 
-  const parseErrors = errors => {
+  const parseErrors = (errors: any) => {
     const errArr = Object.values(errors).map(err => err);
+    //@ts-ignore
     return errArr[0][0];
   };
 
@@ -105,7 +117,7 @@ export function EditProfileTherapist({route, navigation}) {
     setMyInfo(res.data);
     setLoading(false);
   };
-  const handleFormatAddress = (numero, complemento) => {
+  const handleFormatAddress = (numero: any, complemento: any) => {
     if (typeof enderecoInfo === 'undefined') {
       return;
     }
@@ -135,51 +147,74 @@ export function EditProfileTherapist({route, navigation}) {
     return () => clearTimeout(delayDebounceFn);
   }, [cep]);
 
-  const saveInfo = async () => {
+  const saveInfo = async (values: any) => {
     setLoading(true);
-    const info = removeEmptyNewValues();
-    if (info.endereco_cep && enderecoInfo) {
-      info.endereco_logradouro = enderecoInfo.logradouro;
-      info.endereco_bairro = enderecoInfo.bairro;
-      info.endereco_cidade = enderecoInfo.localidade;
-      info.endereco_estado = enderecoInfo.uf;
-    }
-    await Api.post('v1/user/my-info', info)
+    await Api.post('v1/user/my-info', values)
       .then(res => {
         if (res.data.error) {
           setAlert('Erro', parseErrors(res.data.error));
           fetchMyInfo();
           // console.log(res.data.error);
         } else {
+          setAlert('Sucesso', 'Dados atualizado com sucesso');
           fetchMyInfo();
         }
       })
       .catch(error => console.log(error));
-    // navigation.goBack();
   };
 
-  const handleNewValue = (field, value) => {
+  const handleNewValue = (field: any, value: any) => {
     const temp = newValues;
     temp[field] = value;
     setNewValues(temp);
   };
 
-  const removeEmptyNewValues = () => {
-    return Object.fromEntries(
-      Object.entries(newValues).filter(function ([key, value]) {
-        if (value != myInfo[key] && value != '') {
-          return true;
-        }
-        return false;
-      }),
-    );
-    // return Object.fromEntries(
-    //   Object.entries(newValues).filter(([_, v]) => v != "")
-    // );
+  type IAssestsProps = {
+    fileName: string;
+    fileSize: number;
+    width: number;
+    height: number;
+    type: string;
+    uri: string;
+  };
+  type IResponseImageSelected = {
+    assets: IAssestsProps[];
+    didCancel: boolean;
   };
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
+    await launchImageLibrary(
+      {mediaType: 'photo', quality: 1, selectionLimit: 1},
+      async (response: IResponseImageSelected | any) => {
+        if (!response.didCancel) {
+          setLoading(true);
+          const data = new FormData();
+          const mime = require('mime');
+          data.append('foto', {
+            uri: `${response?.assets[0]?.uri}`,
+            type: mime.getType(response?.assets[0]?.uri),
+            name: response?.assets[0]?.uri.split('/').pop(),
+          });
+          await Api.post('v1/user/my-info', data, {
+            headers: {
+              'content-type': 'multipart/form-data',
+            },
+          })
+            .then(res => {
+              if (res.status === 200) {
+                fetchMyInfo();
+              }
+            })
+            .catch(res => {
+              setLoading(false);
+            });
+        }
+      },
+    );
+  };
+
+  const pickImageDocumento = async () => {
+    // // No permissions request is necessary for launching the image library
     // let result = await ImagePicker.launchImageLibraryAsync({
     //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
     //   allowsEditing: true,
@@ -190,70 +225,62 @@ export function EditProfileTherapist({route, navigation}) {
     // if (!result.cancelled) {
     //   setLoading(true);
     //   const data = new FormData();
-    //   const mime = require("mime");
-    //   data.append("foto", {
+    //   const mime = require('mime');
+    //   data.append('foto_documento', {
     //     uri: `${result.uri}`,
     //     type: mime.getType(result.uri),
-    //     name: result.uri.split("/").pop(),
+    //     name: result.uri.split('/').pop(),
     //   });
-    //   await Api.post("v1/user/my-info", data, {
+    //   await Api.post('v1/user/my-info', data, {
     //     headers: {
-    //       "content-type": "multipart/form-data",
+    //       'content-type': 'multipart/form-data',
     //     },
     //   })
-    //     .then((res) => {
-    //       fetchMyInfo();
+    //     .then(res => {
+    //       // console.log(res.data);
+    //       if (res.data.success) {
+    //         fetchMyInfo();
+    //       }
     //     })
-    //     .catch((res) => {
+    //     .catch(res => {
     //       setLoading(false);
     //       // console.log(res.data);
     //     });
     // }
   };
 
-  const pickImageDocumento = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-      allowsMultipleSelection: false,
-    });
-    if (!result.cancelled) {
-      setLoading(true);
-      const data = new FormData();
-      const mime = require('mime');
-      data.append('foto_documento', {
-        uri: `${result.uri}`,
-        type: mime.getType(result.uri),
-        name: result.uri.split('/').pop(),
-      });
-      await Api.post('v1/user/my-info', data, {
-        headers: {
-          'content-type': 'multipart/form-data',
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
         },
-      })
-        .then(res => {
-          // console.log(res.data);
-          if (res.data.success) {
-            fetchMyInfo();
-          }
-        })
-        .catch(res => {
-          setLoading(false);
-          // console.log(res.data);
-        });
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
     }
   };
 
   useEffect(() => {
+    requestCameraPermission();
     fetchMyInfo();
   }, [isFocused]);
   return (
     <>
       {loading ? (
-        <ActivityIndication />
+        <Loading />
       ) : (
         <Formik
           initialValues={{
@@ -284,7 +311,7 @@ export function EditProfileTherapist({route, navigation}) {
             rg: myInfo?.rg,
             celular: myInfo?.celular,
           }}
-          onSubmit={values =>
+          onSubmit={(values: any) =>
             // setLoading(true),
             saveInfo(values)
           }
@@ -393,13 +420,13 @@ export function EditProfileTherapist({route, navigation}) {
                     Nome
                     {errors.nome && touched.nome ? (
                       <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
-                        {errors.nome}
+                        {/**@ts-ignore */}
                       </LabelInput>
                     ) : null}
+                    {/**@ts-ignore */}
                     {apiError?.nome ? (
                       <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                        {/**@ts-ignore */}
                         {apiError.nome[0]}
                       </LabelInput>
                     ) : null}
@@ -416,6 +443,7 @@ export function EditProfileTherapist({route, navigation}) {
                     placeholderTextColor={theme.colors.gray_80}
                     style={{padding: 10}}
                     width={'100%'}
+                    height="50px"
                     color={theme.colors.white}
                     autoCorrect={false}
                   />
@@ -424,12 +452,13 @@ export function EditProfileTherapist({route, navigation}) {
                     {errors.email && touched.email ? (
                       <LabelInput style={{color: theme.colors.red}}>
                         {' '}
-                        {errors.email}
+                        {/**@ts-ignore */}
                       </LabelInput>
                     ) : null}
+                    {/**@ts-ignore */}
                     {apiError?.email ? (
                       <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                        {/**@ts-ignore */}
                         {apiError.email[0]}
                       </LabelInput>
                     ) : null}
@@ -446,24 +475,20 @@ export function EditProfileTherapist({route, navigation}) {
                     placeholderTextColor={theme.colors.gray_80}
                     style={{padding: 10}}
                     width={'100%'}
+                    height="50px"
                     color={theme.colors.white}
                     autoCorrect={false}
                   />
-                  <LabelInput>
-                    Celular
-                    {errors.celular && touched.celular ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                  <WrapperLabel>
+                    <LabelInput>Celular</LabelInput>
+                    {errors.celular && touched.celular && (
+                      <LabelInputError>
+                        {/**@ts-ignore */}
                         {errors.celular}
-                      </LabelInput>
-                    ) : null}
-                    {apiError?.celular ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
-                        {apiError.celular[0]}
-                      </LabelInput>
-                    ) : null}
-                  </LabelInput>
+                      </LabelInputError>
+                    )}
+                  </WrapperLabel>
+
                   <MaskInput
                     defaultValue={values.celular}
                     value={values.celular}
@@ -477,10 +502,12 @@ export function EditProfileTherapist({route, navigation}) {
                     style={{
                       padding: 10,
                       width: '100%',
+                      height: 50,
                       borderRadius: RFValue(4),
                       borderWidth: 1,
                       borderColor: theme.colors.gray_50,
                       marginBottom: RFValue(15),
+                      color: theme.colors.gray_200,
                     }}
                     keyboardType="number-pad"
                     mask={[
@@ -502,21 +529,16 @@ export function EditProfileTherapist({route, navigation}) {
                     ]}
                     autoCorrect={false}
                   />
-                  <LabelInput>
-                    Sobre você
-                    {errors.sobre && touched.sobre ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                  <WrapperLabel>
+                    <LabelInput>Sobre você</LabelInput>
+                    {errors.sobre && touched.sobre && (
+                      <LabelInputError>
+                        {/**@ts-ignore */}
                         {errors.sobre}
-                      </LabelInput>
-                    ) : null}
-                    {apiError?.sobre ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
-                        {apiError.sobre[0]}
-                      </LabelInput>
-                    ) : null}
-                  </LabelInput>
+                      </LabelInputError>
+                    )}
+                  </WrapperLabel>
+
                   <Input
                     defaultValue={values.sobre}
                     value={values.sobre}
@@ -529,26 +551,23 @@ export function EditProfileTherapist({route, navigation}) {
                     placeholderTextColor={theme.colors.gray_80}
                     style={{padding: 10}}
                     width={'100%'}
+                    height="80px"
                     color={theme.colors.white}
                     autoCorrect={false}
+                    multiline
                   />
-                  <LabelInput>
-                    RG
-                    {errors.rg && touched.rg ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                  <WrapperLabel>
+                    <LabelInput>RG</LabelInput>
+                    {errors.rg && touched.rg && (
+                      <LabelInputError>
+                        {/**@ts-ignore */}
                         {errors.rg}
-                      </LabelInput>
-                    ) : null}
-                    {apiError?.rg ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
-                        {apiError.rg[0]}
-                      </LabelInput>
-                    ) : null}
-                  </LabelInput>
+                      </LabelInputError>
+                    )}
+                  </WrapperLabel>
+
                   <MaskInput
-                    defaultValue={values.rg}
+                    // defaultValue={values.rg}
                     value={values.rg}
                     onBlur={handleBlur('rg')}
                     placeholder="Escreva seu RG..."
@@ -564,6 +583,7 @@ export function EditProfileTherapist({route, navigation}) {
                       borderWidth: 1,
                       borderColor: theme.colors.gray_50,
                       marginBottom: RFValue(15),
+                      color: theme.colors.gray_200,
                     }}
                     keyboardType="number-pad"
                     mask={[
@@ -581,21 +601,15 @@ export function EditProfileTherapist({route, navigation}) {
                     ]}
                     autoCorrect={false}
                   />
-                  <LabelInput>
-                    CPF
-                    {errors.cpf && touched.cpf ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                  <WrapperLabel>
+                    <LabelInput>CPF</LabelInput>
+                    {errors.cpf && touched.cpf && (
+                      <LabelInputError>
+                        {/**@ts-ignore */}
                         {errors.cpf}
-                      </LabelInput>
-                    ) : null}
-                    {apiError?.cpf ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
-                        {apiError.cpf[0]}
-                      </LabelInput>
-                    ) : null}
-                  </LabelInput>
+                      </LabelInputError>
+                    )}
+                  </WrapperLabel>
                   <MaskInput
                     defaultValue={values.cpf}
                     value={values.cpf}
@@ -613,6 +627,7 @@ export function EditProfileTherapist({route, navigation}) {
                       borderWidth: 1,
                       borderColor: theme.colors.gray_50,
                       marginBottom: RFValue(15),
+                      color: theme.colors.gray_200,
                     }}
                     keyboardType="number-pad"
                     mask={[
@@ -649,13 +664,14 @@ export function EditProfileTherapist({route, navigation}) {
                     Sobre a consulta
                     {errors.sobre_consulta && touched.sobre_consulta ? (
                       <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                        {/**@ts-ignore */}
                         {errors.sobre_consulta}
                       </LabelInput>
                     ) : null}
+                    {/**@ts-ignore */}
                     {apiError?.sobre_consulta ? (
                       <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                        {/**@ts-ignore */}
                         {apiError.sobre_consulta[0]}
                       </LabelInput>
                     ) : null}
@@ -672,25 +688,21 @@ export function EditProfileTherapist({route, navigation}) {
                     placeholderTextColor={theme.colors.gray_80}
                     style={{padding: 10}}
                     width={'100%'}
+                    height="80px"
                     multiline
                     color={theme.colors.white}
                     autoCorrect={false}
                   />
-                  <LabelInput>
-                    Experiências
-                    {errors.experiencias && touched.experiencias ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                  <WrapperLabel>
+                    <LabelInput>Experiências</LabelInput>
+                    {errors.experiencias && touched.experiencias && (
+                      <LabelInputError>
+                        {/**@ts-ignore */}
                         {errors.experiencias}
-                      </LabelInput>
-                    ) : null}
-                    {apiError?.experiencias ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
-                        {apiError.experiencias[0]}
-                      </LabelInput>
-                    ) : null}
-                  </LabelInput>
+                      </LabelInputError>
+                    )}
+                  </WrapperLabel>
+
                   <Input
                     defaultValue={values.experiencias}
                     value={values.experiencias}
@@ -703,25 +715,27 @@ export function EditProfileTherapist({route, navigation}) {
                     placeholderTextColor={theme.colors.gray_80}
                     style={{padding: 10}}
                     width={'100%'}
+                    height="80px"
                     multiline
                     color={theme.colors.white}
                     autoCorrect={false}
                   />
-                  <LabelInput>
-                    Formação
-                    {errors.formacao && touched.formacao ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                  <WrapperLabel>
+                    <LabelInput>Formação</LabelInput>
+                    {errors.formacao && touched.formacao && (
+                      <LabelInputError>
+                        {/**@ts-ignore */}
                         {errors.formacao}
-                      </LabelInput>
-                    ) : null}
-                    {apiError?.formacao ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
-                        {apiError.formacao[0]}
-                      </LabelInput>
-                    ) : null}
-                  </LabelInput>
+                      </LabelInputError>
+                    )}
+                  </WrapperLabel>
+                  {/**@ts-ignore */}
+                  {apiError?.formacao ? (
+                    <LabelInputError>
+                      {/**@ts-ignore */}
+                      {apiError.formacao[0]}
+                    </LabelInputError>
+                  ) : null}
                   <Input
                     defaultValue={values.formacao}
                     value={values.formacao}
@@ -734,6 +748,7 @@ export function EditProfileTherapist({route, navigation}) {
                     placeholderTextColor={theme.colors.gray_80}
                     style={{padding: 10}}
                     width={'100%'}
+                    height="50px"
                     multiline
                     color={theme.colors.white}
                     autoCorrect={false}
@@ -751,7 +766,7 @@ export function EditProfileTherapist({route, navigation}) {
                     Endereço Completo
                     {errors.endereco_completo && touched.endereco_completo ? (
                       <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                        {/**@ts-ignore */}
                         {errors.endereco_completo}
                       </LabelInput>
                     ) : null}
@@ -781,6 +796,7 @@ export function EditProfileTherapist({route, navigation}) {
                     editable={false}
                     style={{padding: 10}}
                     width={'100%'}
+                    height="70px"
                     color={theme.colors.white}
                     autoCorrect={false}
                   />
@@ -795,7 +811,7 @@ export function EditProfileTherapist({route, navigation}) {
                         CEP {loadingCep ? <ActivityIndicator /> : null}
                         {errors.endereco_cep && touched.endereco_cep ? (
                           <LabelInput style={{color: theme.colors.red}}>
-                            {' '}
+                            {/**@ts-ignore */}
                             {errors.endereco_cep}
                           </LabelInput>
                         ) : null}
@@ -865,7 +881,7 @@ export function EditProfileTherapist({route, navigation}) {
                         Número
                         {errors.endereco_numero && touched.endereco_numero ? (
                           <LabelInput style={{color: theme.colors.red}}>
-                            {' '}
+                            {/**@ts-ignore */}
                             {errors.endereco_numero}
                           </LabelInput>
                         ) : null}
@@ -882,7 +898,8 @@ export function EditProfileTherapist({route, navigation}) {
                         placeholderTextColor={theme.colors.gray_80}
                         style={{padding: 10}}
                         maxLength={8}
-                        width={'100%'}
+                        width={'98%'}
+                        height="50px"
                         color={theme.colors.white}
                         autoCorrect={false}
                         keyboardType="number-pad"
@@ -894,7 +911,7 @@ export function EditProfileTherapist({route, navigation}) {
                     {errors.endereco_complemento &&
                     touched.endereco_complemento ? (
                       <LabelInput style={{color: theme.colors.red}}>
-                        {' '}
+                        {/**@ts-ignore */}
                         {errors.endereco_complemento}
                       </LabelInput>
                     ) : null}
@@ -911,30 +928,10 @@ export function EditProfileTherapist({route, navigation}) {
                     placeholderTextColor={theme.colors.gray_80}
                     style={{padding: 10, marginBottom: 20}}
                     width={'100%'}
+                    height="50px"
                     color={theme.colors.white}
                     autoCorrect={false}
                   />
-                  {/* <LabelInput>
-                    Endereço Completo
-                    {errors.endereco_completo && touched.endereco_completo ? (
-                      <LabelInput style={{ color: theme.colors.red }}>
-                        {" "}
-                        {errors.endereco_completo}
-                      </LabelInput>
-                    ) : null}
-                  </LabelInput>
-                  <Input
-                    defaultValue={values.endereco_completo}
-                    value={values.endereco_completo}
-                    onBlur={handleBlur("endereco_completo")}
-                    placeholder="Escreva sua formação..."
-                    onChangeText={handleChange("endereco_completo")}
-                    placeholderTextColor={theme.colors.gray_80}
-                    style={{ padding: 10 }}
-                    width={"100%"}
-                    color={theme.colors.white}
-                    autoCorrect={false}
-                  /> */}
                 </View>
               </Container>
               <WrapperButton>

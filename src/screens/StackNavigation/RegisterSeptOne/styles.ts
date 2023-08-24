@@ -47,17 +47,29 @@ export const TitleSearchTherapy = styled.Text`
   font-weight: normal;
   color: ${({ theme }) => theme.colors.white};
 `;
-
+export const WrapperLabel = styled.View`
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+`;
 export const LabelInput = styled.Text`
   font-size: ${RFValue(14)}px;
   font-weight: normal;
   color: ${({ theme }) => theme.colors.gray_150};
   margin-bottom: 10px;
+  
+`;
+export const LabelInputError = styled.Text`
+  font-size: ${RFValue(14)}px;
+  font-weight: normal;
+  color: ${({ theme }) => theme.colors.red};
+  margin-bottom: 10px;
+  margin-left: 6px;
 `;
 export const LabelError = styled.Text`
   font-size: ${RFValue(12)}px;
   font-weight: normal;
-  color: ${theme.colors.orange}
+  color: ${theme.colors.orange};
   margin-bottom: 10px;
 `;
 export const WrapperInput = styled.View`
