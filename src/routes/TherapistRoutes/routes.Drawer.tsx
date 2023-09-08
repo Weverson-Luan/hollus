@@ -1,49 +1,50 @@
-import React from "react";
-import { useTheme } from "styled-components";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import React from 'react';
+import {useTheme} from 'styled-components';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 
 //icons
-import Icon from "react-native-vector-icons/Entypo";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 //icons SVG
-import LogoHollusSVG from "../../assets/svg/logo-dark.svg";
-import { StackParamsList } from "./routes";
+import LogoHollusSVG from '../../assets/svg/logo-dark.svg';
+import {StackParamsList} from './routes';
 
 //screens-stacks-authenticates
 
 //screen-bottomTabs-authenticates
-import { Chat } from "../../screens/BottomTabs/Chat";
-import { ChatList } from "../../screens/BottomTabs/ChatList";
+import {Chat} from '../../screens/BottomTabs/Chat';
+import {ChatList} from '../../screens/BottomTabs/ChatList';
 
-import LogoPNG from "../../assets/logo.png";
+import LogoPNG from '../../assets/logo.png';
 
-import { WrapperDrawer, DrawerButton, styles } from "./routes.styles";
-import { AuthenticateBottomTabsNavigation } from "./routes.BottomTabs";
-import { UserPanel } from "../../screens/StackNavigation/UserPanel";
-import { Therapist } from "../../screens/StackNavigation/Therapist";
-import { EditProfileTherapist } from "../../screens/StackNavigation/EditProfile/Therapist";
-import { AppointmentTherapist } from "../../screens/StackNavigation/Appointment/Therapist";
-import { TherapistInfo } from "../../screens/StackNavigation/TherapistInfo";
-import { HeaderDrawer } from "../../components/HeaderDrawer";
-import { GerenciarConsultas } from "../../screens/StackNavigation/GerenciarConsultas";
-import { RegisterTherapistStep2 } from "../../screens/StackNavigation/RegisterTherapist";
-import { Dashboard } from "../../screens/BottomTabs/Dashboard";
-import { FaleConosco } from "../../screens/StackNavigation/FaleConosco";
-import { NavigationHeader } from "../../components/NavigationHeader";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import { RFValue } from "react-native-responsive-fontsize";
-import { Filter } from "../../screens/StackNavigation/Filter";
-import { ScreenSearch } from "../../screens/BottomTabs/Search";
-import { ScreenProducts } from "../../screens/BottomTabs/Products";
-import { FilterProducts } from "../../screens/StackNavigation/FilterProducts";
-import { Cart } from "../../screens/StackNavigation/Cart";
-import { ProductSelected } from "../../screens/StackNavigation/ProductSelected";
-import { ResumeRequest } from "../../screens/StackNavigation/ResumeRequest";
-import { FormPayment } from "../../screens/StackNavigation/FormPayment";
+import {WrapperDrawer, DrawerButton, styles} from './routes.styles';
+import {AuthenticateBottomTabsNavigation} from './routes.BottomTabs';
+import {UserPanel} from '../../screens/StackNavigation/UserPanel';
+import {Therapist} from '../../screens/StackNavigation/Therapist';
+import {EditProfileTherapist} from '../../screens/StackNavigation/EditProfile/Therapist';
+import {AppointmentTherapist} from '../../screens/StackNavigation/Appointment/Therapist';
+import {TherapistInfo} from '../../screens/StackNavigation/TherapistInfo';
+import {HeaderDrawer} from '../../components/HeaderDrawer';
+import {GerenciarConsultas} from '../../screens/StackNavigation/GerenciarConsultas';
+import {RegisterTherapistStep2} from '../../screens/StackNavigation/RegisterTherapist';
+import {Dashboard} from '../../screens/BottomTabs/Dashboard';
+import {FaleConosco} from '../../screens/StackNavigation/FaleConosco';
+import {NavigationHeader} from '../../components/NavigationHeader';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Filter} from '../../screens/StackNavigation/Filter';
+import {ScreenSearch} from '../../screens/BottomTabs/Search';
+import {ScreenProducts} from '../../screens/BottomTabs/Products';
+import {FilterProducts} from '../../screens/StackNavigation/FilterProducts';
+import {Cart} from '../../screens/StackNavigation/Cart';
+import {ProductSelected} from '../../screens/StackNavigation/ProductSelected';
+import {ResumeRequest} from '../../screens/StackNavigation/ResumeRequest';
+import {FormPayment} from '../../screens/StackNavigation/FormPayment';
+import {User} from 'phosphor-react-native';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -59,7 +60,7 @@ function TherapistRoutesDrawerAuth() {
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.gray_25,
         },
-        headerTitleAlign: "center",
+        headerTitleAlign: 'center',
         headerLeft: () => <></>,
         // headerLeft: () => (
         //   <WrapperDrawer>
@@ -77,8 +78,8 @@ function TherapistRoutesDrawerAuth() {
         // ),
         headerTitle: () => (
           <Image
-            source={require("../../assets/logo-full.png")}
-            style={{ height: 50, width: 150 }}
+            source={require('../../assets/logo-full.png')}
+            style={{height: 50, width: 150}}
           />
         ),
         // header: () => <HeaderDrawer notification />,
@@ -94,8 +95,7 @@ function TherapistRoutesDrawerAuth() {
         //     </DrawerButton>
         //   </WrapperDrawer>
         // ),
-      }}
-    >
+      }}>
       {/* <Drawer.Screen name="Home" component={AuthenticateBottomTabsNavigation} /> */}
       <Drawer.Screen name="Painel do usuário" component={UserPanel} />
     </Drawer.Navigator>
@@ -111,41 +111,28 @@ function TherapistStackProfileRoutes() {
         header(props) {
           return <NavigationHeader props={props} />;
         },
-      }}
-    >
+      }}>
       <Stack.Screen
         name="PerfilStack"
-        options={{ title: "Perfil", headerShown: true }}
+        options={{title: 'Perfil', headerShown: true}}
         component={UserPanel}
       />
       <Stack.Screen
         name="Therapist"
         component={Therapist}
         options={{
-          title: "Terapeuta",
+          title: 'Terapeuta',
         }}
       />
       <Stack.Screen
         name="EditProfile"
         component={EditProfileTherapist}
         options={{
-          // headerRight: (
-          //   <TouchableOpacity
-          //     onPress={() => navigation.navigate("TherapistInfo")}
-          //   >
-          //     <Text style={styles.rightHeaderText}>Ver perfil</Text>
-          //   </TouchableOpacity>
-          // ),
-          title: "Editar Perfil",
+          title: 'Editar Perfil',
+          //@ts-ignore
           right: {
-            to: "TherapistInfo",
-            icon: (
-              <AntDesign
-                name="user"
-                size={RFValue(20)}
-                color={theme.colors.white}
-              />
-            ),
+            to: 'TherapistInfo',
+            icon: <User size={RFValue(20)} color={theme.colors.white} />,
           },
         }}
       />
@@ -154,7 +141,7 @@ function TherapistStackProfileRoutes() {
         component={TherapistInfo}
         options={{
           headerBackVisible: true,
-          title: "Terapeuta",
+          title: 'Terapeuta',
         }}
       />
       <Stack.Screen
@@ -162,14 +149,14 @@ function TherapistStackProfileRoutes() {
         component={GerenciarConsultas}
         options={{
           headerBackVisible: true,
-          title: "Gerenciar Horários",
+          title: 'Gerenciar Horários',
         }}
       />
       <Stack.Screen
         name="FaleConosco"
         component={FaleConosco}
         options={{
-          title: "Fale Conosco",
+          title: 'Fale Conosco',
         }}
       />
     </Stack.Navigator>
@@ -185,24 +172,23 @@ function TherapistStackSearchRoutes() {
         header(props) {
           return <NavigationHeader props={props} />;
         },
-      }}
-    >
+      }}>
       <Stack.Screen
         name="Pesquisar"
-        options={{ title: "Pesquisa", headerShown: true }}
+        options={{title: 'Pesquisa', headerShown: true}}
         component={ScreenSearch}
       />
       <Stack.Screen
         name="Filter"
         component={Filter}
         options={{
-          title: "Filtros",
+          title: 'Filtros',
         }}
       />
       <Stack.Screen
         name="Therapist"
         component={Therapist}
-        options={{ title: "Terapeuta" }}
+        options={{title: 'Terapeuta'}}
       />
     </Stack.Navigator>
   );
@@ -217,36 +203,35 @@ function TherapistStackProductsRoutes() {
         header(props) {
           return <NavigationHeader props={props} />;
         },
-      }}
-    >
+      }}>
       <Stack.Screen
         name="Produtos"
-        options={{ title: "Produtos", headerShown: true }}
+        options={{title: 'Produtos', headerShown: true}}
         component={ScreenProducts}
       />
       <Stack.Screen
         name="FilterProducts"
-        options={{ title: "Produtos", headerShown: true }}
+        options={{title: 'Produtos', headerShown: true}}
         component={FilterProducts}
       />
       <Stack.Screen
         name="ShoppingCart"
-        options={{ title: "Cesta", headerShown: true }}
+        options={{title: 'Cesta', headerShown: true}}
         component={Cart}
       />
       <Stack.Screen
         name="ProductSelected"
-        options={{ title: "", headerShown: true }}
+        options={{title: '', headerShown: true}}
         component={ProductSelected}
       />
       <Stack.Screen
         name="ResumeRequest"
-        options={{ title: "Resumo do Pedido", headerShown: true }}
+        options={{title: 'Resumo do Pedido', headerShown: true}}
         component={ResumeRequest}
       />
       <Stack.Screen
         name="FormPayment"
-        options={{ title: "Pagamento", headerShown: true }}
+        options={{title: 'Pagamento', headerShown: true}}
         component={FormPayment}
       />
     </Stack.Navigator>
@@ -262,51 +247,19 @@ function TherapistStackRoutesAuth() {
         header(props) {
           return <NavigationHeader props={props} />;
         },
-      }}
-    >
+      }}>
       <Stack.Screen
         name="HomeAuth"
         component={Dashboard}
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
       />
-
-      {/* <Stack.Screen
-        name="AuthenticateBottomTabsNavigation"
-        component={TherapistRoutesDrawerAuth}
-        options={{
-          headerShown: false,
-        }}
-      /> */}
-
-      {/* <Stack.Screen
-        name="Filter"
-        component={Filter}
-        options={{
-          headerShown: false,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Filtros</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-        }}
-      /> */}
 
       <Stack.Screen
         name="Appointment"
         component={AppointmentTherapist}
         options={{
           headerShown: true,
-          headerTitleAlign: "center",
+          headerTitleAlign: 'center',
           headerTitle: () => (
             <View style={styles.containerHeader}>
               <Text style={styles.title}>Consulta agendada</Text>
@@ -329,7 +282,7 @@ function TherapistStackRoutesAuth() {
         component={ChatList}
         options={{
           headerShown: true,
-          headerTitleAlign: "center",
+          headerTitleAlign: 'center',
           headerTitle: () => (
             <View style={styles.containerHeader}>
               <Text style={styles.title}>Terapeuta</Text>
@@ -549,7 +502,7 @@ function TherapistStackRoutesAuth() {
         component={RegisterTherapistStep2}
         options={{
           headerShown: true,
-          title: "Cadastro - Terapias",
+          title: 'Cadastro - Terapias',
           headerTintColor: theme.colors.orange_100,
           headerTitleStyle: {
             fontSize: 16,

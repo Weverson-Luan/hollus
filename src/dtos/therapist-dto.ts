@@ -14,5 +14,5 @@ interface ITherapist{
     endereco_estado: string;
     endereco_logradouro: string;
     endereco_numero: string;
-    categorias: Array;
+    categorias: [];
 }

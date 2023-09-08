@@ -10,7 +10,15 @@ const Container = styled.View`
 
 `;
 
-
+const ButtonIconClosed = styled.TouchableOpacity`
+  width: 40px;
+  height: 40px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-left: -8px;
+  margin-bottom: 16px;
+`;
 const Text = styled.Text`
   font-size: 18px;
 
@@ -20,5 +28,6 @@ const Text = styled.Text`
  */
 export {
   Container,
+  ButtonIconClosed,
   Text
 }

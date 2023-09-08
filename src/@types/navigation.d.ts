@@ -6,6 +6,8 @@ declare global {
     interface RootParamList extends StackParamsList {
       ForgotPassword: undefined;
       Register: undefined;
+      RegisterSeptOne: any;
+      RegisterTherapist: any
 
       FilterProducts: {};
       ShoppingCart: {};
@@ -19,6 +21,9 @@ declare global {
         terapeuta: any;
         categoria: any;
       }
+      RegisterTherapistStep2: undefined;
+      HomeAuth: undefined;
+      Consultas: undefined;
     }
   }
 }

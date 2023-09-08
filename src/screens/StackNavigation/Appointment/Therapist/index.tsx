@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { useTheme } from "styled-components";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, {useEffect, useState} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useTheme} from 'styled-components';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 //icons vector-icons
-import Entypo from "react-native-vector-icons/Entypo";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 //components
-import { Button } from "../../../components/Button";
+import {Button} from '../../../components/Button';
 
 //styled-components
 import {
@@ -26,21 +26,22 @@ import {
   SubTitleLocation,
   WrapperButton,
   ContentButton,
-} from "./styles";
-import { View, Text } from "react-native";
-import { ModalCancelScheduling } from "../../../../components/ModalCancelScheduling";
-import { Api } from "../../../../services/api";
-import { ActivityIndication } from "../../../../components/Spinner";
+} from './styles';
+import {View, Text} from 'react-native';
+import {ModalCancelScheduling} from '../../../../components/ModalCancelScheduling';
+import {Api} from '../../../../services/api';
+import {ActivityIndication} from '../../../../components/Spinner';
+import {Calendar, Clock} from 'phosphor-react-native';
 
 export function AppointmentTherapist() {
-  const { params } = useRoute();
+  const {params} = useRoute();
   const navigation = useNavigation();
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [isModalCancel, setIsModalCancel] = useState(false);
   const [consulta, setConsulta] = useState();
   const fetchInfo = async () => {
-    const res = await Api.get("/v1/consulta/info/" + params?.consulta);
+    const res = await Api.get('/v1/consulta/info/' + params?.consulta);
     setConsulta(res.data.data);
     setLoading(false);
   };
@@ -67,11 +68,7 @@ export function AppointmentTherapist() {
               <WrapperLocation>
                 <WrapperLocationHeader>
                   <WrapperLocationIcon>
-                    <FontAwesome
-                      name="calendar"
-                      size={18}
-                      color={theme.colors.gray_150}
-                    />
+                    <Calendar size={18} color={theme.colors.gray_150} />
                     <SubTitleLocation>Dia da Consulta:</SubTitleLocation>
                   </WrapperLocationIcon>
 
@@ -84,11 +81,7 @@ export function AppointmentTherapist() {
 
                 <WrapperLocationHeader>
                   <WrapperLocationIcon>
-                    <FontAwesome5
-                      name="clock"
-                      size={18}
-                      color={theme.colors.gray_80}
-                    />
+                    <Clock size={18} color={theme.colors.gray_80} />
                     <SubTitleLocation>Horário da Consulta:</SubTitleLocation>
                   </WrapperLocationIcon>
 
@@ -126,14 +119,14 @@ export function AppointmentTherapist() {
               isModalCancel={isModalCancel}
               data={consulta}
               onIsModalCancel={() => setIsModalCancel(true)}
-              disabled={consulta?.status !== "aguardando"}
+              disabled={consulta?.status !== 'aguardando'}
               disabledText={
-                consulta?.status === "finalizada"
-                  ? "Finalizada"
-                  : consulta?.status === "cancelada"
-                  ? "Cancelada"
-                  : consulta?.status === "Confirmada"
-                  ? "Confirmada"
+                consulta?.status === 'finalizada'
+                  ? 'Finalizada'
+                  : consulta?.status === 'cancelada'
+                  ? 'Cancelada'
+                  : consulta?.status === 'Confirmada'
+                  ? 'Confirmada'
                   : null
               }
             />

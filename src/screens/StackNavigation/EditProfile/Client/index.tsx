@@ -14,18 +14,6 @@ import {Button} from '../../../../components/Button';
 //styled-components
 import {
   Container,
-  Content,
-  ImageTherapist,
-  WrapperInfo,
-  Title,
-  WrapperHeader,
-  ContentPonts,
-  TitlePonts,
-  WrapperLocation,
-  WrapperLocationHeader,
-  WrapperLocatinIcon,
-  TitleLocationMap,
-  SubTitleLocation,
   WrapperButton,
   ContentButton,
   TextButton,
@@ -34,75 +22,70 @@ import {
   Photo,
   PhotoChangeText,
 } from './styles';
-import {getMyInfo, saveMyInfo} from '../../../../context/hooks/User/useUser';
+import {getMyInfo} from '../../../../context/hooks/User/useUser';
 import {Input} from '../../../../components/Input';
-import {LabelText} from '../../SignIn/styles';
 import {LabelInput} from '../../RegisterSeptOne/styles';
 import {View, PermissionsAndroid} from 'react-native';
 import {ActivityIndication} from '../../../../components/Spinner';
 import {MaskedTextInputForm} from '../../../../components/Input/styles';
-import {Form, Formik, useFormik} from 'formik';
+import {Formik} from 'formik';
 import {EditProfileSchema} from './schema';
 import {Api} from '../../../../services/api';
-// import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-// import * as ImagePicker from "expo-image-picker";
+import {launchImageLibrary} from 'react-native-image-picker';
+import {Loading} from '../../../../components/Loading';
+import {IUserInfo, IUserInfoResponseApi} from '../../../../dtos/user-dtos';
 
-export function EditProfileClient({route, navigation}) {
+export function EditProfileClient() {
   const theme = useTheme();
   const [emailChanged, setEmailChanged] = useState(false);
-  const [myInfo, setMyInfo] = useState({
-    nome: '',
-    email: '',
-    celular: '',
-    id: '',
-    cpf: '',
-    rg: '',
-  });
+  const [myInfo, setMyInfo] = useState<IUserInfo>({} as IUserInfo);
   const [loading, setLoading] = useState(true);
   const [newValues, setNewValues] = useState(myInfo);
 
   const isFocused = useIsFocused();
-  const [celular, setTelefone] = useState('');
-  const fetchMyInfo = async () => {
-    const res = await getMyInfo().then(
-      res => (setMyInfo(res.data), setLoading(false)),
-    );
+
+  type IAssestsProps = {
+    fileName: string;
+    fileSize: number;
+    width: number;
+    height: number;
+    type: string;
+    uri: string;
+  };
+  type IResponseImageSelected = {
+    assets: IAssestsProps[];
+    didCancel: boolean;
   };
 
   const pickImage = async () => {
-    // // No permissions request is necessary for launching the image library
-    // let result = await ImagePicker.launchImageLibraryAsync({
-    //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    //   allowsEditing: true,
-    //   aspect: [1, 1],
-    //   quality: 1,
-    //   allowsMultipleSelection: false,
-    // });
-    // if (!result.cancelled) {
-    //   setLoading(true);
-    //   const data = new FormData();
-    //   const mime = require("mime");
-    //   data.append("foto", {
-    //     uri: `${result.uri}`,
-    //     type: mime.getType(result.uri),
-    //     name: result.uri.split("/").pop(),
-    //   });
-    //   await Api.post("v1/user/my-info", data, {
-    //     headers: {
-    //       "content-type": "multipart/form-data",
-    //     },
-    //   })
-    //     .then((res) => {
-    //       if (res.status === 200) {
-    //         // console.log(res.data);
-    //         fetchMyInfo();
-    //       }
-    //     })
-    //     .catch((res) => {
-    //       setLoading(false);
-    //       // console.log(res.data);
-    //     });
-    // }
+    await launchImageLibrary(
+      {mediaType: 'photo', quality: 1, selectionLimit: 1},
+      async (response: IResponseImageSelected | any) => {
+        if (!response.didCancel) {
+          setLoading(true);
+          const data = new FormData();
+          const mime = require('mime');
+          data.append('foto', {
+            uri: `${response?.assets[0]?.uri}`,
+            type: mime.getType(response?.assets[0]?.uri),
+            name: response?.assets[0]?.uri.split('/').pop(),
+          });
+          await Api.post('v1/user/my-info', data, {
+            headers: {
+              'content-type': 'multipart/form-data',
+            },
+          })
+            .then(res => {
+              if (res.status === 200) {
+                handleGetUserInfo();
+              }
+            })
+            .catch(res => {
+              setLoading(false);
+            });
+        }
+      },
+    );
   };
 
   const requestCameraPermission = async () => {
@@ -129,50 +112,52 @@ export function EditProfileClient({route, navigation}) {
     }
   };
 
+  const handleGetUserInfo = async () => {
+    try {
+      setLoading(true);
+      const {data}: IUserInfoResponseApi = await getMyInfo();
+
+      if (data) {
+        setMyInfo(data);
+      }
+    } catch (error) {
+      //trataento de error
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     requestCameraPermission();
-    fetchMyInfo();
+    handleGetUserInfo();
   }, [isFocused]);
 
-  const saveInfo = async () => {
-    setLoading(true);
-    const info = removeEmptyNewValues();
-    await Api.post('v1/user/my-info', info)
-      .then(res => {
-        if (res.data.error) {
-          // setApiError(res.data.error);
-          // console.log(res.data.error);
-        }
-        fetchMyInfo();
-      })
-      .catch(error => console.log(error));
-    // navigation.goBack();
+  const saveInfo = async (values: any) => {
+    try {
+      console.log('antes', values);
+      setLoading(true);
+      const response = await Api.post('v1/user/my-info', values);
+      if (response?.data?.data) {
+        const responseMyInfo = await getMyInfo();
+        setMyInfo(responseMyInfo.data);
+      }
+    } catch (error) {
+      //tratamento de eror
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleNewValue = (field, value) => {
-    const temp = newValues;
+  const handleNewValue = (field: any, value: any) => {
+    const temp: any = newValues;
     temp[field] = value;
     setNewValues(temp);
-  };
-
-  const removeEmptyNewValues = () => {
-    return Object.fromEntries(
-      Object.entries(newValues).filter(function ([key, value]) {
-        if (value != myInfo[key] && value != '') {
-          return true;
-        }
-        return false;
-      }),
-    );
-    // return Object.fromEntries(
-    //   Object.entries(newValues).filter(([_, v]) => v != "")
-    // );
   };
 
   return (
     <>
       {loading ? (
-        <ActivityIndication />
+        <Loading />
       ) : (
         <Formik
           initialValues={{
@@ -185,7 +170,7 @@ export function EditProfileClient({route, navigation}) {
             password: '',
             passwordConfirmation: '',
           }}
-          onSubmit={values => saveInfo(values)}
+          onSubmit={(values: any) => saveInfo(values)}
           validationSchema={EditProfileSchema}>
           {({
             handleChange,
@@ -220,7 +205,7 @@ export function EditProfileClient({route, navigation}) {
                   <LabelInput>Nome</LabelInput>
                   {errors.nome && touched.nome && (
                     <LabelInput style={{color: 'red'}}>
-                      {errors.nome}
+                      {errors.nome as string}
                     </LabelInput>
                   )}
                   <Input
@@ -241,7 +226,7 @@ export function EditProfileClient({route, navigation}) {
                   <LabelInput>Celular</LabelInput>
                   {errors.celular && touched.nome && (
                     <LabelInput style={{color: 'red'}}>
-                      {errors.celular}
+                      {errors.celular as any}
                     </LabelInput>
                   )}
                   <MaskedTextInputForm
@@ -254,6 +239,7 @@ export function EditProfileClient({route, navigation}) {
                     }}
                     value={values.celular}
                     placeholderTextColor={theme.colors.gray_80}
+                    //@ts-ignore
                     width={'100%'}
                     height={'50px'}
                     color={theme.colors.white}
@@ -281,7 +267,9 @@ export function EditProfileClient({route, navigation}) {
                   />
                   <LabelInput>CPF</LabelInput>
                   {errors.cpf && touched.cpf && (
-                    <LabelInput style={{color: 'red'}}>{errors.cpf}</LabelInput>
+                    <LabelInput style={{color: 'red'}}>
+                      {errors.cpf as any}
+                    </LabelInput>
                   )}
                   <MaskedTextInputForm
                     defaultValue={values.cpf}
@@ -293,6 +281,7 @@ export function EditProfileClient({route, navigation}) {
                     }}
                     value={values.cpf}
                     placeholderTextColor={theme.colors.gray_80}
+                    //@ts-ignore
                     width={'100%'}
                     height={'50px'}
                     color={theme.colors.white}
@@ -318,7 +307,9 @@ export function EditProfileClient({route, navigation}) {
                   />
                   <LabelInput>RG</LabelInput>
                   {errors.rg && touched.rg && (
-                    <LabelInput style={{color: 'red'}}>{errors.rg}</LabelInput>
+                    <LabelInput style={{color: 'red'}}>
+                      {errors.rg as any}
+                    </LabelInput>
                   )}
                   <Input
                     defaultValue={values.rg}
@@ -343,7 +334,7 @@ export function EditProfileClient({route, navigation}) {
                   <LabelInput>E-mail</LabelInput>
                   {errors.email && touched.email && (
                     <LabelInput style={{color: 'red'}}>
-                      {errors.email}
+                      {errors.email as any}
                     </LabelInput>
                   )}
                   <Input
@@ -368,7 +359,7 @@ export function EditProfileClient({route, navigation}) {
                       {errors.emailConfirmation &&
                         touched.emailConfirmation && (
                           <LabelInput style={{color: 'red'}}>
-                            {errors.emailConfirmation}
+                            {errors.emailConfirmation as any}
                           </LabelInput>
                         )}
                       <Input
@@ -388,7 +379,7 @@ export function EditProfileClient({route, navigation}) {
                   <LabelInput>Senha</LabelInput>
                   {errors.password && touched.password && (
                     <LabelInput style={{color: 'red'}}>
-                      {errors.password}
+                      {errors.password as any}
                     </LabelInput>
                   )}
                   <Input
@@ -411,7 +402,7 @@ export function EditProfileClient({route, navigation}) {
                   {errors.passwordConfirmation &&
                     touched.passwordConfirmation && (
                       <LabelInput style={{color: 'red'}}>
-                        {errors.passwordConfirmation}
+                        {errors.passwordConfirmation as any}
                       </LabelInput>
                     )}
                   <Input
@@ -439,7 +430,7 @@ export function EditProfileClient({route, navigation}) {
                       loading ? theme.colors.white : theme.colors.orange_100
                     }
                     border
-                    onPress={handleSubmit}>
+                    onPress={() => handleSubmit()}>
                     <TextButton>
                       {loading ? <ActivityIndication /> : 'Salvar'}
                     </TextButton>

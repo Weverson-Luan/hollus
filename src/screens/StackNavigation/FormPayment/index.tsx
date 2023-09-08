@@ -59,7 +59,9 @@ import cardValidator from 'card-validator';
 import {ActivityIndication} from '../../../components/Spinner';
 import useAlert from '../../../context/hooks/Alert/useAlert';
 import {ModalCustom} from './modal/modal';
-import {CheckSquare} from 'phosphor-react-native';
+import {CheckSquare, X} from 'phosphor-react-native';
+import {regexInput, regexValidationDate} from './utils';
+import {ButtonIconClosed} from './modal/styles';
 
 type IRoutesProps = {
   params: {
@@ -69,15 +71,11 @@ type IRoutesProps = {
 export function FormPayment({route, navigation}: any) {
   const theme = useTheme();
   const [cards, setCards] = useState<any>();
-  const [cardInfo, setCardInfo] = useState();
   const [openCards, setOpenCards] = useState(false);
   const [openUserCards, setOpenUserCards] = useState(false);
   const [bgCards, setBgCards] = useState(false);
-  const [cardToUse, setCardToUse] = useState();
   const [name, setName] = useState('');
-  const [enableSubmit, setEnableSubmit] = useState(false);
   const [selectedCard, setSelectedCard] = useState();
-  const actionSheetRef = useRef<ActionSheetRef>(null);
   const {params} = useRoute() as IRoutesProps;
 
   const firstFieldRef = useRef(null);
@@ -247,16 +245,26 @@ export function FormPayment({route, navigation}: any) {
                       paddingHorizontal: 20,
                       flexDirection: 'column',
                     }}>
-                    <Text
+                    <View
                       style={{
-                        marginVertical: 10,
-                        color: theme.colors.gray_150,
-                        textAlign: 'left',
-                        fontSize: 24,
-                        fontWeight: '500',
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
                       }}>
-                      Adicionar novo cartão
-                    </Text>
+                      <Text
+                        style={{
+                          color: theme.colors.gray_150,
+                          textAlign: 'left',
+                          fontSize: 24,
+                          fontWeight: '500',
+                        }}>
+                        Adicionar novo cartão
+                      </Text>
+                      <ButtonIconClosed onPress={() => setIsModal(false)}>
+                        <X size={24} color={theme.colors.gray_200} />
+                      </ButtonIconClosed>
+                    </View>
 
                     <CreditCardWrapper>
                       <Formik
@@ -304,7 +312,11 @@ export function FormPayment({route, navigation}: any) {
                                       : 16
                                   }
                                   style={{
-                                    color: `${errors.number ? 'red' : 'black'}`,
+                                    color: `${
+                                      errors.number
+                                        ? theme.colors.red
+                                        : theme.colors.gray_200
+                                    }`,
                                   }}
                                   onChangeText={text => {
                                     setFieldValue('number', text);
@@ -330,24 +342,7 @@ export function FormPayment({route, navigation}: any) {
                                     secondFieldRef.current.focus()
                                   }
                                   blurOnSubmit={false}
-                                  mask={[
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                  ]}
+                                  mask={regexInput}
                                 />
                                 {errors.number && touched.number && (
                                   <CardErrorText>Número inválido</CardErrorText>
@@ -365,15 +360,7 @@ export function FormPayment({route, navigation}: any) {
                                   }
                                   blurOnSubmit={false}
                                   value={values.expiry}
-                                  mask={[
-                                    /\d/,
-                                    /\d/,
-                                    '/',
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                    /\d/,
-                                  ]}
+                                  mask={regexValidationDate}
                                   keyboardType="number-pad"
                                   placeholder="Data de Validade"
                                   placeholderTextColor={theme.colors.gray_150}

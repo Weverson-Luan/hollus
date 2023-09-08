@@ -19,4 +19,4 @@ interface ITherapies {
 /**
  * EXPORTS
  */
-export { ITherapies };
+export type{ ITherapies };

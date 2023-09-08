@@ -15,7 +15,8 @@ interface IContext extends IUser {
   handleLogout: () => any;
   handleGetUser: () => any;
   handleGetTherapist: () => Promise<void>;
-  successLogin: any;
+  successLogin: boolean;
+  isLoading: boolean;
 };
 
 interface IAuthProvider {
@@ -26,7 +27,7 @@ interface IAuthProvider {
 /**
  * EXPORT
  */
-export { IUser, IContext, IAuthProvider };
+export type { IUser, IContext, IAuthProvider };
 
 
 

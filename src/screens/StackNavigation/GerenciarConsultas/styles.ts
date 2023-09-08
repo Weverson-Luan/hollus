@@ -42,18 +42,19 @@ export const EmptyMessage = styled.Text`
 
 export const AddButtonContainer = styled.View`
   width: 100%;
+  padding: 0 16px;
   /* background-color: ${({ theme }) => theme.colors.white}; */
 `;
 
 export const AddButton = styled.TouchableOpacity`
-  width: 50%;
+  width: 100%;
   background-color: ${({ theme }) => theme.colors.orange};
   align-self: center;
   margin-bottom: ${RFValue(20)}px;
   height: ${RFValue(40)}px;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 6px;
 `;
 
 export const AddButtonText = styled.Text`
@@ -75,4 +76,5 @@ export const ValueInput = styled(MaskInput)`
   align-self: center;
   max-width: ${RFValue(100)}px;
   font-size: ${RFValue(14)}px;
+  color: #1e1e1e;
 `;

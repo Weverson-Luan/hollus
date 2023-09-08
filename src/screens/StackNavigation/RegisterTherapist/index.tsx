@@ -30,6 +30,7 @@ import {Alert, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {Form, Formik} from 'formik';
 import {RegisterSchema} from './Schema/RegisterSchema';
 
+//@ts-ignore
 import {BarPasswordStrengthDisplay} from 'react-native-password-strength-meter';
 import MaskInput from 'react-native-mask-input';
 import {RFValue} from 'react-native-responsive-fontsize';
@@ -44,6 +45,7 @@ import {
   formatTimeString,
   getDayOfWeekFromIndex,
 } from '../../../utils/formatdate';
+import {CheckSquare} from 'phosphor-react-native';
 
 export function RegisterTherapist() {
   const theme = useTheme();
@@ -58,7 +60,7 @@ export function RegisterTherapist() {
     return errArr[0][0];
   };
 
-  const handleRegister = async values => {
+  const handleRegister = async (values: any) => {
     console.log(values);
     setLoading(true);
     await Api.post('/register', values).then(async res => {
@@ -66,7 +68,7 @@ export function RegisterTherapist() {
       if (res.data.success) {
         await auth
           .handleAuthentication(values.email, values.password)
-          .then(resAuth => {
+          .then((resAuth: any) => {
             if (!resAuth?.token) {
               setAlert(
                 'Erro ao conectar',
@@ -86,12 +88,7 @@ export function RegisterTherapist() {
         setLoading(false);
         return;
       }
-      // Alert.alert("Cadastro", res.data.message, [
-      //   {
-      //     text: "OK",
-      //     onPress: () => navigation.navigate("SignIn"),
-      //   },
-      // ]);
+
       setLoading(false);
     });
   };
@@ -479,10 +476,18 @@ export function RegisterTherapist() {
                         setFieldValue('policiesAccept', !values.policiesAccept)
                       }
                       style={{marginRight: 10}}>
-                      <FontAwesome5Icon
-                        name={values.policiesAccept ? 'check-circle' : 'circle'}
-                        size={RFValue(20)}
-                      />
+                      {values.policiesAccept ? (
+                        <CheckSquare
+                          weight="fill"
+                          color={theme.colors.orange}
+                          size={RFValue(20)}
+                        />
+                      ) : (
+                        <CheckSquare
+                          color={theme.colors.gray_150}
+                          size={RFValue(20)}
+                        />
+                      )}
                     </TouchableOpacity>
                     <LabelInput>
                       Confirmo que li e concordo com os{' '}
@@ -501,7 +506,7 @@ export function RegisterTherapist() {
                     background_color={
                       loading ? theme.colors.white : theme.colors.orange
                     }
-                    onPress={handleSubmit}
+                    onPress={() => handleSubmit()}
                     disabled={false}>
                     <TitleSearchTherapy>
                       {loading ? <ActivityIndication /> : 'Próximo'}
@@ -535,21 +540,6 @@ export function RegisterTherapistStep2() {
   const getCategories = async () => {
     const {data} = await Api.get('/register/categorias');
     setCategoriesList(data.data);
-    // let arr = [];
-    // data.data.forEach((cat) => {
-    //   arr.push({
-    //     label: cat.nome,
-    //     value: cat.id,
-    //     beginTime: new Date(),
-    //     endTime: new Date(),
-    //     changedBeginTime: false,
-    //     changedEndTime: false,
-    //     days: Array(7).fill(false),
-    //   });
-    // });
-    // setCategoriesList(arr);
-    // setSelectedCategoriesDetails(arr);
-    // console.log(categoriesList);
   };
 
   const validateValues = () => {
@@ -585,7 +575,7 @@ export function RegisterTherapistStep2() {
       const total = selectedCategories.length;
       let count = 0;
       setSubmitLoading(true);
-      selectedCategories.forEach(async cat => {
+      selectedCategories.forEach(async (cat: any) => {
         await Api.post('/v1/user/adicionar-categoria', {
           categoria_id: cat.id,
           valor: '100',
@@ -595,8 +585,10 @@ export function RegisterTherapistStep2() {
           horario_fim: `${formatTimeString(cat.endTime)}`,
           dias_semana: JSON.stringify(
             cat.days
-              .map((day, index) => (day ? getDayOfWeekFromIndex(index) : null))
-              .filter(_ => _ !== null),
+              .map((day: any, index: number) =>
+                day ? getDayOfWeekFromIndex(index) : null,
+              )
+              .filter((_: null) => _ !== null),
           ),
         }).then(res => (console.log(res.data), (count = count + 1)));
         if (count === total) {
@@ -611,47 +603,27 @@ export function RegisterTherapistStep2() {
     }
   };
 
-  const onChangeDetails = catChanged => {
-    const temp = [...selectedCategories];
+  const onChangeDetails = (catChanged: any) => {
+    const temp = [...selectedCategories] as any;
 
-    const index = temp.findIndex(v => v.id === catChanged.id);
+    const index = temp.findIndex((v: any) => v.id === catChanged.id);
     if (index === -1) {
       return;
     }
     temp[index] = catChanged;
     setSelectedCategories(temp);
-    // setSelectedCategories([
-    //   ...selectedCategories.slice(0, index),
-    //   Object.assign({}, selectedCategories[index], catChanged),
-    //   ...selectedCategories.slice(index + 1),
-    // ]);
-    // console.log(selectedCategories);
   };
 
-  const changeSelected = newValues => {
-    // console.log("# new", newValues.length);
-
-    const newArr = newValues.map(nV => {
-      // check if any of the
-      // new values is already
-      // selected
-
-      const isSelected = selectedCategories.find(sC => sC?.id === nV.id);
+  const changeSelected = (newValues: any) => {
+    const newArr = newValues.map((nV: any) => {
+      const isSelected = selectedCategories.find((sC: any) => sC?.id === nV.id);
       if (typeof isSelected !== 'undefined') {
-        // console.log(nV.nome, " was selected, skipping");
-
-        // return the value
-        // that was already
-        // selected
         return isSelected;
       }
 
-      // console.log(nV.nome, " wasnt selected, adding");
-
-      // return the new selected value
       return nV;
     });
-    // console.log("# w/ new added", newArr.length);
+
     setSelectedCategories(newArr);
   };
 
@@ -691,7 +663,7 @@ export function RegisterTherapistStep2() {
               />
             </WrapperInput>
             <CategoriesList>
-              {selectedCategories?.map((cat, index) => (
+              {selectedCategories?.map((cat: any, index) => (
                 // <Text key={index}>{cat.nome}</Text>
                 <CardCategoria
                   key={cat?.id}

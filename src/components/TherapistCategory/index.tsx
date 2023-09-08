@@ -1,5 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { useTheme } from "styled-components";
+import React, {useEffect, useState} from 'react';
+import {useTheme} from 'styled-components';
+
+import {RFValue} from 'react-native-responsive-fontsize';
+import {
+  formatTimeString,
+  getDayOfWeek,
+  getDayOfWeekFromIndex,
+} from '../../utils/formatdate';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import useAlert from '../../context/hooks/Alert/useAlert';
+import {Api} from '../../services/api';
+import {ActivityIndicator} from 'react-native';
+import {ITherapistCategoryProps} from './interface';
+import {
+  CaretDoubleDown,
+  CaretDoubleUp,
+  Clock,
+  Pencil,
+  X,
+  DotsThree,
+  Check,
+  Trash,
+} from 'phosphor-react-native';
 
 //styled-components
 import {
@@ -51,24 +73,11 @@ import {
   EditCategoryDescriptionModal,
   EditCategoryDescriptionView,
   CategoryDescriptionTextInput,
-} from "./styles";
-import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { RFValue } from "react-native-responsive-fontsize";
-import {
-  formatTimeString,
-  getDayOfWeek,
-  getDayOfWeekFromIndex,
-} from "../../utils/formatdate";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { useIsFocused } from "@react-navigation/native";
-import useAlert from "../../context/hooks/Alert/useAlert";
-import { Api } from "../../services/api";
-import { ActivityIndicator } from "react-native";
+} from './styles';
 
-export function TherapistCategory({ data, refresh }) {
+export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
   const theme = useTheme();
-  const isFocused = useIsFocused();
-  const { text, title, setAlert } = useAlert();
+  const {text, title, setAlert} = useAlert();
 
   const [isLoading, setIsLoading] = useState(false);
   const [expand, setExpand] = useState(false);
@@ -83,12 +92,13 @@ export function TherapistCategory({ data, refresh }) {
   const [openEndTimePicker, setOpenEndTimePicker] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedTimes, setSelectedTimes] = useState([]);
-  const [categoriaDescricao, setCategoriaDescricao] = useState("");
+  const [categoriaDescricao, setCategoriaDescricao] = useState('');
+  const [showDescricao, setShowDescricao] = useState(false);
 
-  const days = ["D", "S", "T", "Q", "Q", "S", "S"];
+  const days = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
-  const onTimeChangeBegin = async (event, selectedTime) => {
-    if (typeof selectedTime === "undefined") {
+  const onTimeChangeBegin = async (event: any, selectedTime: any) => {
+    if (typeof selectedTime === 'undefined') {
       setOpenBeginTimePicker(false);
       return;
     }
@@ -101,8 +111,8 @@ export function TherapistCategory({ data, refresh }) {
     setOpenBeginTimePicker(false);
   };
 
-  const onTimeChangeEnd = async (event, selectedTime) => {
-    if (typeof selectedTime === "undefined") {
+  const onTimeChangeEnd = async (event: any, selectedTime: any) => {
+    if (typeof selectedTime === 'undefined') {
       setOpenEndTimePicker(false);
       return;
     }
@@ -112,8 +122,8 @@ export function TherapistCategory({ data, refresh }) {
 
     if (selectedBeginTime && correctedTime.getTime() < beginTime.getTime()) {
       setAlert(
-        "Erro",
-        "Selecione um horário final para depois do horário inicial!"
+        'Erro',
+        'Selecione um horário final para depois do horário inicial!',
       );
       return;
     }
@@ -123,21 +133,17 @@ export function TherapistCategory({ data, refresh }) {
     setOpenEndTimePicker(false);
   };
 
-  const selectDay = (index) => {
-    const dayOfWeekName = getDayOfWeekFromIndex(index);
+  const selectDay = (index: any) => {
+    const dayOfWeekName: any = getDayOfWeekFromIndex(index);
     if (!selectedDays.includes(dayOfWeekName)) {
-      setSelectedDays((selectedDays) => [...selectedDays, dayOfWeekName]);
+      setSelectedDays(selectedDays => [...selectedDays, dayOfWeekName]);
       return;
     }
-    const dayRemoved = selectedDays.filter((item) => item !== dayOfWeekName);
+    const dayRemoved = selectedDays.filter(item => item !== dayOfWeekName);
     setSelectedDays(dayRemoved);
-    // setSelectedDays((selectedDays) => [
-    //   ...selectedDays,
-    //   selectedDays.filter((item) => item !== dayOfWeekName),
-    // ]);
   };
 
-  const checkDaySelected = (index) => {
+  const checkDaySelected = (index: any) => {
     const dayOfWeekName = getDayOfWeekFromIndex(index);
     if (selectedDays.includes(dayOfWeekName)) {
       return true;
@@ -145,20 +151,16 @@ export function TherapistCategory({ data, refresh }) {
     return false;
   };
 
-  const selectTime = (time) => {
+  const selectTime = (time: any) => {
     if (!selectedTimes.includes(time.id)) {
-      setSelectedTimes((selectedTimes) => [...selectedTimes, time.id]);
+      setSelectedTimes(selectedTimes => [...selectedTimes, time.id]);
       return;
     }
-    const timeRemoved = selectedTimes.filter((item) => item !== time.id);
+    const timeRemoved = selectedTimes.filter(item => item !== time.id);
     setSelectedTimes(timeRemoved);
-    // setSelectedDays((selectedDays) => [
-    //   ...selectedDays,
-    //   selectedDays.filter((item) => item !== dayOfWeekName),
-    // ]);
   };
 
-  const checkTimeSelected = (time) => {
+  const checkTimeSelected = (time: any) => {
     if (selectedTimes.includes(time.id)) {
       return true;
     }
@@ -167,45 +169,45 @@ export function TherapistCategory({ data, refresh }) {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    await Api.post("v1/user/horario/adicionar", {
+    await Api.post('v1/user/horario/adicionar', {
       dia_semana: JSON.stringify(selectedDays),
       horario_inicio: formatTimeString(beginTime),
       horario_fim: formatTimeString(endTime),
       terapeuta_categoria_id: data.id,
     })
-      .then((res) => {
+      .then(res => {
         if (res.data.success) {
           setOpenModal(false);
           refresh();
         }
         // console.log(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
     setIsLoading(false);
     return;
   };
 
-  const handleDelete = async (confirmed) => {
+  const handleDelete = async (confirmed: any) => {
     setIsLoading(true);
-    selectedTimes.forEach(async (item) => {
-      await Api.delete("/v1/user/horario/remover/" + item)
-        .then((res) => console.log(res.data))
-        .catch((err) => console.log(err));
+    selectedTimes.forEach(async item => {
+      await Api.delete('/v1/user/horario/remover/' + item)
+        .then(res => console.log(res.data))
+        .catch(err => console.log(err));
     });
-    setAlert("Horários excluídos", "Horários excluídos com sucesso!");
+    setAlert('Horários excluídos', 'Horários excluídos com sucesso!');
     setIsLoading(false);
     refresh();
   };
 
   const handleEditDescription = async () => {
     setIsLoading(true);
-    await Api.post("/v1/user/categoria/editar/descricao", {
-      categoria_id: data.id,
+    await Api.post('/v1/user/horario/salvar-descricao', {
+      terapia_id: data.horarios[0].terapeuta_categoria_id,
       descricao: categoriaDescricao,
     })
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
-    setAlert("Descrição alterada", "Descrição alterada com sucesso!");
+      .then(res => console.log(res.data))
+      .catch(err => console.log(err));
+    setAlert('Descrição alterada', 'Descrição alterada com sucesso!');
     setIsLoading(false);
     refresh();
   };
@@ -237,8 +239,7 @@ export function TherapistCategory({ data, refresh }) {
       <EditCategoryDescriptionModal
         onRequestClose={() => setOpenDescriptionModal(false)}
         visible={openDescriptionModal}
-        transparent
-      >
+        transparent>
         <EditCategoryDescriptionView>
           <AddCategoryTimeCard>
             <AddCategoryTimeHeader>
@@ -246,13 +247,8 @@ export function TherapistCategory({ data, refresh }) {
                 Editar Descrição
               </AddCategoryTimeHeaderText>
               <AddCategoryTimeHeaderButton
-                onPress={() => setOpenDescriptionModal(false)}
-              >
-                <FontAwesome5Icon
-                  name="times"
-                  size={RFValue(18)}
-                  color={theme.colors.white}
-                />
+                onPress={() => setOpenDescriptionModal(false)}>
+                <X size={RFValue(16)} color={theme.colors.white} />
               </AddCategoryTimeHeaderButton>
             </AddCategoryTimeHeader>
             <CategoryDescriptionTextInput
@@ -262,22 +258,22 @@ export function TherapistCategory({ data, refresh }) {
               maxLength={300}
               onChangeText={setCategoriaDescricao}
             />
-            {categoriaDescricao === "" || categoriaDescricao === data?.descricao ? null : (
+            {categoriaDescricao === '' ||
+            categoriaDescricao === data?.descricao ? null : (
               <AddCategoryTimeSaveButton
-                disabled={isLoading || categoriaDescricao === ""}
-                onPress={handleEditDescription}
-              >
+                disabled={isLoading || categoriaDescricao === ''}
+                onPress={handleEditDescription}>
                 <AddCategoryTime>Salvar</AddCategoryTime>
               </AddCategoryTimeSaveButton>
             )}
           </AddCategoryTimeCard>
         </EditCategoryDescriptionView>
       </EditCategoryDescriptionModal>
+
       <AddCategoryTimeModal
         onRequestClose={() => setOpenModal(false)}
         visible={openModal}
-        transparent
-      >
+        transparent>
         <AddCategoryTimeView>
           <AddCategoryTimeCard>
             <AddCategoryTimeHeader>
@@ -285,11 +281,7 @@ export function TherapistCategory({ data, refresh }) {
                 Novo Horário
               </AddCategoryTimeHeaderText>
               <AddCategoryTimeHeaderButton onPress={() => setOpenModal(false)}>
-                <FontAwesome5Icon
-                  name="times"
-                  size={RFValue(18)}
-                  color={theme.colors.white}
-                />
+                <X size={RFValue(16)} color={theme.colors.white} />
               </AddCategoryTimeHeaderButton>
             </AddCategoryTimeHeader>
             {openBeginTimePicker ? (
@@ -310,7 +302,7 @@ export function TherapistCategory({ data, refresh }) {
             ) : null}
             {isLoading ? (
               <LoadingContainer>
-                <ActivityIndicator size={"large"} color={theme.colors.orange} />
+                <ActivityIndicator size={'large'} color={theme.colors.orange} />
               </LoadingContainer>
             ) : (
               <>
@@ -318,22 +310,20 @@ export function TherapistCategory({ data, refresh }) {
                   <AddCategoryFieldWrapper>
                     <AddCategoryLabel>Horário Inicial</AddCategoryLabel>
                     <AddCategoryTimeTouchable
-                      onPress={() => setOpenBeginTimePicker(true)}
-                    >
+                      onPress={() => setOpenBeginTimePicker(true)}>
                       <AddCategoryTime>
                         {selectedBeginTime
                           ? formatTimeString(beginTime)
-                          : "00:00"}
+                          : '00:00'}
                       </AddCategoryTime>
                     </AddCategoryTimeTouchable>
                   </AddCategoryFieldWrapper>
                   <AddCategoryFieldWrapper>
                     <AddCategoryLabel>Horário Final</AddCategoryLabel>
                     <AddCategoryTimeTouchable
-                      onPress={() => setOpenEndTimePicker(true)}
-                    >
+                      onPress={() => setOpenEndTimePicker(true)}>
                       <AddCategoryTime>
-                        {selectedEndTime ? formatTimeString(endTime) : "00:00"}
+                        {selectedEndTime ? formatTimeString(endTime) : '00:00'}
                       </AddCategoryTime>
                     </AddCategoryTimeTouchable>
                   </AddCategoryFieldWrapper>
@@ -344,10 +334,12 @@ export function TherapistCategory({ data, refresh }) {
                     {days.map((day, index) => (
                       <AddCategoryTimeDayTouchable
                         key={index}
+                        //@ts-ignore
                         selected={checkDaySelected(index)}
-                        onPress={() => selectDay(index)}
-                      >
-                        <AddCategoryTimeDay selected={checkDaySelected(index)}>
+                        onPress={() => selectDay(index)}>
+                        <AddCategoryTimeDay
+                          //@ts-ignore
+                          selected={checkDaySelected(index)}>
                           {day}
                         </AddCategoryTimeDay>
                       </AddCategoryTimeDayTouchable>
@@ -361,8 +353,7 @@ export function TherapistCategory({ data, refresh }) {
                     !selectedEndTime ||
                     selectedDays.length === 0
                   }
-                  onPress={handleSubmit}
-                >
+                  onPress={handleSubmit}>
                   <AddCategoryTime>Salvar</AddCategoryTime>
                 </AddCategoryTimeSaveButton>
               </>
@@ -370,6 +361,7 @@ export function TherapistCategory({ data, refresh }) {
           </AddCategoryTimeCard>
         </AddCategoryTimeView>
       </AddCategoryTimeModal>
+
       <CategoryWrapper>
         <CategoryPhotoWrapper>
           <CategoryPhoto
@@ -382,20 +374,34 @@ export function TherapistCategory({ data, refresh }) {
         <CategoryInfoWrapper>
           <TitleWrapper>
             <CategoryTitle>{data.categoria?.nome}</CategoryTitle>
-            <CategoryOptionToggle onPress={() => setExpand(!expand)}>
-              <FontAwesome5Icon
-                name={expand ? "angle-up" : "angle-down"}
-                size={RFValue(25)}
-              />
+            <CategoryOptionToggle
+              onPress={() => {
+                setShowDescricao(!showDescricao);
+                setExpand(!expand);
+              }}>
+              {expand ? (
+                <CaretDoubleUp size={16} />
+              ) : (
+                <CaretDoubleDown size={16} />
+              )}
             </CategoryOptionToggle>
           </TitleWrapper>
           <CategoryDescription textBreakStrategy="highQuality">
-            {data?.descricao}
+            {showDescricao ? (
+              data?.descricao
+            ) : (
+              <>
+                {' '}
+                {data?.descricao.length > 32
+                  ? `${data.descricao.slice(0, 32)}...`
+                  : data?.descricao}
+              </>
+            )}
           </CategoryDescription>
           <CategoryTimePriceWrapper>
             <CategoryPrice>R$ {data?.valor}</CategoryPrice>
             <CategoryTimeScheduleWrapper>
-              <FontAwesome5Icon name="clock" size={RFValue(15)} />
+              <Clock size={RFValue(16)} />
               <CategoryTime>
                 {data?.tempo > 60 ? `${data.tempo / 60}h` : `${data.tempo}min`}
               </CategoryTime>
@@ -403,34 +409,25 @@ export function TherapistCategory({ data, refresh }) {
           </CategoryTimePriceWrapper>
         </CategoryInfoWrapper>
       </CategoryWrapper>
+
       {expand ? (
         data.horarios.length > 0 ? (
           <CategoryDetailsWrapper>
             <CategoryDescriptionEditButton
-              onPress={() => setOpenDescriptionModal(true)}
-            >
+              onPress={() => setOpenDescriptionModal(true)}>
               <CategoryDescriptionEditText>
                 Editar descrição
               </CategoryDescriptionEditText>
-              {/* <FontAwesome5Icon
-                name="pen"
-                size={RFValue(16)}
-                color={theme.colors.gray_200}
-              /> */}
             </CategoryDescriptionEditButton>
             <CategoryTimeWrapper>
               <CategoryTimeTitleHeader>
                 <CategoryTimeTitle>Horários</CategoryTimeTitle>
                 <CategoryHeaderEdit onPress={() => setEditMode(!editMode)}>
-                  <FontAwesome5Icon
-                    name="pen"
-                    size={RFValue(16)}
-                    color={theme.colors.white}
-                  />
+                  <Pencil size={RFValue(16)} color={theme.colors.white} />
                 </CategoryHeaderEdit>
               </CategoryTimeTitleHeader>
               {isLoading ? (
-                <ActivityIndicator size={"large"} color={theme.colors.orange} />
+                <ActivityIndicator size={'large'} color={theme.colors.orange} />
               ) : (
                 <CategoryTimesContainer>
                   <CategoryTimeTitleRow>
@@ -441,43 +438,42 @@ export function TherapistCategory({ data, refresh }) {
                     <CategoryTimeBegin>De</CategoryTimeBegin>
                     <CategoryTimeEnd>Até</CategoryTimeEnd>
                   </CategoryTimeTitleRow>
-                  {data.horarios.map((horario) => (
+                  {data.horarios.map(horario => (
                     <CategoryTimeRow key={horario.id}>
                       {editMode ? (
                         <CategoryTimeSelect onPress={() => selectTime(horario)}>
-                          <FontAwesome5Icon
-                            name={
-                              checkTimeSelected(horario)
-                                ? "dot-circle"
-                                : "circle"
-                            }
-                            size={RFValue(20)}
-                            color={theme.colors.orange}
-                          />
+                          {checkTimeSelected(horario) ? (
+                            <Check color={theme.colors.green} size={16} />
+                          ) : (
+                            <DotsThree />
+                          )}
                         </CategoryTimeSelect>
                       ) : null}
                       <CategoryTimeDay>
-                        {getDayOfWeek(horario.dia_semana)}
+                        {getDayOfWeek(horario.dia_semana) ?? ''}
                       </CategoryTimeDay>
                       <CategoryTimeBegin>
-                        {horario.horario_inicio.substr(0, 5)}
+                        {horario.horario_inicio.substr(0, 5) ?? ''}
                       </CategoryTimeBegin>
                       <CategoryTimeEnd>
-                        {horario.horario_fim.substr(0, 5)}
+                        {horario.horario_fim.substr(0, 5) ?? ''}
                       </CategoryTimeEnd>
                     </CategoryTimeRow>
                   ))}
                   {editMode && selectedTimes.length > 0 ? (
-                    <AddCategoryTimeButton onPress={() => setOpenModal(true)}>
+                    <AddCategoryTimeButton
+                      //@ts-ignore
+                      type="danger"
+                      onPress={() => setOpenModal(true)}>
+                      <Trash size={RFValue(16)} color={theme.colors.white} />
                       <AddCategoryTimeButtonTitle
-                        type="danger"
-                        onPress={handleDelete}
-                      >
-                        <FontAwesome5Icon name="trash" size={RFValue(16)} />{" "}
+                        //@ts-ignore
+
+                        onPress={handleDelete}>
                         Excluir
                         {selectedTimes.length === 1
-                          ? " selecionado"
-                          : " selecionados"}
+                          ? ' selecionado'
+                          : ' selecionados'}
                       </AddCategoryTimeButtonTitle>
                     </AddCategoryTimeButton>
                   ) : (

@@ -70,6 +70,11 @@ import {ActivityIndication} from '../../../components/Spinner';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import useAlert from '../../../context/hooks/Alert/useAlert';
 import MandalaSVG from '../../../assets/svg/mandala.svg';
+import {
+  DotsThreeOutline,
+  DotsThreeOutlineVertical,
+  StopCircle,
+} from 'phosphor-react-native';
 
 export function Therapist({navigation, route}: any) {
   const theme = useTheme();
@@ -211,10 +216,11 @@ export function Therapist({navigation, route}: any) {
                           .map((category: any) => (
                             <Col key={category.id}>
                               <Row>
-                                <CategoryIcon name="dot-circle" />
+                                <StopCircle color="black" size={17} />
                                 <Text
                                   style={{
                                     color: theme.colors.gray_150,
+                                    marginLeft: 6,
                                   }}>
                                   {category.nome}
                                 </Text>

@@ -214,6 +214,7 @@ export const CardField = styled(TextInput)`
   /* flex: 1; */
   width: 100%;
   font-size: ${RFValue(14)}px;
+  color: ${({theme})=> theme.colors.gray_150};
 `;
 
 export const CardMaskedField = styled(MaskInput)`
@@ -221,9 +222,9 @@ export const CardMaskedField = styled(MaskInput)`
   border-width: 1px;
   padding: ${RFValue(5)}px;
   margin: ${RFValue(5)}px;
-  /* flex: 1; */
   width: 100%;
   font-size: ${RFValue(14)}px;
+  color: ${({theme})=> theme.colors.gray_200};
 `;
 
 export const CardRow = styled(View)`
