@@ -38,6 +38,7 @@ export function AuthenticateBottomTabsNavigation() {
   const theme = useTheme();
   return (
     <BottomTabs.Navigator
+      initialRouteName="HomeTherapist"
       screenOptions={{
         headerTitleAlign: 'center',
         headerShown: true,
@@ -67,7 +68,7 @@ export function AuthenticateBottomTabsNavigation() {
         },
       }}>
       <BottomTabs.Screen
-        name="Home"
+        name="HomeTherapist"
         component={TherapistStackRoutesAuth}
         options={{
           tabBarIcon: ({color, size}) => (
@@ -89,7 +90,7 @@ export function AuthenticateBottomTabsNavigation() {
         }}
       />
       <BottomTabs.Screen
-        name="Pesquisar"
+        name="PesquisarTherapist"
         component={TherapistStackSearchRoutes}
         options={{
           tabBarIcon: ({color, size}) => (
@@ -100,7 +101,7 @@ export function AuthenticateBottomTabsNavigation() {
         }}
       />
       <BottomTabs.Screen
-        name="Consultas"
+        name="ConsultasTherapist"
         component={ScreenQuery}
         options={{
           tabBarIcon: ({color, size}) => <Calendar size={size} color={color} />,
@@ -109,7 +110,7 @@ export function AuthenticateBottomTabsNavigation() {
       />
 
       <BottomTabs.Screen
-        name="Produtos"
+        name="ProdutosTherapist"
         component={TherapistStackProductsRoutes}
         options={{
           tabBarIcon: ({color, size}) => (

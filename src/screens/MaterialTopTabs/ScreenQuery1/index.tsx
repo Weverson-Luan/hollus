@@ -33,13 +33,14 @@ import {
 } from './styles';
 import {Api} from '../../../services/api';
 import {ActivityIndication} from '../../../components/Spinner';
+import {Clock, DotsThreeOutlineVertical} from 'phosphor-react-native';
 
-export function ScreenQuery({navigation}) {
+export function ScreenQuery({navigation}: any) {
   const theme = useTheme();
   const isFocused = useIsFocused();
   const navigationAuth = useNavigation();
-  const [proximasConsultas, setProximasConsultas] = useState();
-  const [historicoConsultas, setHistoricoConsultas] = useState();
+  const [proximasConsultas, setProximasConsultas] = useState<any>();
+  const [historicoConsultas, setHistoricoConsultas] = useState<any>();
 
   const [historyLoading, setHistoryLoading] = useState(false);
   const [nextLoading, setNextLoading] = useState(false);
@@ -92,23 +93,10 @@ export function ScreenQuery({navigation}) {
                 <DescriptionInfo>
                   <HeaderTitle>
                     <TitleName>{item.usuario_paciente.nome}</TitleName>
-
-                    {/* <WrapperPonts>
-                  <AntDesign
-                    name="star"
-                    size={14}
-                    color={theme.colors.orange_100}
-                  />
-                  <TitlePont>{item.ponts}</TitlePont>
-                </WrapperPonts> */}
                   </HeaderTitle>
 
                   <WrapperDate>
-                    <AntDesign
-                      name="clockcircleo"
-                      size={14}
-                      color={theme.colors.gray_150}
-                    />
+                    <Clock size={14} color={theme.colors.gray_150} />
                     <TitleDate>
                       {item.data_hora.substring(8, 10)}/
                       {item.data_hora.substring(5, 7)}/
@@ -116,18 +104,9 @@ export function ScreenQuery({navigation}) {
                       {item.data_hora.substring(11, 16)}
                     </TitleDate>
                   </WrapperDate>
-
-                  {/* <WrapperLocation>
-                <Entypo
-                  name="location-pin"
-                  size={14}
-                  color={theme.colors.gray_150}
-                />
-                <TitleLocation>{item.location_spacion}</TitleLocation>
-              </WrapperLocation> */}
                 </DescriptionInfo>
 
-                <Ionicons name="ellipsis-vertical" size={36} />
+                <DotsThreeOutlineVertical size={32} />
               </WrapperContentInfo>
             )}
           />
@@ -162,23 +141,10 @@ export function ScreenQuery({navigation}) {
                 <DescriptionInfo>
                   <HeaderTitle>
                     <TitleName>{item.usuario_paciente.nome}</TitleName>
-
-                    {/* <WrapperPonts>
-                  <AntDesign
-                    name="star"
-                    size={14}
-                    color={theme.colors.orange_100}
-                  />
-                  <TitlePont>{item.ponts}</TitlePont>
-                </WrapperPonts> */}
                   </HeaderTitle>
 
                   <WrapperDate>
-                    <AntDesign
-                      name="clockcircleo"
-                      size={14}
-                      color={theme.colors.gray_150}
-                    />
+                    <Clock size={14} color={theme.colors.gray_150} />
                     <TitleDate>
                       {item.data_hora.substring(8, 10)}/
                       {item.data_hora.substring(5, 7)}/
@@ -186,18 +152,9 @@ export function ScreenQuery({navigation}) {
                       {item.data_hora.substring(11, 16)}
                     </TitleDate>
                   </WrapperDate>
-
-                  {/* <WrapperLocation>
-                <Entypo
-                  name="location-pin"
-                  size={14}
-                  color={theme.colors.gray_150}
-                />
-                <TitleLocation>{item.location_spacion}</TitleLocation>
-              </WrapperLocation> */}
                 </DescriptionInfo>
 
-                <Ionicons name="ellipsis-vertical" size={36} />
+                <DotsThreeOutlineVertical size={32} />
               </WrapperContentInfo>
             )}
           />

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Alert, Modal as ModalRN } from "react-native";
-import { useTheme } from "styled-components";
+import React, {useState} from 'react';
+import {Alert, Modal as ModalRN} from 'react-native';
+import {useTheme} from 'styled-components';
 import {
   Modal,
   FormControl,
@@ -10,21 +10,21 @@ import {
   Select,
   CheckIcon,
   View,
-} from "native-base";
+} from 'native-base';
 
 //components
-import { Button as ButtonCancel } from "../../components/Button";
+import {Button as ButtonCancel} from '../../components/Button';
 
 // component use productSelect
-import { TextButton } from "../../screens/StackNavigation/ProductSelected/styles";
+import {TextButton} from '../../screens/StackNavigation/ProductSelected/styles';
 
 //typings
-import { IModalCancelProps } from "./index.d";
+import {IModalCancelProps} from './index.d';
 
-import { styles } from "./styles";
-import { Api } from "../../services/api";
-import { useNavigation } from "@react-navigation/native";
-import useAlert from "../../context/hooks/Alert/useAlert";
+import {styles} from './styles';
+import {Api} from '../../services/api';
+import {useNavigation} from '@react-navigation/native';
+import useAlert from '../../context/hooks/Alert/useAlert';
 
 export function ModalCancelScheduling({
   onIsModalCancel,
@@ -35,16 +35,16 @@ export function ModalCancelScheduling({
 }: IModalCancelProps) {
   const theme = useTheme();
   const [showModal, setShowModal] = useState(false);
-  let [service, setService] = useState("");
+  let [service, setService] = useState('');
   const navigation = useNavigation();
   function handleIsModal() {
     onIsModalCancel();
     setShowModal(!showModal);
   }
-  const { setAlert } = useAlert();
+  const {setAlert} = useAlert();
 
   const submitCancel = async () => {
-    const res = await Api.delete("v1/consulta/cancelar/" + data.id);
+    const res = await Api.delete('v1/consulta/cancelar/' + data.id);
     setAlert('Erro', res.data.message);
     // Alert.alert(res.data.message, "Retorne à tela de consultas.", [
     //   {
@@ -64,10 +64,9 @@ export function ModalCancelScheduling({
         height="50px"
         background_color={theme.colors.orange_100}
         border
-        disabled={disabled}
-      >
+        disabled={disabled}>
         <TextButton>
-          {disabled ? disabledText : "Cancelar atendimento"}
+          {disabled ? disabledText : 'Cancelar atendimento'}
         </TextButton>
       </ButtonCancel>
 
@@ -75,8 +74,7 @@ export function ModalCancelScheduling({
         transparent
         visible={showModal}
         onRequestClose={() => setShowModal(false)}
-        style={styles.modalRN}
-      >
+        style={styles.modalRN}>
         <Modal.Content style={styles.modalContent}>
           <View style={styles.wrapperHeader}>
             <Modal.CloseButton
@@ -111,17 +109,16 @@ export function ModalCancelScheduling({
                 borderRadius={6}
                 shadow={0.1}
                 selectedValue={service}
-                width={"96%"}
+                width={'96%'}
                 accessibilityLabel="Selecione a opção..."
                 placeholder="Selecione motivo do cancelamento"
                 _selectedItem={{
-                  bg: "teal.600",
+                  bg: 'teal.600',
                   endIcon: <CheckIcon size="5" />,
                 }}
-                _light={{ bg: "white" }}
-                _dark={{ bg: "white" }}
-                onValueChange={(itemValue) => setService(itemValue)}
-              >
+                _light={{bg: 'white'}}
+                _dark={{bg: 'white'}}
+                onValueChange={itemValue => setService(itemValue)}>
                 <Select.Item shadow={2} label="SIM" value="ux" />
                 <Select.Item shadow={2} label="NÃO" value="web" />
                 <Select.Item
@@ -141,8 +138,7 @@ export function ModalCancelScheduling({
               width="100%"
               height="50px"
               background_color={theme.colors.orange_100}
-              border
-            >
+              border>
               <TextButton>Confirmar cancelamento</TextButton>
             </ButtonCancel>
           </Modal.Footer>

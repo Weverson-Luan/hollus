@@ -1,25 +1,33 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from "react";
-import { FlatList } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import axios from "axios";
-import { ITherapies } from "../../../dtos/therepies-dto";
+import React, {useState, useEffect} from 'react';
+import {FlatList, View} from 'react-native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {Check, Clock, CurrencyDollar, X} from 'phosphor-react-native';
 
 // components
-import { Button } from "../../../components/Button";
-import { ActivityIndication } from "../../../components/Spinner";
-import { QueryData } from "../../../components/QueryData";
-import { ServiceLocation } from "../../../components/ServiceLocation";
+import {Button} from '../../../components/Button';
+import {Loading} from '../../../components/Loading';
+import {QueryData} from '../../../components/QueryData';
+import {ServiceLocation} from '../../../components/ServiceLocation';
+import {Card} from '../../../components/Card';
+
+// services
+import {Api} from '../../../services/api';
+
+// typings
+import {
+  IAtendimentosProps,
+  IConsultaProps,
+  IResponseApiAtendimentos,
+  IResponseApiConsulta,
+  ISpacosProps,
+  IResponseApiSpacos,
+} from './interface';
 
 // theme
-import theme from "../../../styles/colors/theme";
+import theme from '../../../styles/colors/theme';
 
 import {
   Container,
-  WrapperActivityIndication,
   WrapperText,
   Title,
   WrapperInfoScheduling,
@@ -32,7 +40,6 @@ import {
   TextSchedulingCheck,
   ContentIconDie,
   TextInfoValueSchedulingDie,
-  TextSchedulingDie,
   WrapperButton,
   TextTitleButton,
   WrapperResume,
@@ -40,52 +47,77 @@ import {
   ContentIconMoney,
   TextInfoValueSchedulingMoney,
   TextSchedulingMoney,
-  InfoLineSchedulingStatus,
-  BallStatus,
-  ContentIconStatus,
-  TextInfoValueSchedulingStatus,
-  TextSchedulingStatus,
   InfoLineSchedulingClock,
   ContentIconClock,
   TextInfoValueSchedulingClock,
   TextSchedulingClock,
-} from "./styles";
-import { Card } from "../../../components/Card";
-import { IUserTherapists } from "../../../dtos/therepies-user-dto";
-import { Api } from "../../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+} from './styles';
 
 export function Dashboard() {
   const navigation = useNavigation();
-  // const [ therapists, setTherapists ] = useState<IUserTherapists>();
-  const [atendimentos, setAtendimentos] = useState();
-  const [atendimentosLoading, setAtendimentosLoading] = useState(false);
-  const [dadosConsulta, setDadosConsulta] = useState();
-  const [consultaLoading, setConsultaLoading] = useState(false);
-  const [spaces, setSpaces] = useState();
-  const [spacesLoading, setSpacesLoading] = useState(false);
+
+  const [atendimentos, setAtendimentos] = useState<IAtendimentosProps>(
+    {} as IAtendimentosProps,
+  );
+
+  const [dadosConsulta, setDadosConsulta] = useState<IConsultaProps>();
+
+  const [spaces, setSpaces] = useState<ISpacosProps>({} as ISpacosProps);
+  const [isLoading, setIsLoading] = useState(false);
 
   const isFocused = useIsFocused();
 
+  /**
+   * BUSCAR ATENDIMENTOS
+   */
   const fetchAtendimentos = async () => {
-    setAtendimentosLoading(true);
-    const res = await Api.get("v1/home/historico-atendimento-mes");
-    setAtendimentos(res.data.data);
-    setAtendimentosLoading(false);
+    try {
+      setIsLoading(true);
+      const {data} = await Api.get<IResponseApiAtendimentos>(
+        'v1/home/historico-atendimento-mes',
+      );
+      setAtendimentos(data.data);
+    } catch (error) {
+      //tratamento de error
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  /**
+   * BUSCAR DADOS DA CONULTA
+   */
   const fetchDadosConsulta = async () => {
-    setConsultaLoading(true);
-    const res = await Api.get("/v1/home/dados-consulta");
-    // console.log(res.data.data);
-    setDadosConsulta(res.data.data);
-    setConsultaLoading(false);
+    try {
+      setIsLoading(true);
+      const {data} = await Api.get<IResponseApiConsulta>(
+        '/v1/home/dados-consulta',
+      );
+      setDadosConsulta(data.data);
+    } catch (error) {
+      //tratamento de error
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  /**
+   * BUSCAR ESPAÇOS
+   */
   const fetchSpaces = async () => {
-    setSpacesLoading(true);
-    const res = await Api.get("v1/home/locais-atendimento");
-    setSpaces(res.data.data);
-    setSpacesLoading(false);
+    try {
+      setIsLoading(true);
+      const {data} = await Api.get<IResponseApiSpacos>(
+        'v1/home/locais-atendimento',
+      );
+      setSpaces(data.data);
+    } catch (error) {
+      //tratamento de error
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   useEffect(() => {
     if (isFocused) {
       fetchAtendimentos();
@@ -93,39 +125,21 @@ export function Dashboard() {
       fetchSpaces();
     }
   }, [isFocused]);
-  // useEffect(()=> {
-  //   async function handleUsers(){
-  //     await axios.get('/api/spaces-therapists')
-  //     .then((response)=> {
-  //       setTherapists(response.data);
-  //       setIsLoading(!isLoading);
-  //       console.log(therapists?.therapists);
-  //     })
-  //     .catch((error)=> console.log('error em buscar users', error));
-  //   }
 
-  //   handleUsers();
-
-  // }, []);
   return (
     <>
-      {/* Container Main */}
-      <Container>
-        <WrapperText>
-          <Title>Histórico de atendimento no mês</Title>
-        </WrapperText>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Container>
+          <WrapperText>
+            <Title>Histórico de atendimento no mês</Title>
+          </WrapperText>
 
-        {atendimentosLoading ? (
-          <ActivityIndication />
-        ) : (
           <WrapperInfoScheduling>
             <InfoLineScheduling>
               <ContentIcon>
-                <AntDesign
-                  name="clockcircleo"
-                  size={16}
-                  color={theme.colors.gray_200}
-                />
+                <Clock size={16} color={theme.colors.gray_200} />
                 <TextScheduling>Quantidade de agendamentos</TextScheduling>
               </ContentIcon>
               <TextInfoValueScheduling>
@@ -135,7 +149,7 @@ export function Dashboard() {
 
             <InfoLineScheduling>
               <ContentIconCheck>
-                <AntDesign name="check" size={20} color={theme.colors.green} />
+                <Check size={20} color={theme.colors.green} />
                 <TextSchedulingCheck>
                   Agendamentos concluídos
                 </TextSchedulingCheck>
@@ -147,7 +161,7 @@ export function Dashboard() {
 
             <InfoLineScheduling>
               <ContentIconDie>
-                <AntDesign name="close" size={20} color={theme.colors.red} />
+                <X size={20} color={theme.colors.red} />
                 <TextSchedulingCheck>
                   Agendamentos cancelados
                 </TextSchedulingCheck>
@@ -163,67 +177,53 @@ export function Dashboard() {
                 height="40px"
                 background_color="#FFF"
                 border={true}
-                onPress={() => navigation.navigate("Consultas")}
-              >
+                onPress={() => navigation.navigate('Consultas')}>
                 <TextTitleButton>Histórico completo</TextTitleButton>
               </Button>
             </WrapperButton>
           </WrapperInfoScheduling>
-        )}
 
-        <QueryData />
-        {consultaLoading ? (
-          <ActivityIndication />
-        ) : dadosConsulta?.categorias.length === 0 ? (
-          <></>
-        ) : (
-          <WrapperResume>
-            <InfoLineSchedulingMoney>
-              <ContentIconMoney>
-                <MaterialIcons
-                  name="attach-money"
-                  size={18}
-                  color={theme.colors.gray_150}
-                />
-                <TextInfoValueSchedulingMoney>
-                  Valor:
-                </TextInfoValueSchedulingMoney>
-              </ContentIconMoney>
-              <TextSchedulingMoney>
-                R$ {dadosConsulta?.categorias[0].terapeutas[0].pivot?.valor}
-              </TextSchedulingMoney>
-            </InfoLineSchedulingMoney>
+          <QueryData />
 
-            {/* <InfoLineSchedulingStatus>
-              <ContentIconStatus>
-                <BallStatus />
-                <TextInfoValueSchedulingStatus>Status de desconto:</TextInfoValueSchedulingStatus>
-              </ContentIconStatus>
-              <TextSchedulingStatus>Desconto inativo</TextSchedulingStatus>
-            </InfoLineSchedulingStatus> */}
+          {dadosConsulta?.categorias?.length === 0 ? (
+            <View />
+          ) : (
+            <WrapperResume>
+              <InfoLineSchedulingMoney>
+                <ContentIconMoney>
+                  <CurrencyDollar size={18} color={theme.colors.gray_150} />
+                  <TextInfoValueSchedulingMoney>
+                    Valor:
+                  </TextInfoValueSchedulingMoney>
+                </ContentIconMoney>
+                <TextSchedulingMoney>
+                  R$ {dadosConsulta?.categorias[0].terapeutas[0].pivot?.valor}
+                </TextSchedulingMoney>
+              </InfoLineSchedulingMoney>
 
-            <InfoLineSchedulingClock>
-              <ContentIconClock>
-                <AntDesign name="clockcircleo" size={16} color="black" />
-                <TextInfoValueSchedulingClock>
-                  Tempo de duração
-                </TextInfoValueSchedulingClock>
-              </ContentIconClock>
-              <TextSchedulingClock>
-                {dadosConsulta?.categorias[0].terapeutas[0].pivot?.tempo}{" "}
-                minutos
-              </TextSchedulingClock>
-            </InfoLineSchedulingClock>
-          </WrapperResume>
-        )}
+              <InfoLineSchedulingClock>
+                <ContentIconClock>
+                  <Clock size={16} color="black" />
+                  <TextInfoValueSchedulingClock>
+                    Tempo de duração
+                  </TextInfoValueSchedulingClock>
+                </ContentIconClock>
+                <TextSchedulingClock>
+                  {dadosConsulta?.categorias[0]?.terapeutas[0].pivot?.tempo}{' '}
+                  minutos
+                </TextSchedulingClock>
+              </InfoLineSchedulingClock>
+            </WrapperResume>
+          )}
 
-        <ServiceLocation />
-        <FlatList
-          data={spaces?.empresas}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <Card data={item} />}
-        />
-      </Container>
+          <ServiceLocation />
+          <FlatList
+            data={spaces?.empresas}
+            keyExtractor={item => item?.id}
+            renderItem={({item}) => <Card data={item} />}
+          />
+        </Container>
+      )}
     </>
   );
 }

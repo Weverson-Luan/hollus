@@ -1,29 +1,18 @@
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
-import styled from "styled-components/native";
+import {RFValue} from 'react-native-responsive-fontsize';
+import styled from 'styled-components/native';
 
 export const CategoryContainer = styled.View`
-  /* flex-direction: column; */
   margin: ${RFValue(10)}px;
   padding: ${RFValue(10)}px;
   border-radius: 10px;
-  /* background-color: ${({ theme }) => theme.colors.gray_25}; */
-  background-color: ${({ theme }) => theme.colors.white};
+  background-color: ${({theme}) => theme.colors.white};
 `;
 
 export const CategoryWrapper = styled.View`
-  /* height: ${RFValue(100)}px; */
-  /* background-color: ${({ theme }) => theme.colors.black}; */
   flex-direction: row;
-  /* padding: ${RFValue(10)}px; */
-  /* overflow: hidden; */
 `;
 
 export const CategoryPhotoWrapper = styled.View`
-  /* width: 30%; */
-  /* padding: ${RFValue(10)}px; */
-  /* border-radius: 1000000px; */
-  /* height: ${RFValue(100)}px;
-  width: ${RFValue(100)}px; */
   overflow: hidden;
   align-content: center;
   justify-content: center;
@@ -37,15 +26,14 @@ export const CategoryPhoto = styled.Image`
 
 export const CategoryInfoWrapper = styled.View`
   flex: 1;
-  /* padding: ${RFValue(10)}px; */
   flex-direction: column;
   justify-content: space-between;
-  /* background-color: ${({ theme }) => theme.colors.white}; */
 `;
 
 export const TitleWrapper = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  margin-left: 12px;
 `;
 
 export const CategoryTitle = styled.Text`
@@ -54,11 +42,14 @@ export const CategoryTitle = styled.Text`
 
 export const CategoryDescription = styled.Text`
   font-size: ${RFValue(14)}px;
+  margin-left: 12px;
+  text-align: justify;
 `;
 
 export const CategoryTimePriceWrapper = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  margin-left: 12px;
 `;
 
 export const CategoryTimeScheduleWrapper = styled.View`
@@ -78,7 +69,6 @@ export const CategoryPrice = styled.Text`
 `;
 
 export const CategoryOptionToggle = styled.TouchableOpacity`
-  /* position: absolute; */
   right: 0;
 `;
 
@@ -86,17 +76,13 @@ export const CategoryTimeWrapper = styled.View`
   flex: 1;
   flex-direction: column;
   justify-content: space-between;
-  /* border-width: 1px; */
   border-radius: 10px;
-  border-color: ${({ theme }) => theme.colors.gray_50};
+  border-color: ${({theme}) => theme.colors.gray_50};
 `;
 
 export const CategoryTimeTitleHeader = styled.View`
   flex-direction: row;
-  /* border-top-width: 2px; */
-  border-color: ${({ theme }) => theme.colors.gray_50};
-  /* margin-bottom: ${RFValue(5)}px; */
-  /* padding: ${RFValue(5)}px; */
+  border-color: ${({theme}) => theme.colors.gray_50};
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   overflow: hidden;
@@ -104,35 +90,31 @@ export const CategoryTimeTitleHeader = styled.View`
 
 export const CategoryTimeTitle = styled.Text`
   font-size: ${RFValue(18)}px;
+  font-weight: 500;
   text-align: center;
   flex: 1;
-  background-color: ${({ theme }) => theme.colors.orange};
-  color: ${({ theme }) => theme.colors.white};
+  background-color: ${({theme}) => theme.colors.orange};
+  color: ${({theme}) => theme.colors.white};
   padding: ${RFValue(5)}px 0;
 `;
 
 export const CategoryHeaderEdit = styled.TouchableOpacity`
   position: absolute;
   right: ${RFValue(10)}px;
-  /* width: 10%; */
-  /* justify-content: center; */
-  /* align-items: center; */
   align-self: center;
 `;
 
 export const CategoryTimesContainer = styled.View`
   overflow: hidden;
-  /* border-left-width: 1px; */
-  /* border-right-width: 1px; */
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
 `;
 
 export const CategoryTimeTitleRow = styled.View`
   flex-direction: row;
-  /* justify-content: space-between; */
-  background-color: ${({ theme }) => theme.colors.gray_25};
-  padding: 0 ${RFValue(5)}px;
+  height: 32px;
+  background-color: ${({theme}) => theme.colors.gray_25};
+  padding: 4px ${RFValue(5)}px;
 `;
 
 export const CategoryTimeRow = styled.View`
@@ -143,9 +125,6 @@ export const CategoryTimeRow = styled.View`
 `;
 
 export const CategoryTimeSelect = styled.TouchableOpacity`
-  /* flex: 1; */
-  /* justify-content: center; */
-  /* align-items: center; */
   width: 10%;
 `;
 
@@ -167,19 +146,22 @@ export const CategoryTimeEnd = styled.Text`
 `;
 
 export const AddCategoryTimeButton = styled.TouchableOpacity`
-  /* margin: ${RFValue(10)}px 0; */
+  display: flex;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  background-color: ${(props: any) =>
+    props.type === 'danger'
+      ? props.theme.colors.red
+      : props.theme.colors.orange};
 `;
 
 export const AddCategoryTimeButtonTitle = styled.Text`
-  /* border-radius: 10px; */
   text-align: center;
-  background-color: ${(props) =>
-    props.type === "danger"
-      ? props.theme.colors.red
-      : props.theme.colors.orange};
-  color: ${({ theme }) => theme.colors.white};
-  padding: ${RFValue(10)}px;
+  color: ${({theme}) => theme.colors.white};
   font-size: ${RFValue(14)}px;
+  margin-left: 6px;
 `;
 
 export const AddCategoryTimeModal = styled.Modal``;
@@ -191,39 +173,35 @@ export const AddCategoryTimeView = styled.View`
   align-items: center;
 `;
 
-// export const AddCategoryTimeCard = styled.View`
 export const AddCategoryTimeCard = styled.View`
-  background-color: ${({ theme }) => theme.colors.white};
-  /* width: 50%; */
+  background-color: ${({theme}) => theme.colors.white};
   border-radius: 10px;
   max-height: ${RFValue(450)}px;
   width: ${RFValue(300)}px;
   overflow: hidden;
 `;
 
-export const AddCategoryCardContent = styled.ScrollView`
-  /* background-color: ${({ theme }) => theme.colors.white}; */
-  /* width: 50%; */
-  /* border-radius: 10px; */
-  /* max-height: ${RFValue(450)}px; */
-  /* width: ${RFValue(300)}px; */
-`;
+export const AddCategoryCardContent = styled.ScrollView``;
 
 export const AddCategoryTimeTouchable = styled.TouchableOpacity`
-  background-color: ${({ theme }) => theme.colors.orange};
+  background-color: ${({theme}) => theme.colors.orange};
   border-radius: 10px;
   padding: ${RFValue(10)}px;
 `;
+export const WrapperButton = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+`;
 
 export const AddCategoryTimeSaveButton = styled.TouchableOpacity`
-  /* margin-top: ${RFValue(5)}px; */
-  /* margin-bottom: ${RFValue(40)}px; */
-  background-color: ${(props) =>
+  background-color: ${props =>
     props.disabled ? props.theme.colors.gray_80 : props.theme.colors.orange};
-  /* border-radius: 10px; */
   padding: ${RFValue(9)}px;
   text-align: center;
-  width: ${RFValue(300)}px;
+  width: ${RFValue(280)}px;
+  margin-bottom: 8px;
 `;
 
 export const AddCategoryFieldWrapper = styled.View`
@@ -234,7 +212,7 @@ export const AddCategoryTimeHeader = styled.View`
   padding: ${RFValue(10)}px 0;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  background-color: ${({ theme }) => theme.colors.orange};
+  background-color: ${({theme}) => theme.colors.orange};
   align-content: center;
   justify-content: center;
   flex-direction: row;
@@ -251,15 +229,15 @@ export const AddCategoryTimeHeaderButton = styled.TouchableOpacity`
 
 export const AddCategoryTimeHeaderText = styled.Text`
   font-size: ${RFValue(18)}px;
-  background-color: ${({ theme }) => theme.colors.orange};
-  color: ${({ theme }) => theme.colors.white};
+  background-color: ${({theme}) => theme.colors.orange};
+  color: ${({theme}) => theme.colors.white};
   text-align: center;
 `;
 
 export const AddCategoryLabel = styled.Text`
   font-size: ${RFValue(14)}px;
   margin-bottom: ${RFValue(5)}px;
-  color: ${({ theme }) => theme.colors.black};
+  color: ${({theme}) => theme.colors.black};
   text-align: center;
 `;
 
@@ -271,20 +249,18 @@ export const AddCategoryTimeRow = styled.View`
 
 export const AddCategoryTime = styled.Text`
   font-size: ${RFValue(14)}px;
-  color: ${({ theme }) => theme.colors.white};
+  color: ${({theme}) => theme.colors.white};
   text-align: center;
-  /* background-color: ${({ theme }) => theme.colors.white}; */
 `;
 
 export const AddCategoryTimeDaysRow = styled.View`
-  /* background-color: orange; */
   flex-direction: row;
   justify-content: space-between;
   padding: ${RFValue(5)}px;
 `;
 
 export const AddCategoryTimeDayTouchable = styled.TouchableOpacity`
-  background-color: ${(props) =>
+  background-color: ${(props: any) =>
     props.selected ? props.theme.colors.orange : props.theme.colors.gray_25};
   border-radius: 100000px;
   height: ${RFValue(30)}px;
@@ -295,14 +271,13 @@ export const AddCategoryTimeDayTouchable = styled.TouchableOpacity`
 `;
 
 export const AddCategoryTimeDay = styled.Text`
-  /* background-color: ${({ theme }) => theme.colors.white}; */
   font-size: ${RFValue(14)}px;
-  color: ${(props) =>
+  color: ${(props: any) =>
     props.selected ? props.theme.colors.white : props.theme.colors.orange};
 `;
 
 export const LoadingContainer = styled.View`
-  background-color: ${(props) => props.theme.colors.white};
+  background-color: ${props => props.theme.colors.white};
   height: ${RFValue(150)}px;
   width: ${RFValue(150)}px;
   justify-content: center;
@@ -322,9 +297,8 @@ export const EditCategoryDescriptionView = styled.View`
   align-items: center;
 `;
 
-
 export const CategoryDescriptionEditButton = styled.TouchableOpacity`
-  background-color: ${(props) => props.theme.colors.orange};
+  background-color: ${props => props.theme.colors.orange};
   justify-content: center;
   align-items: center;
   flex-direction: row;
@@ -335,11 +309,12 @@ export const CategoryDescriptionEditButton = styled.TouchableOpacity`
 
 export const CategoryDescriptionEditText = styled.Text`
   font-size: ${RFValue(14)}px;
-  color: ${(props) => props.theme.colors.white};
+  color: ${props => props.theme.colors.white};
+  font-weight: 400;
 `;
 
 export const CategoryDescriptionTextInput = styled.TextInput`
-  background-color: ${(props) => props.theme.colors.gray_25};
+  background-color: ${props => props.theme.colors.gray_25};
   margin: ${RFValue(10)}px;
   padding: ${RFValue(10)}px;
   border-radius: 10px;

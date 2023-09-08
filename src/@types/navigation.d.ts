@@ -22,7 +22,8 @@ declare global {
         categoria: any;
       }
       RegisterTherapistStep2: undefined;
-      HomeAuth: undefined
+      HomeAuth: undefined;
+      Consultas: undefined;
     }
   }
 }

@@ -1,6 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { useIsFocused } from "@react-navigation/native";
-import { useTheme } from "styled-components";
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, FlatList} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
+import {useTheme} from 'styled-components';
+import {X} from 'phosphor-react-native';
+import {RFValue} from 'react-native-responsive-fontsize';
+import {Masks} from 'react-native-mask-input';
+
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import DropDownPicker from 'react-native-dropdown-picker';
+
+// api
+import {Api} from '../../../services/api';
+
+// components
+import {Input} from '../../../components/Input';
+import {Loading} from '../../../components/Loading';
+import {TherapistCategory} from '../../../components/TherapistCategory';
+
+// context
+import useAlert from '../../../context/hooks/Alert/useAlert';
+
+// utils
+import {
+  formatTimeString,
+  getDayOfWeekFromIndex,
+} from '../../../utils/formatdate';
 
 //styled-components
 import {
@@ -10,12 +34,8 @@ import {
   AddButtonText,
   AddButtonContainer,
   ValueInput,
-} from "./styles";
-import { ActivityIndication } from "../../../components/Spinner";
-import { Api } from "../../../services/api";
-import { RFValue } from "react-native-responsive-fontsize";
-import { TherapistCategory } from "../../../components/TherapistCategory";
-import { ActivityIndicator, FlatList, Text, TextInput } from "react-native";
+  WrapperButton,
+} from './styles';
 import {
   AddCategoryCardContent,
   AddCategoryFieldWrapper,
@@ -33,28 +53,16 @@ import {
   AddCategoryTimeSaveButton,
   AddCategoryTimeTouchable,
   AddCategoryTimeView,
-  EmptyCategoryListComponent,
   LoadingContainer,
-} from "../../../components/TherapistCategory/styles";
-import useAlert from "../../../context/hooks/Alert/useAlert";
-import {
-  formatTimeString,
-  getDayOfWeekFromIndex,
-} from "../../../utils/formatdate";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
-import DropDownPicker from "react-native-dropdown-picker";
-import MaskInput, { Masks } from "react-native-mask-input";
-import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { Input } from "../../../components/Input";
+} from '../../../components/TherapistCategory/styles';
 
-export function GerenciarConsultas({ route, navigation }) {
+export function GerenciarConsultas() {
   const theme = useTheme();
   const isFocused = useIsFocused();
-  const { setAlert } = useAlert();
+  const {setAlert} = useAlert();
 
   const [loading, setLoading] = useState(false);
-  const [categorias, setCategorias] = useState();
-  const [expand, setExpand] = useState(false);
+  const [categorias, setCategorias] = useState<any[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [selectedBeginTime, setSelectedBeginTime] = useState(false);
@@ -66,38 +74,31 @@ export function GerenciarConsultas({ route, navigation }) {
   const [openEndTimePicker, setOpenEndTimePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedDuration, setSelectedDuration] = useState({
-    hours: 1,
-    minutes: 0,
-    seconds: 0,
-  });
-  const [selectedPrice, setSelectedPrice] = useState("");
-  const [categoryDescription, setCategoryDescription] = useState("");
+
+  const [selectedPrice, setSelectedPrice] = useState('');
+  const [categoryDescription, setCategoryDescription] = useState('');
   const [categoriesList, setCategoriesList] = useState([]);
   const [openDropDown, setOpenDropdown] = useState(false);
 
   const fetchMyInfo = async () => {
     setLoading(true);
     clearStates();
-    const { data } = await Api.get("/v1/user/pesquisar-minhas-categorias");
+    const {data} = await Api.get('/v1/user/pesquisar-minhas-categorias');
     // console.log(data.data);
     setCategorias(data.data);
     setLoading(false);
   };
 
-  const parseErrors = (errors) => {
-    const errArr = Object.values(errors).map((err) => err);
+  const parseErrors = (errors: any) => {
+    const errArr = Object.values(errors).map(err => err);
+    //@ts-ignore
     return errArr[0][0];
   };
 
-  const days = ["D", "S", "T", "Q", "Q", "S", "S"];
+  const days = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
-  const handleDurationChange = (newValue) => {
-    setSelectedDuration(newValue);
-  };
-
-  const onTimeChangeBegin = async (event, selectedTime) => {
-    if (typeof selectedTime === "undefined") {
+  const onTimeChangeBegin = async (event: any, selectedTime: any) => {
+    if (typeof selectedTime === 'undefined') {
       setOpenBeginTimePicker(false);
       return;
     }
@@ -110,8 +111,8 @@ export function GerenciarConsultas({ route, navigation }) {
     setOpenBeginTimePicker(false);
   };
 
-  const onTimeChangeEnd = async (event, selectedTime) => {
-    if (typeof selectedTime === "undefined") {
+  const onTimeChangeEnd = async (event: any, selectedTime: any) => {
+    if (typeof selectedTime === 'undefined') {
       setOpenEndTimePicker(false);
       return;
     }
@@ -121,8 +122,8 @@ export function GerenciarConsultas({ route, navigation }) {
 
     if (selectedBeginTime && correctedTime.getTime() < beginTime.getTime()) {
       setAlert(
-        "Erro",
-        "Selecione um horário final para depois do horário inicial!"
+        'Erro',
+        'Selecione um horário final para depois do horário inicial!',
       );
       return;
     }
@@ -132,64 +133,47 @@ export function GerenciarConsultas({ route, navigation }) {
     setOpenEndTimePicker(false);
   };
 
-  const selectDay = (index) => {
+  const selectDay = (index: any) => {
     const dayOfWeekName = getDayOfWeekFromIndex(index);
+    //@ts-ignore
     if (!selectedDays.includes(dayOfWeekName)) {
-      setSelectedDays((selectedDays) => [...selectedDays, dayOfWeekName]);
+      //@ts-ignore
+      setSelectedDays(selectedDays => [...selectedDays, dayOfWeekName]);
       return;
     }
-    const dayRemoved = selectedDays.filter((item) => item !== dayOfWeekName);
+    const dayRemoved = selectedDays.filter(item => item !== dayOfWeekName);
     setSelectedDays(dayRemoved);
-    // setSelectedDays((selectedDays) => [
-    //   ...selectedDays,
-    //   selectedDays.filter((item) => item !== dayOfWeekName),
-    // ]);
   };
 
-  const checkDaySelected = (index) => {
+  const checkDaySelected = (index: any) => {
     const dayOfWeekName = getDayOfWeekFromIndex(index);
+    //@ts-ignore
     if (selectedDays.includes(dayOfWeekName)) {
       return true;
     }
     return false;
   };
 
-  const selectTime = (time) => {
-    if (!selectedTimes.includes(time.id)) {
-      setSelectedTimes((selectedTimes) => [...selectedTimes, time.id]);
-      return;
-    }
-    const timeRemoved = selectedTimes.filter((item) => item !== time.id);
-    setSelectedTimes(timeRemoved);
-    // setSelectedDays((selectedDays) => [
-    //   ...selectedDays,
-    //   selectedDays.filter((item) => item !== dayOfWeekName),
-    // ]);
-  };
-
-  const checkTimeSelected = (time) => {
-    if (selectedTimes.includes(time.id)) {
-      return true;
-    }
-    return false;
-  };
-
   const fetchCategories = async () => {
-    const { data } = await Api.get("/v1/user/pesquisar-categorias");
+    const {data} = await Api.get('/v1/user/pesquisar-categorias');
+    //@ts-ignore
     let arr = [];
-    data.data.forEach((cat) => {
+    data.data.forEach((cat: any) => {
       arr.push({
         label: cat.nome,
         value: cat.id,
       });
     });
+    //@ts-ignore
     setCategoriesList(arr);
   };
 
   const handleSubmit = async () => {
     setLoading(true);
+    //@ts-ignore
     if (selectedCategory.length === 1) {
-      Api.post("/v1/user/adicionar-categoria", {
+      Api.post('/v1/user/adicionar-categoria', {
+        //@ts-ignore
         categoria_id: selectedCategory[0],
         tempo: 60,
         descricao: categoryDescription,
@@ -198,25 +182,26 @@ export function GerenciarConsultas({ route, navigation }) {
         dias_semana: JSON.stringify(selectedDays),
         valor: selectedPrice,
       })
-        .then((res) => {
+        .then(res => {
           if (res.data.success) {
             fetchMyInfo();
             fetchCategories();
             setOpenModal(false);
           }
           if (res.data.error) {
-            setAlert("Erro", parseErrors(res.data.error));
+            setAlert('Erro', parseErrors(res.data.error));
           }
           // console.log(res.data);
         })
-        .catch((err) => console.log(err));
+        .catch(err => console.log(err));
       setLoading(false);
       return;
     }
-    let errCount = [];
-    selectedCategory.forEach((selCat) => {
+
+    //@ts-ignore
+    selectedCategory.forEach(selCat => {
       setIsLoading(true);
-      Api.post("/v1/user/adicionar-categoria", {
+      Api.post('/v1/user/adicionar-categoria', {
         categoria_id: selCat,
         tempo: 60,
         descricao: categoryDescription,
@@ -225,12 +210,12 @@ export function GerenciarConsultas({ route, navigation }) {
         dias_semana: JSON.stringify(selectedDays),
         valor: selectedPrice,
       })
-        .then((res) => {
+        .then(res => {
           if (res.data.error) {
-            setAlert("Erro", parseErrors(res.data.error));
+            setAlert('Erro', parseErrors(res.data.error));
           }
         })
-        .catch((err) => console.log(err));
+        .catch(err => console.log(err));
     });
     fetchMyInfo();
     fetchCategories();
@@ -249,8 +234,8 @@ export function GerenciarConsultas({ route, navigation }) {
     setOpenBeginTimePicker(false);
     setOpenEndTimePicker(false);
     setSelectedCategory(null);
-    setSelectedPrice("");
-    setCategoryDescription("");
+    setSelectedPrice('');
+    setCategoryDescription('');
   };
 
   useEffect(() => {
@@ -264,20 +249,16 @@ export function GerenciarConsultas({ route, navigation }) {
       <AddCategoryTimeModal
         onRequestClose={() => setOpenModal(false)}
         visible={openModal}
-        transparent
-      >
+        transparent>
         <AddCategoryTimeView>
           <AddCategoryTimeCard>
             <AddCategoryTimeHeader>
               <AddCategoryTimeHeaderText>
                 Nova Categoria
               </AddCategoryTimeHeaderText>
+
               <AddCategoryTimeHeaderButton onPress={() => setOpenModal(false)}>
-                <FontAwesome5Icon
-                  name="times"
-                  size={RFValue(18)}
-                  color={theme.colors.white}
-                />
+                <X size={`${RFValue(18)}px`} color={theme.colors.white} />
               </AddCategoryTimeHeaderButton>
             </AddCategoryTimeHeader>
             {openBeginTimePicker ? (
@@ -287,7 +268,9 @@ export function GerenciarConsultas({ route, navigation }) {
                 is24Hour={true}
                 onChange={onTimeChangeBegin}
               />
-            ) : null}
+            ) : (
+              <></>
+            )}
             {openEndTimePicker ? (
               <RNDateTimePicker
                 value={endTime}
@@ -295,12 +278,14 @@ export function GerenciarConsultas({ route, navigation }) {
                 is24Hour={true}
                 onChange={onTimeChangeEnd}
               />
-            ) : null}
+            ) : (
+              <></>
+            )}
             <AddCategoryCardContent showsVerticalScrollIndicator={false}>
               {isLoading ? (
                 <LoadingContainer>
                   <ActivityIndicator
-                    size={"large"}
+                    size={'large'}
                     color={theme.colors.orange}
                   />
                 </LoadingContainer>
@@ -313,21 +298,22 @@ export function GerenciarConsultas({ route, navigation }) {
                       items={categoriesList}
                       setOpen={setOpenDropdown}
                       setValue={setSelectedCategory}
+                      //@ts-ignore
                       setItems={setCategoriesList}
                       placeholder={
                         categoriesList.length > 0
-                          ? "Selecione uma categoria"
-                          : "Sem categorias disponíveis"
+                          ? 'Selecione uma categoria'
+                          : 'Sem categorias disponíveis'
                       }
                       disabled={categoriesList.length === 0}
-                      placeholderStyle={{ textAlign: "center" }}
-                      style={{ borderColor: theme.colors.gray_50 }}
-                      containerStyle={{ width: RFValue(225) }}
-                      textStyle={{ textAlign: "center" }}
+                      placeholderStyle={{textAlign: 'center'}}
+                      style={{borderColor: theme.colors.gray_50}}
+                      containerStyle={{width: RFValue(225)}}
+                      textStyle={{textAlign: 'center'}}
                       arrowIconContainerStyle={{
-                        position: "absolute",
-                        right: "5%",
-                        transform: [{ scale: 1.2 }],
+                        position: 'absolute',
+                        right: '5%',
+                        transform: [{scale: 1.2}],
                       }}
                       selectedItemContainerStyle={{
                         backgroundColor: theme.colors.orange,
@@ -335,7 +321,7 @@ export function GerenciarConsultas({ route, navigation }) {
                       dropDownContainerStyle={{
                         borderColor: theme.colors.gray_50,
                       }}
-                      selectedItemLabelStyle={{ color: theme.colors.white }}
+                      selectedItemLabelStyle={{color: theme.colors.white}}
                       showTickIcon={false}
                       closeOnBackPressed
                       multiple
@@ -351,8 +337,8 @@ export function GerenciarConsultas({ route, navigation }) {
                         borderColor: theme.colors.gray_50,
                       }}
                       itemSeparatorStyle={{
-                        backgroundColor: "red",
-                        borderColor: "red",
+                        backgroundColor: 'red',
+                        borderColor: 'red',
                       }}
                       searchPlaceholder="Pesquisar categoria..."
                     />
@@ -361,46 +347,47 @@ export function GerenciarConsultas({ route, navigation }) {
                     <AddCategoryFieldWrapper>
                       <AddCategoryLabel>Horário Inicial</AddCategoryLabel>
                       <AddCategoryTimeTouchable
-                        onPress={() => setOpenBeginTimePicker(true)}
-                      >
+                        onPress={() => setOpenBeginTimePicker(true)}>
                         <AddCategoryTime>
                           {selectedBeginTime
                             ? formatTimeString(beginTime)
-                            : "00:00"}
+                            : '00:00'}
                         </AddCategoryTime>
                       </AddCategoryTimeTouchable>
                     </AddCategoryFieldWrapper>
+
                     <AddCategoryFieldWrapper>
                       <AddCategoryLabel>Horário Final</AddCategoryLabel>
                       <AddCategoryTimeTouchable
-                        onPress={() => setOpenEndTimePicker(true)}
-                      >
+                        onPress={() => setOpenEndTimePicker(true)}>
                         <AddCategoryTime>
                           {selectedEndTime
                             ? formatTimeString(endTime)
-                            : "00:00"}
+                            : '00:00'}
                         </AddCategoryTime>
                       </AddCategoryTimeTouchable>
                     </AddCategoryFieldWrapper>
                   </AddCategoryTimeRow>
+
                   <AddCategoryFieldWrapper>
                     <AddCategoryLabel>Dia da Semana</AddCategoryLabel>
                     <AddCategoryTimeDaysRow>
                       {days.map((day, index) => (
                         <AddCategoryTimeDayTouchable
+                          //@ts-ignore
                           selected={checkDaySelected(index)}
                           onPress={() => selectDay(index)}
-                          key={index}
-                        >
+                          key={index}>
                           <AddCategoryTimeDay
-                            selected={checkDaySelected(index)}
-                          >
+                            //@ts-ignore
+                            selected={checkDaySelected(index)}>
                             {day}
                           </AddCategoryTimeDay>
                         </AddCategoryTimeDayTouchable>
                       ))}
                     </AddCategoryTimeDaysRow>
                   </AddCategoryFieldWrapper>
+
                   <AddCategoryFieldWrapper>
                     <AddCategoryLabel>Particularidades</AddCategoryLabel>
                     <Input
@@ -414,6 +401,7 @@ export function GerenciarConsultas({ route, navigation }) {
                       onChangeText={setCategoryDescription}
                     />
                   </AddCategoryFieldWrapper>
+
                   <AddCategoryFieldWrapper>
                     <AddCategoryLabel>Valor da Consulta</AddCategoryLabel>
                     <ValueInput
@@ -433,32 +421,26 @@ export function GerenciarConsultas({ route, navigation }) {
                 </>
               )}
             </AddCategoryCardContent>
-            {isLoading ||
-            !selectedBeginTime ||
-            !selectedEndTime ||
-            selectedDays.length === 0 ||
-            typeof selectedCategory === "undefined" ||
-            selectedPrice === "" ||
-            categoryDescription === "" ? null : (
+
+            <WrapperButton>
               <AddCategoryTimeSaveButton
                 disabled={
                   isLoading ||
                   !selectedBeginTime ||
                   !selectedEndTime ||
                   selectedDays.length === 0 ||
-                  typeof selectedCategory === "undefined" ||
-                  selectedPrice === ""
+                  typeof selectedCategory === 'undefined' ||
+                  selectedPrice === ''
                 }
-                onPress={handleSubmit}
-              >
+                onPress={handleSubmit}>
                 <AddCategoryTime>Salvar</AddCategoryTime>
               </AddCategoryTimeSaveButton>
-            )}
+            </WrapperButton>
           </AddCategoryTimeCard>
         </AddCategoryTimeView>
       </AddCategoryTimeModal>
       {loading ? (
-        <ActivityIndication />
+        <Loading />
       ) : categorias?.length === 0 ? (
         <EmptyMessageContainer>
           <EmptyMessage>Sem horários ainda</EmptyMessage>
@@ -466,8 +448,8 @@ export function GerenciarConsultas({ route, navigation }) {
       ) : (
         <FlatList
           data={categorias}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
             <TherapistCategory refresh={fetchMyInfo} data={item} />
           )}
         />

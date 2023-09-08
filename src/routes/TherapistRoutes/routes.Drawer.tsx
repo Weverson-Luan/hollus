@@ -254,37 +254,6 @@ function TherapistStackRoutesAuth() {
         options={{headerShown: false}}
       />
 
-      {/* <Stack.Screen
-        name="AuthenticateBottomTabsNavigation"
-        component={TherapistRoutesDrawerAuth}
-        options={{
-          headerShown: false,
-        }}
-      /> */}
-
-      {/* <Stack.Screen
-        name="Filter"
-        component={Filter}
-        options={{
-          headerShown: false,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Filtros</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-        }}
-      /> */}
-
       <Stack.Screen
         name="Appointment"
         component={AppointmentTherapist}
