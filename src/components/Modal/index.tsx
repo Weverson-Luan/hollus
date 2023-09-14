@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Modal as ModalNative } from "react-native";
-import { useTheme } from "styled-components";
-import { Button } from "../Button";
-import { Input } from "../Input";
-import { IModalProps } from "./modal";
+import React, {useState} from 'react';
+import {Modal as ModalNative, Text} from 'react-native';
+import {useTheme} from 'styled-components';
+import {Button} from '../Button';
+import {Input} from '../Input';
+import {IModalProps} from './modal';
 
 import {
   Wrapper,
@@ -11,67 +11,133 @@ import {
   WrapperModal,
   LabelText,
   WrapperButton,
-} from "./styles";
+  WrapperInput,
+} from './styles';
+import {ActivityIndication} from '../Spinner';
 
-export function Modal({ visible, ...rest }: IModalProps) {
+export function Address({
+  visible,
+  onChangeCep,
+  handleFetchCepAPI,
+  onChangeCity,
+  valueCity,
+  onChangeLogadouro,
+  valueLogadouro,
+  valueDistrict,
+  onChangeDistrict,
+  valueNumber,
+  onChangeNumber,
+  valueComplement,
+  onChangeComplement,
+  handleSaveAndress,
+  ...rest
+}: IModalProps) {
   const theme = useTheme();
+  const [loading, setLoading] = useState(false);
+  console.log('Setting', onChangeCep);
   return (
-    <ModalNative {...rest} visible={visible}>
-      <Wrapper>
-        <Title>Edite suas informaçãos </Title>
+    <Wrapper>
+      <Title>Cadastre novo enderço</Title>
 
-        <WrapperModal>
+      <WrapperModal>
+        <WrapperInput>
+          <LabelText>Cep</LabelText>
+          <Input
+            width={'350px'}
+            height={'50px'}
+            color={theme.colors.white}
+            placeholder="Informe seu cep"
+            placeholderTextColor={theme.colors.gray_80}
+            onChangeText={onChangeCep}
+            onEndEditing={handleFetchCepAPI}
+          />
+        </WrapperInput>
+        <WrapperInput>
           <LabelText>Cidade</LabelText>
           <Input
-            color="white"
-            height="50px"
-            width="100%"
+            width={'350px'}
+            height={'50px'}
+            color={theme.colors.white}
+            autoCorrect={false}
             placeholder="Informe sua cidade"
+            placeholderTextColor={theme.colors.gray_80}
+            onChangeText={onChangeCity}
+            value={valueCity}
           />
+        </WrapperInput>
 
+        <WrapperInput>
           <LabelText>Rua</LabelText>
           <Input
             color="white"
-            height="50px"
-            width="100%"
+            width={'350px'}
+            height={'50px'}
             placeholder="Informe sua rua"
+            placeholderTextColor={theme.colors.gray_80}
+            onChangeText={onChangeLogadouro}
+            value={valueLogadouro}
           />
+        </WrapperInput>
 
+        <WrapperInput>
           <LabelText>Bairro</LabelText>
           <Input
             color="white"
-            height="50px"
-            width="100%"
+            width={'350px'}
+            height={'50px'}
             placeholder="Informe seu bairro"
+            placeholderTextColor={theme.colors.gray_80}
+            onChangeText={onChangeDistrict}
+            value={valueDistrict}
           />
+        </WrapperInput>
 
+        <WrapperInput>
           <LabelText>Numero</LabelText>
           <Input
             color="white"
-            height="50px"
-            width="100%"
+            width={'350px'}
+            height={'50px'}
             placeholder="Informe seu número"
+            placeholderTextColor={theme.colors.gray_80}
+            onChangeText={onChangeNumber}
+            value={valueNumber}
           />
+        </WrapperInput>
 
+        <WrapperInput>
           <LabelText>Complemento</LabelText>
           <Input
             color="white"
-            height="50px"
-            width="100%"
+            width={'350px'}
+            height={'50px'}
             placeholder="Complemento ex: Bloco 01"
+            placeholderTextColor={theme.colors.gray_80}
+            onChangeText={onChangeComplement}
+            value={valueComplement}
           />
-        </WrapperModal>
+        </WrapperInput>
+      </WrapperModal>
 
-        <WrapperButton>
-          <Button
-            width="100%"
-            height="40px"
-            background_color={theme.colors.orange_100}
-          >
-            <LabelText>Alterar iformações</LabelText>
-          </Button>
-        </WrapperButton>
-      </Wrapper>
-    </ModalNative>
+      <WrapperButton>
+        <Button
+          height="50px"
+          background_color={loading ? theme.colors.white : theme.colors.orange}
+          onPress={handleSaveAndress}>
+          {loading ? (
+            <ActivityIndication />
+          ) : (
+            <Text
+              style={{
+                fontSize: 20,
+                color: theme.colors.white,
+                fontWeight: '500',
+              }}>
+              Cadastre
+            </Text>
+          )}
+        </Button>
+      </WrapperButton>
+    </Wrapper>
   );
 }

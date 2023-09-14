@@ -1,4 +1,4 @@
-import { DrawerNavigation } from "../../routes/routes.Drawer"
+
 import { ChatList } from "../../screens/BottomTabs/ChatList"
 import { Addresses } from "../../screens/StackNavigation/Addresses"
 import { EditProfileClient } from "../../screens/StackNavigation/EditProfile/Client"

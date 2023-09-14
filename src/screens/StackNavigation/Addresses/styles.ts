@@ -27,8 +27,6 @@ export const WrapperButtonNext = styled.View`
   width: 100%;
 
   margin-top: ${RFValue(20)}px;
-  padding-left: ${RFValue(8)}px;
-  padding-right: ${RFValue(8)}px;
 
   align-items: center;
   justify-content: space-around;

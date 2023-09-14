@@ -3,9 +3,8 @@ import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import styled from "styled-components/native";
 import theme from "../../../styles/colors/theme";
 
-export const Container = styled.View`
+export const Container = styled.ScrollView`
   background-color: ${({ theme }) => theme.colors.white};
-  height: 100%;
   padding: 24px;
 `;
 export const WrapperHeader = styled.View`
@@ -52,11 +51,17 @@ export const WrapperLabel = styled.View`
   display: flex;
   flex-direction: row;
 `;
+export const WrapperLabelInput = styled.View`
+  width: 100%;
+  background-color: transparent;
+  margin-bottom: 8px;
+
+`;
 export const LabelInput = styled.Text`
   font-size: ${RFValue(14)}px;
   font-weight: normal;
   color: ${({ theme }) => theme.colors.gray_150};
-  margin-bottom: 10px;
+  margin-bottom: 10px;  
   
 `;
 export const LabelInputError = styled.Text`
@@ -73,6 +78,7 @@ export const LabelError = styled.Text`
   margin-bottom: 10px;
 `;
 export const WrapperInput = styled.View`
+  width: 100%;
   margin-bottom: 16px;
 `;
 
@@ -83,12 +89,28 @@ export const SubLabel = styled(Text)`
   margin-bottom: 10px;
 `;
 
-export const FieldsContainer = styled.ScrollView`
-  /* flex: 1; */
-  height: 70%;
-  overflow: hidden;
+export const FieldsContainer = styled.View`
+  width: 100%;
+  padding-bottom: 76px;
+
+  
 `;
 
 export const SubmitButtonContainer = styled.View`
-  height: 20%;
+  width: 100%;
+  height: 60px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+`;
+
+export const WrapperConfirmePolicy = styled.View`
+  width: 100%;
+  padding: 10px;
+  align-items: flex-start;
+  background-color: transparent;
+  flex-direction: row;
+
+
 `;
