@@ -78,7 +78,6 @@ const AuthProvider = ({children}: IAuthProvider) => {
   const handleAuthentication = async (email: string, password: string) => {
     try {
       const response = await handleLoginRequest(email, password);
-      console.log('kkk', response);
       if (response?.token) {
         setUser(response.usuario);
         handleSetUserLocalStorage(response);

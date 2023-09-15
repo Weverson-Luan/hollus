@@ -73,140 +73,164 @@ export function ScreenQuery() {
       {loading ? (
         <Loading />
       ) : (
-        <Container>
-          <Wrapper>
-            <>
-              <>
-                <WrapperTitle>
-                  <Title>Próximas consultas</Title>
-                </WrapperTitle>
+        <>
+          {past.length > 0 ? (
+            <Container>
+              <Wrapper>
+                <>
+                  <>
+                    <WrapperTitle>
+                      <Title>Próximas consultas</Title>
+                    </WrapperTitle>
 
-                <View>
-                  <FlatList
-                    data={next}
-                    keyExtractor={item => item.id}
-                    renderItem={({item}) => (
-                      <WrapperContentInfo
-                        onPress={() =>
-                          navigationAuth.navigate('Appointment', {
-                            id: item.id,
-                          })
-                        }>
-                        <ImageProfile
-                          source={{
-                            uri: item?.usuario_terapeuta?.link_foto,
-                          }}
-                        />
-                        <DescriptionInfo>
-                          <HeaderTitle>
-                            <TitleName>
-                              {item?.usuario_terapeuta?.nome}
-                            </TitleName>
-
-                            <WrapperPonts>
-                              <AntDesign
-                                name="star"
-                                size={14}
-                                color={theme.colors.orange_100}
-                              />
-                              <TitlePont>
-                                {item?.usuario_terapeuta?.nota_media}
-                              </TitlePont>
-                            </WrapperPonts>
-                          </HeaderTitle>
-
-                          <WrapperDate>
-                            <ClockAfternoon
-                              // name="clockcircleo"
-                              size={14}
-                              color={theme.colors.gray_150}
+                    <View>
+                      <FlatList
+                        data={next}
+                        keyExtractor={item => item.id}
+                        renderItem={({item}) => (
+                          <WrapperContentInfo
+                            onPress={() =>
+                              navigationAuth.navigate('Appointment', {
+                                id: item.id,
+                              })
+                            }>
+                            <ImageProfile
+                              source={{
+                                uri: item?.usuario_terapeuta?.link_foto,
+                              }}
                             />
-                            <TitleDate>
-                              {item?.data_hora?.slice(8, 10)}/
-                              {item?.data_hora?.slice(5, 7)}/
-                              {item?.data_hora?.slice(0, 4)} às{' '}
-                              {item?.data_hora?.slice(11, 16)}
-                            </TitleDate>
-                          </WrapperDate>
+                            <DescriptionInfo>
+                              <HeaderTitle>
+                                <TitleName>
+                                  {item?.usuario_terapeuta?.nome}
+                                </TitleName>
 
-                          <WrapperLocation>
-                            <MapPin size={14} color={theme.colors.gray_150} />
-                            <TitleLocation>{item?.espaco?.nome}</TitleLocation>
-                          </WrapperLocation>
-                        </DescriptionInfo>
+                                <WrapperPonts>
+                                  <AntDesign
+                                    name="star"
+                                    size={14}
+                                    color={theme.colors.orange_100}
+                                  />
+                                  <TitlePont>
+                                    {item?.usuario_terapeuta?.nota_media}
+                                  </TitlePont>
+                                </WrapperPonts>
+                              </HeaderTitle>
 
-                        <DotsThreeOutlineVertical size={32} />
-                      </WrapperContentInfo>
-                    )}
-                  />
-                </View>
-              </>
+                              <WrapperDate>
+                                <ClockAfternoon
+                                  // name="clockcircleo"
+                                  size={14}
+                                  color={theme.colors.gray_150}
+                                />
+                                <TitleDate>
+                                  {item?.data_hora?.slice(8, 10)}/
+                                  {item?.data_hora?.slice(5, 7)}/
+                                  {item?.data_hora?.slice(0, 4)} às{' '}
+                                  {item?.data_hora?.slice(11, 16)}
+                                </TitleDate>
+                              </WrapperDate>
 
-              <>
-                <WrapperTitle>
-                  <Title>Histórico de consultas</Title>
-                </WrapperTitle>
+                              <WrapperLocation>
+                                <MapPin
+                                  size={14}
+                                  color={theme.colors.gray_150}
+                                />
+                                <TitleLocation>
+                                  {item?.espaco?.nome}
+                                </TitleLocation>
+                              </WrapperLocation>
+                            </DescriptionInfo>
 
-                <FlatList
-                  data={past}
-                  keyExtractor={item => item.id}
-                  renderItem={({item}) => (
-                    <WrapperContentInfo
-                      onPress={() =>
-                        navigationAuth.navigate('Appointment', {
-                          id: item.id,
-                        })
-                      }>
-                      <ImageProfile
-                        source={{
-                          uri: item?.usuario_terapeuta?.link_foto,
-                        }}
+                            <DotsThreeOutlineVertical size={32} />
+                          </WrapperContentInfo>
+                        )}
                       />
-                      <DescriptionInfo>
-                        <HeaderTitle>
-                          <TitleName>{item.usuario_terapeuta?.nome}</TitleName>
+                    </View>
+                  </>
 
-                          <ContentSpots>
-                            {/* <TitleSpots>{therapistInfo?.nota_media}</TitleSpots> */}
-                            <TitleSpots>3</TitleSpots>
+                  <>
+                    <WrapperTitle>
+                      <Title>Histórico de consultas</Title>
+                    </WrapperTitle>
 
-                            <MandalaSVG
-                              width={RFValue(20)}
-                              height={RFValue(20)}
-                            />
-                            <MandalaSVG
-                              width={RFValue(20)}
-                              height={RFValue(20)}
-                            />
-                            <MandalaSVG
-                              width={RFValue(20)}
-                              height={RFValue(20)}
-                            />
-                          </ContentSpots>
-                        </HeaderTitle>
-                        <WrapperDate>
-                          <ClockAfternoon
-                            // name="clockcircleo"
-                            size={14}
-                            color={theme.colors.gray_150}
+                    <FlatList
+                      data={past}
+                      keyExtractor={item => item.id}
+                      renderItem={({item}) => (
+                        <WrapperContentInfo
+                          onPress={() =>
+                            navigationAuth.navigate('Appointment', {
+                              id: item.id,
+                            })
+                          }>
+                          <ImageProfile
+                            source={{
+                              uri: item?.usuario_terapeuta?.link_foto,
+                            }}
                           />
-                          <TitleDate>
-                            {item?.data_hora?.slice(8, 10)}/
-                            {item?.data_hora?.slice(5, 7)}/
-                            {item?.data_hora?.slice(0, 4)} às{' '}
-                            {item?.data_hora?.slice(11, 16)}
-                          </TitleDate>
-                        </WrapperDate>
-                      </DescriptionInfo>
+                          <DescriptionInfo>
+                            <HeaderTitle>
+                              <TitleName>
+                                {item.usuario_terapeuta?.nome}
+                              </TitleName>
 
-                      <DotsThreeOutlineVertical size={32} />
-                    </WrapperContentInfo>
-                  )}
-                />
-              </>
-            </>
-          </Wrapper>
-        </Container>
+                              <ContentSpots>
+                                {/* <TitleSpots>{therapistInfo?.nota_media}</TitleSpots> */}
+                                <TitleSpots>3</TitleSpots>
+
+                                <MandalaSVG
+                                  width={RFValue(20)}
+                                  height={RFValue(20)}
+                                />
+                                <MandalaSVG
+                                  width={RFValue(20)}
+                                  height={RFValue(20)}
+                                />
+                                <MandalaSVG
+                                  width={RFValue(20)}
+                                  height={RFValue(20)}
+                                />
+                              </ContentSpots>
+                            </HeaderTitle>
+                            <WrapperDate>
+                              <ClockAfternoon
+                                // name="clockcircleo"
+                                size={14}
+                                color={theme.colors.gray_150}
+                              />
+                              <TitleDate>
+                                {item?.data_hora?.slice(8, 10)}/
+                                {item?.data_hora?.slice(5, 7)}/
+                                {item?.data_hora?.slice(0, 4)} às{' '}
+                                {item?.data_hora?.slice(11, 16)}
+                              </TitleDate>
+                            </WrapperDate>
+                          </DescriptionInfo>
+
+                          <DotsThreeOutlineVertical size={32} />
+                        </WrapperContentInfo>
+                      )}
+                    />
+                  </>
+                </>
+              </Wrapper>
+            </Container>
+          ) : (
+            <View
+              style={{
+                width: '100%',
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingLeft: 16,
+                paddingRight: 16,
+                backgroundColor: '#fff',
+              }}>
+              <Title>Nenhuma consulta disponivel no momento.</Title>
+            </View>
+          )}
+        </>
       )}
     </>
   );

@@ -6,6 +6,7 @@ export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.white};
   flex: 1;
   width: 100%;
+
 `;
 export const Wrapper = styled.View`
   width: 100%;

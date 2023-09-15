@@ -8,6 +8,9 @@ import {
   ClockCounterClockwise,
   Pencil,
   ChatDots,
+  CreditCard,
+  HouseLine,
+  ChatsCircle,
 } from 'phosphor-react-native';
 
 export function CardDrawerNavigation({data}: any) {
@@ -19,18 +22,30 @@ export function CardDrawerNavigation({data}: any) {
         <Pencil size={24} color={theme.colors.orange} />
       )}
 
+      {data?.name === 'Chat' && (
+        <ChatsCircle size={24} color={theme.colors.orange} />
+      )}
+
+      {data?.name === 'Endereços' && (
+        <HouseLine size={24} color={theme.colors.orange} />
+      )}
+
       {data?.name === 'Gerenciar horários' && (
         <Calendar size={24} color={theme.colors.orange} />
       )}
 
-      {data?.name === 'Histórico de Consultas' && (
+      {data?.name === 'Formas de pagamento' && (
+        <CreditCard size={24} color={theme.colors.orange} />
+      )}
+
+      {data?.name === 'Histórico de consultas' && (
         <ClockCounterClockwise size={24} color={theme.colors.orange} />
       )}
 
       {data?.name === 'Fale conosco' && (
         <ChatDots size={24} color={theme.colors.orange} />
       )}
-      <Title style={{}}>{data.name}</Title>
+      <Title>{data.name}</Title>
     </Container>
   );
 }

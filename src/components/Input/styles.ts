@@ -7,13 +7,21 @@ interface InputProps extends TextInputProps {
   width?: string;
   height?: string;
   color?: string;
+  textColor?: string;
+}
+
+interface IMaskedInputCustomProps extends MaskInputProps {
+  width?: string;
+  height?: string;
+  color?: string;
+  textColor?: string;
 }
 export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.white};
 `;
 
 export const TextInputForm = styled(TextInput)<InputProps>`
-  width: ${({ width }) => width || 'auto'};
+  width: ${({ width }) => width || '100%'};
   height: ${({ height }) => height || 'auto'};
   background-color: ${({ color, theme }) => color || theme.colors.white};
 
@@ -27,7 +35,7 @@ export const TextInputForm = styled(TextInput)<InputProps>`
   max-width: 100%;
 `;
 
-export const MaskedTextInputForm = styled(MaskInput)<MaskInputProps>`
+export const MaskedTextInputForm = styled(MaskInput)<IMaskedInputCustomProps>`
   width: ${({ width }) => width || 'auto'};
   height: ${({ height }) => height || 'auto'};
   background-color: ${({ color, theme }) => color || theme.colors.white};
@@ -37,7 +45,7 @@ export const MaskedTextInputForm = styled(MaskInput)<MaskInputProps>`
   margin-bottom: ${RFValue(14)}px;
 
   padding-left: 12px;
-  color: ${({ theme }) => theme.colors.gray_200};
+  color: ${({ theme, textColor }) => textColor ? textColor : theme.colors.gray_80};
 `;
 
 export const Title = styled.Text``;

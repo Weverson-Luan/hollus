@@ -1,17 +1,33 @@
 import React, {useEffect, useState} from 'react';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {View, PermissionsAndroid} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 import {useTheme} from 'styled-components';
-
-//icons
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Entypo from 'react-native-vector-icons/Entypo';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {Formik} from 'formik';
 
 //components
 import {Button} from '../../../../components/Button';
+import {ActivityIndication} from '../../../../components/Spinner';
+import {MaskedTextInputForm} from '../../../../components/Input/styles';
+import {Input} from '../../../../components/Input';
+import {Loading} from '../../../../components/Loading';
+
+// contexto
+import {getMyInfo} from '../../../../context/hooks/User/useUser';
+
+// service
+import {Api} from '../../../../services/api';
+
+// commons
+import {imagNotFound} from '../../../../common/constants';
+
+// typings
+import {IUserInfo, IUserInfoResponseApi} from '../../../../dtos/user-dtos';
+import {EditProfileSchema} from './schema';
+import {IResponseImageSelected} from './interface';
 
 //styled-components
+import {LabelInput} from '../../RegisterSeptOne/styles';
 import {
   Container,
   WrapperButton,
@@ -22,40 +38,15 @@ import {
   Photo,
   PhotoChangeText,
 } from './styles';
-import {getMyInfo} from '../../../../context/hooks/User/useUser';
-import {Input} from '../../../../components/Input';
-import {LabelInput} from '../../RegisterSeptOne/styles';
-import {View, PermissionsAndroid} from 'react-native';
-import {ActivityIndication} from '../../../../components/Spinner';
-import {MaskedTextInputForm} from '../../../../components/Input/styles';
-import {Formik} from 'formik';
-import {EditProfileSchema} from './schema';
-import {Api} from '../../../../services/api';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {Loading} from '../../../../components/Loading';
-import {IUserInfo, IUserInfoResponseApi} from '../../../../dtos/user-dtos';
 
 export function EditProfileClient() {
   const theme = useTheme();
+  const isFocused = useIsFocused();
+
   const [emailChanged, setEmailChanged] = useState(false);
   const [myInfo, setMyInfo] = useState<IUserInfo>({} as IUserInfo);
   const [loading, setLoading] = useState(true);
   const [newValues, setNewValues] = useState(myInfo);
-
-  const isFocused = useIsFocused();
-
-  type IAssestsProps = {
-    fileName: string;
-    fileSize: number;
-    width: number;
-    height: number;
-    type: string;
-    uri: string;
-  };
-  type IResponseImageSelected = {
-    assets: IAssestsProps[];
-    didCancel: boolean;
-  };
 
   const pickImage = async () => {
     await launchImageLibrary(
@@ -134,7 +125,6 @@ export function EditProfileClient() {
 
   const saveInfo = async (values: any) => {
     try {
-      console.log('antes', values);
       setLoading(true);
       const response = await Api.post('v1/user/my-info', values);
       if (response?.data?.data) {
@@ -192,7 +182,9 @@ export function EditProfileClient() {
                   <PhotoTouchable onPress={pickImage}>
                     <Photo
                       source={{
-                        uri: `${myInfo?.link_foto}`,
+                        uri: `${
+                          myInfo?.link_foto ? myInfo.link_foto : imagNotFound
+                        }`,
                       }}
                     />
                     <PhotoChangeText>Trocar foto</PhotoChangeText>

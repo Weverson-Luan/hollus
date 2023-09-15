@@ -1,29 +1,37 @@
 import React from 'react';
-import { TextInputProps } from 'react-native';
-import { MaskInputProps } from 'react-native-mask-input';
-import { Container, TextInputForm } from './styles';
+import {TextInputProps} from 'react-native';
+import {MaskInputProps} from 'react-native-mask-input';
+import {Container, TextInputForm} from './styles';
 
 interface InputProps extends TextInputProps {
-  width: string;
-  height: string;
-  color: string;
+  width?: string;
+  height?: string;
+  color?: string;
 }
-export function Input({ width, height, color, ...rest }: InputProps) {
+export function Input({width, height, color, ...rest}: InputProps) {
   return (
     <Container>
-      <TextInputForm style={{}} {...rest} width={width} height={height} color={color} />
+      <TextInputForm
+        style={{}}
+        {...rest}
+        width={width}
+        height={height}
+        color={color}
+      />
     </Container>
   );
 }
-interface MaskedInputProps extends MaskInputProps {
+interface IMaskCustomProps extends TextInputProps {}
+
+interface MaskedInputProps extends IMaskCustomProps {
   width: string;
   height: string;
   color: string;
 }
-export function MaskInput({ width, height, color, ...rest }: MaskedInputProps) {
+export function MaskInput({width, height, color, ...rest}: MaskedInputProps) {
   return (
     <Container>
-      <TextInputForm style={{}} {...rest} width={width} height={height} color={color} />
+      <TextInputForm {...rest} width={width} height={height} color={color} />
     </Container>
   );
 }

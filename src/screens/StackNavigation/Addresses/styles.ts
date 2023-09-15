@@ -27,8 +27,6 @@ export const WrapperButtonNext = styled.View`
   width: 100%;
 
   margin-top: ${RFValue(20)}px;
-  padding-left: ${RFValue(8)}px;
-  padding-right: ${RFValue(8)}px;
 
   align-items: center;
   justify-content: space-around;
@@ -61,26 +59,20 @@ export const WrapperCardBorder = styled(TouchableOpacity)<Props>`
 `;
 export const TitleCard = styled.Text`
   color: ${({ theme }) => theme.colors.white};
-  /* margin-left: ${RFValue(8)}px; */
   font-size: ${RFValue(14)}px;
   font-weight: 400;
 `;
-
 export const WrapperCardBand = styled(View)<Selected>`
   width: 100%;
   height: ${({ cardCredit }) => (cardCredit ? '220px' : '65px')};
   background-color: ${({ cardCredit }) => (cardCredit ? '#FFECCD' : 'white')};
-  /* flex-direction: row;
-  align-items: center;
-  justify-content: space-between; */
 
   border-color: ${({ theme }) => theme.colors.gray_25};
   border-left-width: 1px;
   border-right-width: 1px;
   border-bottom-width: 1px;
 
-  /* padding-left: 14px;
-  padding-right: 14px; */
+
 `;
 export const CardBand = styled.TouchableOpacity`
   flex-direction: row;
@@ -140,31 +132,22 @@ export const WrapperCardSelected = styled(View)<Selected>`
   width: 100%;
   height: 110px;
   flex-direction: column;
-
-  /* border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.gray_25}; */
   margin-top: ${({ selected }) => (selected ? '220px' : 0)};
   margin-bottom: 20px;
 `;
-
 export const WrapperCardCredit = styled(View)<Selected>`
   width: 100%;
   height: 110px;
   flex-direction: column;
-
-  /* border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.gray_25}; */
   margin-top: ${({ selected }) => (selected ? '220px' : 0)};
   margin-bottom: 20px;
 `;
-
 export const WrapperTitleBankName = styled.View`
   padding-left: 14px;
   padding-right: 14px;
 `;
 export const TitleBankName = styled.Text`
   color: ${({ theme }) => theme.colors.gray_200};
-  /* margin-left: ${RFValue(8)}px; */
   font-size: ${RFValue(16)}px;
   font-weight: bold;
 `;
@@ -173,7 +156,6 @@ export const WrapperTitleBankNumber = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-
   margin-top: ${RFValue(20)}px; ;
 `;
 export const TitleBankNumber = styled.Text`
@@ -186,7 +168,6 @@ export const WrapperMainCarHolder = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-
   padding-left: 14px;
   padding-right: 14px;
   margin-top: ${RFValue(8)}px;
