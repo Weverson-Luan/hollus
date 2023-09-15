@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {FlatList} from 'react-native';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useFocusEffect} from '@react-navigation/native';
 import {useTheme} from 'styled-components';
 import {SignOut} from 'phosphor-react-native';
 
@@ -22,6 +22,10 @@ import {useAuth} from '../../../context/hooks/Auth/useAuth';
 //types
 import {IUserResponse} from './interface';
 
+import {imagNotFound} from '../../../common/constants';
+import {IUserInfoResponseApi} from '../../../dtos/user-dtos';
+import {getMyInfo} from '../../../context/hooks/User/useUser';
+
 //styles
 import {
   Container,
@@ -39,28 +43,28 @@ export function UserPanel() {
   const isFocused = useIsFocused();
 
   const [userInfo, setUserInfo] = useState<IUserResponse>({} as IUserResponse);
-  const [isLoading, setIsloading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const imaeNotFound =
-    'https://www.charlotteathleticclub.com/assets/camaleon_cms/image-not-found-4a963b95bf081c3ea02923dceaeb3f8085e1a654fc54840aac61a57a60903fef.png';
-
-  const handleLoadingData = async () => {
+  const handleGetUserInfo = async () => {
     try {
-      const responseUser = await auth.handleGetUser();
+      setIsLoading(true);
+      const {data}: IUserInfoResponseApi = await getMyInfo();
 
-      if (responseUser) {
-        setUserInfo(responseUser);
+      if (data) {
+        setUserInfo(data);
       }
     } catch (error) {
-      //realizar tratamento de error
+      //trataento de error
     } finally {
-      setIsloading(false);
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    handleLoadingData();
-  }, [isFocused]);
+  useFocusEffect(
+    useCallback(() => {
+      handleGetUserInfo();
+    }, [isFocused]),
+  );
 
   return (
     <>
@@ -72,7 +76,7 @@ export function UserPanel() {
             <WrapperImage>
               <Image
                 source={{
-                  uri: userInfo?.link_foto ?? imaeNotFound,
+                  uri: userInfo?.link_foto ? userInfo?.link_foto : imagNotFound,
                 }}
               />
               <Title>{userInfo?.nome}</Title>
@@ -92,7 +96,6 @@ export function UserPanel() {
       </Container>
       <WrapperLogout
         onPress={async () => {
-          console.log('logout');
           auth.handleLogout();
         }}>
         <SignOut size={18} color={theme.colors.orange_100} />

@@ -225,6 +225,7 @@ export function ScreenQuery() {
                 justifyContent: 'center',
                 paddingLeft: 16,
                 paddingRight: 16,
+                backgroundColor: '#fff',
               }}>
               <Title>Nenhuma consulta disponivel no momento.</Title>
             </View>

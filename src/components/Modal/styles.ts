@@ -18,7 +18,7 @@ export const WrapperModal = styled.View`
 export const WrapperInput = styled.View`
   width: 100%;
   flex-direction: column;
-  align-items: flex-start;
+
   height: 90px;
 
 `;

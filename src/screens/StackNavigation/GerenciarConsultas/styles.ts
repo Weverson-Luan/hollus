@@ -38,6 +38,7 @@ export const EmptyMessageContainer = styled.View`
 
 export const EmptyMessage = styled.Text`
   font-size: ${RFValue(16)}px;
+  color: ${({ theme }) => theme.colors.gray_150};
 `;
 
 export const AddButtonContainer = styled.View`

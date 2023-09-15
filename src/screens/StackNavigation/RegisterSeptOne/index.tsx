@@ -29,13 +29,12 @@ import {useAuth, useRegister} from '../../../context/hooks/Auth/useAuth';
 import {Alert, Switch, Text, TouchableOpacity, View} from 'react-native';
 import {Form, Formik} from 'formik';
 import {RegisterSchema} from './Schema/RegisterSchema';
-
+import {ActivityIndicator} from 'react-native';
 import {BarPasswordStrengthDisplay} from 'react-native-password-strength-meter';
 import MaskInput from 'react-native-mask-input';
 import {RFValue} from 'react-native-responsive-fontsize';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import ActionSheet, {ActionSheetRef} from 'react-native-actions-sheet';
-import {ActivityIndication} from '../../../components/Spinner';
 import {Api} from '../../../services/api';
 import useAlert from '../../../context/hooks/Alert/useAlert';
 import {CheckSquare} from 'phosphor-react-native';
@@ -510,7 +509,11 @@ export function RegisterSeptOne() {
                         // onPress={() => navigation.navigate('RegisterSeptTwo')}
                       >
                         <TitleSearchTherapy>
-                          {loading ? <ActivityIndication /> : 'Próximo'}
+                          {loading ? (
+                            <ActivityIndicator size={24} color={'#FFF'} />
+                          ) : (
+                            'Próximo'
+                          )}
                         </TitleSearchTherapy>
                       </Button>
                     </SubmitButtonContainer>

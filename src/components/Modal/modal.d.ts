@@ -20,6 +20,7 @@ interface IModalProps extends ModalProps {
 
   //handle save andress
   handleSaveAndress: ()=> void;
+  handleOnCloseModal: ()=> void;
 
 }
 

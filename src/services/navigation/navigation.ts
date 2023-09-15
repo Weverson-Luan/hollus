@@ -39,12 +39,6 @@ const navigationListClient = [
     name_Icon: "history",
     route: 'Consultas'
   },
-  // {
-  //   id: "6",
-  //   name: "Sobre nós",
-  //   name_Icon: "info-circle",
-  //   route: 'AboutUs'
-  // },
   {
     id: "8",
     name: "Fale conosco",
@@ -67,16 +61,10 @@ const navigationListTherapist = [
   },
   {
     id: "4",
-    name: "Histórico de Consultas",
+    name: "Histórico de consultas",
     name_Icon: "history",
     route: 'Consultas'
   },
-  // {
-  //   id: "6",
-  //   name: "Sobre nós",
-  //   name_Icon: "info-circle",
-  //   route: 'AboutUs'
-  // },
   {
     id: "7",
     name: "Fale conosco",

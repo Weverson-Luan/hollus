@@ -1,9 +1,17 @@
 import React, {useState} from 'react';
-import {Modal as ModalNative, Text} from 'react-native';
+import {
+  Modal as ModalNative,
+  Text,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {useTheme} from 'styled-components';
 import {Button} from '../Button';
 import {Input} from '../Input';
 import {IModalProps} from './modal';
+
+import {X} from 'phosphor-react-native';
 
 import {
   Wrapper,
@@ -13,7 +21,6 @@ import {
   WrapperButton,
   WrapperInput,
 } from './styles';
-import {ActivityIndication} from '../Spinner';
 
 export function Address({
   visible,
@@ -30,14 +37,28 @@ export function Address({
   valueComplement,
   onChangeComplement,
   handleSaveAndress,
+  handleOnCloseModal,
   ...rest
 }: IModalProps) {
   const theme = useTheme();
   const [loading, setLoading] = useState(false);
-  console.log('Setting', onChangeCep);
+
   return (
     <Wrapper>
-      <Title>Cadastre novo enderço</Title>
+      <View
+        style={{
+          width: '100%',
+          height: 40,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <Title>Cadastre novo enderço</Title>
+
+        <TouchableOpacity onPress={handleOnCloseModal}>
+          <X size={24} color={theme.colors.gray_80} />
+        </TouchableOpacity>
+      </View>
 
       <WrapperModal>
         <WrapperInput>
@@ -125,7 +146,7 @@ export function Address({
           background_color={loading ? theme.colors.white : theme.colors.orange}
           onPress={handleSaveAndress}>
           {loading ? (
-            <ActivityIndication />
+            <ActivityIndicator size={24} color={theme.colors.white} />
           ) : (
             <Text
               style={{
