@@ -23,7 +23,6 @@ export const TitleLoading = styled.Text`
   font-size: ${RFValue(16)}px;
   color: ${({ theme }) => theme.colors.gray_150};
   text-align: center;
-  margin-top: 12px;
 `;
 export const Content = styled.View`
   width: 100%;

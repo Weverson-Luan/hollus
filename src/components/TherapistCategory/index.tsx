@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useTheme} from 'styled-components';
 
 import {RFValue} from 'react-native-responsive-fontsize';
+import {formatToBRL} from 'brazilian-values';
 import {
   formatTimeString,
   getDayOfWeek,
@@ -74,10 +75,15 @@ import {
   EditCategoryDescriptionView,
   CategoryDescriptionTextInput,
 } from './styles';
+import {Box} from '../Box';
 
-export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
+export function TherapistCategory({
+  data,
+  refresh,
+  onPress,
+}: ITherapistCategoryProps) {
   const theme = useTheme();
-  const {text, title, setAlert} = useAlert();
+  const {setAlert} = useAlert();
 
   const [isLoading, setIsLoading] = useState(false);
   const [expand, setExpand] = useState(false);
@@ -135,7 +141,9 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
 
   const selectDay = (index: any) => {
     const dayOfWeekName: any = getDayOfWeekFromIndex(index);
+    //@ts-ignore
     if (!selectedDays.includes(dayOfWeekName)) {
+      //@ts-ignore
       setSelectedDays(selectedDays => [...selectedDays, dayOfWeekName]);
       return;
     }
@@ -145,6 +153,7 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
 
   const checkDaySelected = (index: any) => {
     const dayOfWeekName = getDayOfWeekFromIndex(index);
+    //@ts-ignore
     if (selectedDays.includes(dayOfWeekName)) {
       return true;
     }
@@ -152,7 +161,9 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
   };
 
   const selectTime = (time: any) => {
+    //@ts-ignore
     if (!selectedTimes.includes(time.id)) {
+      //@ts-ignore
       setSelectedTimes(selectedTimes => [...selectedTimes, time.id]);
       return;
     }
@@ -161,6 +172,7 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
   };
 
   const checkTimeSelected = (time: any) => {
+    //@ts-ignore
     if (selectedTimes.includes(time.id)) {
       return true;
     }
@@ -188,15 +200,13 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
   };
 
   const handleDelete = async (confirmed: any) => {
-    setIsLoading(true);
     selectedTimes.forEach(async item => {
       await Api.delete('/v1/user/horario/remover/' + item)
         .then(res => console.log(res.data))
         .catch(err => console.log(err));
     });
+    await refresh();
     setAlert('Horários excluídos', 'Horários excluídos com sucesso!');
-    setIsLoading(false);
-    refresh();
   };
 
   const handleEditDescription = async () => {
@@ -306,8 +316,15 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
               </LoadingContainer>
             ) : (
               <>
-                <AddCategoryTimeRow>
-                  <AddCategoryFieldWrapper>
+                <Box
+                  width="100%"
+                  height={'60px'}
+                  justifyContent="center"
+                  flexDirection="row"
+                  paddingTop={8}
+                  paddingLeft={16}
+                  paddingRight={16}>
+                  <Box width="150px" paddingRight={4}>
                     <AddCategoryLabel>Horário Inicial</AddCategoryLabel>
                     <AddCategoryTimeTouchable
                       onPress={() => setOpenBeginTimePicker(true)}>
@@ -317,8 +334,9 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
                           : '00:00'}
                       </AddCategoryTime>
                     </AddCategoryTimeTouchable>
-                  </AddCategoryFieldWrapper>
-                  <AddCategoryFieldWrapper>
+                  </Box>
+
+                  <Box width="150px" paddingLeft={4}>
                     <AddCategoryLabel>Horário Final</AddCategoryLabel>
                     <AddCategoryTimeTouchable
                       onPress={() => setOpenEndTimePicker(true)}>
@@ -326,8 +344,8 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
                         {selectedEndTime ? formatTimeString(endTime) : '00:00'}
                       </AddCategoryTime>
                     </AddCategoryTimeTouchable>
-                  </AddCategoryFieldWrapper>
-                </AddCategoryTimeRow>
+                  </Box>
+                </Box>
                 <AddCategoryFieldWrapper>
                   <AddCategoryLabel>Dia da Semana</AddCategoryLabel>
                   <AddCategoryTimeDaysRow>
@@ -346,16 +364,23 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
                     ))}
                   </AddCategoryTimeDaysRow>
                 </AddCategoryFieldWrapper>
-                <AddCategoryTimeSaveButton
-                  disabled={
-                    isLoading ||
-                    !selectedBeginTime ||
-                    !selectedEndTime ||
-                    selectedDays.length === 0
-                  }
-                  onPress={handleSubmit}>
-                  <AddCategoryTime>Salvar</AddCategoryTime>
-                </AddCategoryTimeSaveButton>
+
+                <Box
+                  width="100%"
+                  paddingLeft={16}
+                  paddingRight={16}
+                  height={80}>
+                  <AddCategoryTimeSaveButton
+                    disabled={
+                      isLoading ||
+                      !selectedBeginTime ||
+                      !selectedEndTime ||
+                      selectedDays.length === 0
+                    }
+                    onPress={handleSubmit}>
+                    <AddCategoryTime>Salvar</AddCategoryTime>
+                  </AddCategoryTimeSaveButton>
+                </Box>
               </>
             )}
           </AddCategoryTimeCard>
@@ -399,7 +424,9 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
             )}
           </CategoryDescription>
           <CategoryTimePriceWrapper>
-            <CategoryPrice>R$ {data?.valor}</CategoryPrice>
+            <CategoryPrice>
+              {data?.valor && formatToBRL(data?.valor)}
+            </CategoryPrice>
             <CategoryTimeScheduleWrapper>
               <Clock size={RFValue(16)} />
               <CategoryTime>
@@ -469,7 +496,10 @@ export function TherapistCategory({data, refresh}: ITherapistCategoryProps) {
                       <AddCategoryTimeButtonTitle
                         //@ts-ignore
 
-                        onPress={handleDelete}>
+                        onPress={() => {
+                          handleDelete(true);
+                          onPress();
+                        }}>
                         Excluir
                         {selectedTimes.length === 1
                           ? ' selecionado'

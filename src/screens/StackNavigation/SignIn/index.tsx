@@ -1,25 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, KeyboardAvoidingView, Alert, Text} from 'react-native';
+import {KeyboardAvoidingView} from 'react-native';
 import {useTheme} from 'styled-components';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 // components
 import {Input} from '../../../components/Input';
 import {Button} from '../../../components/Button';
-import {Select} from '../../../components/Select';
-
-// assets
-import Logo from '../../../assets/svg/logo-signin.svg';
 
 //services
 import {useAuth} from '../../../context/hooks/Auth/useAuth';
+
+import {ActivityIndication} from '../../../components/Spinner';
+import {Image} from 'react-native';
+import useAlert from '../../../context/hooks/Alert/useAlert';
+import {View} from 'react-native';
+import {Loading} from '../../../components/Loading';
 
 // style-components
 import {
   Container,
   WrapperHeaderRadius,
   WrapperHeaderIcon,
-  WrapperSelect,
   WrapperHeaderDescription,
   Title,
   Subtitle,
@@ -34,25 +35,18 @@ import {
   TextNotAccount,
   TextRegister,
   WrapperRegister,
-  LogoImage,
 } from './styles';
-import {ActivityIndication} from '../../../components/Spinner';
-import {Image} from 'react-native';
-import {handlePersistLoginRequest} from '../../../context/hooks/Auth/util';
-import AsyncStorageLib from '@react-native-async-storage/async-storage';
-import useAlert from '../../../context/hooks/Alert/useAlert';
-import {View} from 'react-native';
-import {Loading} from '../../../components/Loading';
 
 export function SignIn() {
   const theme = useTheme();
   const navigation = useNavigation();
   const auth = useAuth();
+  const {setAlert} = useAlert();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible] = useState(true);
   const [loading, setLoading] = useState(true);
-  const {setAlert} = useAlert();
 
   const handleOnLogin = async (email: string, password: string) => {
     try {
@@ -65,21 +59,12 @@ export function SignIn() {
         setLoading(false);
         setAlert('Erro ao fazer login', 'E-mail ou senha inválidos');
       }
-      // return navigation.navigate("HomeAuth", {
-      //   screen: "AuthenticateBottomTabsNavigation",
-      // });
     } catch (error) {
-      // return navigation.navigate("SignIn");
-    }
-  };
-
-  const handleVerify = () => {
-    if (auth.successLogin) {
+      setAlert('Erro ao fazer login', 'E-mail ou senha inválidos');
     }
   };
 
   useEffect(() => {
-    handleVerify();
     !auth.successLogin ? setLoading(false) : null;
   }, []);
 
@@ -88,7 +73,7 @@ export function SignIn() {
       {auth.isLoading ? (
         <Loading />
       ) : (
-        <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <View style={{flex: 1, backgroundColor: theme.colors.white}}>
           <Container contentContainerStyle={{justifyContent: 'space-between'}}>
             <WrapperHeaderRadius>
               <WrapperHeaderIcon>

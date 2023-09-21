@@ -2,12 +2,6 @@ import * as React from 'react';
 import {useTheme} from 'styled-components';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-//icons expo
-import Icon from 'react-native-vector-icons/Entypo';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
 import {
   HouseLine,
   User,
@@ -28,7 +22,7 @@ import {
   TherapistStackProfileRoutes,
   TherapistStackRoutesAuth,
   TherapistStackSearchRoutes,
-} from './routes.Drawer';
+} from './routes.stack-auth';
 
 import {NavigationHeader} from '../../components/NavigationHeader';
 

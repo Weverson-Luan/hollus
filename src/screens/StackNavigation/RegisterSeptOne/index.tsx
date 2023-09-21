@@ -16,7 +16,6 @@ import {
   SubTitle,
   WrapperInput,
   LabelInput,
-  WrapperButtons,
   TitleSearchTherapy,
   LabelError,
   SubLabel,
@@ -25,52 +24,53 @@ import {
   WrapperLabelInput,
   WrapperConfirmePolicy,
 } from './styles';
-import {useAuth, useRegister} from '../../../context/hooks/Auth/useAuth';
-import {Alert, Switch, Text, TouchableOpacity, View} from 'react-native';
-import {Form, Formik} from 'formik';
+
+import {Text, TouchableOpacity, View} from 'react-native';
+import {Formik} from 'formik';
 import {RegisterSchema} from './Schema/RegisterSchema';
 import {ActivityIndicator} from 'react-native';
+
+//@ts-ignore
 import {BarPasswordStrengthDisplay} from 'react-native-password-strength-meter';
 import MaskInput from 'react-native-mask-input';
 import {RFValue} from 'react-native-responsive-fontsize';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import ActionSheet, {ActionSheetRef} from 'react-native-actions-sheet';
+
 import {Api} from '../../../services/api';
 import useAlert from '../../../context/hooks/Alert/useAlert';
 import {CheckSquare} from 'phosphor-react-native';
+import {ModalAceppt} from './components/modal/modal-acettp';
 
 export function RegisterSeptOne() {
   const theme = useTheme();
-  const auth = useAuth();
   const navigation = useNavigation();
-  const policiesRef = useRef<ActionSheetRef>(null);
   const [loading, setLoading] = useState(false);
+
+  const [modal, setModal] = useState(false);
   const {setAlert} = useAlert();
 
-  const parseErrors = errors => {
+  const parseErrors = (errors: any) => {
     const errArr = Object.values(errors).map(err => err);
+
+    //@ts-ignore
     return errArr[0][0];
   };
 
-  const handleRegister = async values => {
-    // console.log(values);
-    setLoading(true);
-    await Api.post('/register', values).then(res => {
-      console.log(res.data);
-      if (res.data.success) {
+  const handleRegister = async (values: any) => {
+    try {
+      setLoading(true);
+      const response = await Api.post('/register', values);
+
+      if (response.data.success) {
         navigation.navigate('SignIn');
-        setAlert('Cadastro', res.data.message);
+        setAlert('Cadastro', response.data.message);
       } else {
-        setAlert('Cadastro', parseErrors(res.data.error));
+        setAlert('Cadastro', parseErrors(response.data.error));
       }
-      // Alert.alert("Cadastro", res.data.message, [
-      //   {
-      //     text: "OK",
-      //     onPress: () => navigation.navigate("SignIn"),
-      //   },
-      // ]);
-    });
-    setLoading(false);
+    } catch (error) {
+      setAlert('Cadastro', parseErrors('Error em cadastrar usuário!'));
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -117,53 +117,6 @@ export function RegisterSeptOne() {
             }) => (
               <>
                 <FieldsContainer>
-                  <ActionSheet ref={policiesRef}>
-                    <View
-                      style={{justifyContent: 'center', padding: RFValue(20)}}>
-                      <Text
-                        style={{
-                          fontSize: RFValue(24),
-                          textAlign: 'center',
-                          marginBottom: RFValue(10),
-                        }}>
-                        Termos de uso
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: RFValue(14),
-                          textAlign: 'justify',
-                          marginBottom: RFValue(10),
-                        }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Quisque rhoncus eget massa vitae viverra. Cras dui
-                        neque, iaculis at imperdiet non, elementum non mi.
-                        Maecenas eu massa nisl. Quisque nec lectus mattis,
-                        varius orci sit amet, varius dui. Vivamus nec massa eget
-                        felis varius suscipit. Nulla non sollicitudin purus, ac
-                        condimentum libero. Suspendisse commodo vel nulla sed
-                        interdum. Pellentesque nisi sem, mollis tincidunt
-                        euismod vitae, tincidunt vel nisl. Morbi facilisis erat
-                        non nunc tincidunt efficitur. Donec aliquet dui dui, sed
-                        fermentum nunc feugiat nec.
-                      </Text>
-                      <Button
-                        width="100%"
-                        height="45px"
-                        background_color={theme.colors.orange}
-                        onPress={() => (
-                          setFieldValue(
-                            'policiesAccept',
-                            !values.policiesAccept,
-                          ),
-                          policiesRef.current?.hide()
-                        )}>
-                        <TitleSearchTherapy>
-                          Aceitar e voltar
-                        </TitleSearchTherapy>
-                      </Button>
-                    </View>
-                  </ActionSheet>
-
                   <WrapperLabelInput>
                     <LabelInput>
                       Nome{' '}
@@ -266,6 +219,7 @@ export function RegisterSeptOne() {
                         borderRadius: RFValue(4),
                         borderWidth: 1,
                         borderColor: theme.colors.gray_50,
+                        color: theme.colors.gray_200,
                       }}
                       keyboardType="number-pad"
                       mask={[
@@ -310,6 +264,7 @@ export function RegisterSeptOne() {
                         borderRadius: RFValue(4),
                         borderWidth: 1,
                         borderColor: theme.colors.gray_50,
+                        color: theme.colors.gray_200,
                       }}
                       keyboardType="number-pad"
                       mask={[
@@ -472,7 +427,7 @@ export function RegisterSeptOne() {
 
                     <WrapperConfirmePolicy>
                       <TouchableOpacity
-                        onPress={() => policiesRef.current?.show()}
+                        onPress={() => {}}
                         style={{marginRight: 10}}>
                         {values.policiesAccept ? (
                           <CheckSquare
@@ -489,8 +444,7 @@ export function RegisterSeptOne() {
                       </TouchableOpacity>
                       <LabelInput>
                         Confirmo que li e concordo com os{' '}
-                        <TouchableOpacity
-                          onPress={() => policiesRef.current?.show()}>
+                        <TouchableOpacity onPress={() => setModal(true)}>
                           <LabelInput style={{textDecorationLine: 'underline'}}>
                             termos de uso do aplicativo.
                           </LabelInput>
@@ -498,16 +452,22 @@ export function RegisterSeptOne() {
                       </LabelInput>
                     </WrapperConfirmePolicy>
 
+                    <ModalAceppt
+                      isVisible={modal}
+                      handleAceppt={() => {
+                        setFieldValue('policiesAccept', !values.policiesAccept),
+                          setModal(!modal);
+                      }}
+                      handleCancel={() => setModal(!modal)}
+                    />
+
                     <SubmitButtonContainer>
                       <Button
                         width="100%"
                         height="45px"
                         background_color={theme.colors.orange}
                         onPress={() => handleSubmit()}
-                        disabled={!isValid || loading}
-                        // onPress={() => navigation.navigate('RegisterSeptFour')}
-                        // onPress={() => navigation.navigate('RegisterSeptTwo')}
-                      >
+                        disabled={!isValid || loading}>
                         <TitleSearchTherapy>
                           {loading ? (
                             <ActivityIndicator size={24} color={'#FFF'} />

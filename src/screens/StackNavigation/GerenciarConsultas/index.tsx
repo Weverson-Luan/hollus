@@ -1,19 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList} from 'react-native';
+import React, {useEffect, useState, useCallback} from 'react';
+import {FlatList} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
-import {useTheme} from 'styled-components';
-import {X} from 'phosphor-react-native';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {Masks} from 'react-native-mask-input';
-
-import RNDateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
 
 // api
 import {Api} from '../../../services/api';
 
 // components
-import {Input} from '../../../components/Input';
 import {Loading} from '../../../components/Loading';
 import {TherapistCategory} from '../../../components/TherapistCategory';
 
@@ -33,31 +25,10 @@ import {
   AddButton,
   AddButtonText,
   AddButtonContainer,
-  ValueInput,
-  WrapperButton,
 } from './styles';
-import {
-  AddCategoryCardContent,
-  AddCategoryFieldWrapper,
-  AddCategoryLabel,
-  AddCategoryTime,
-  AddCategoryTimeCard,
-  AddCategoryTimeDay,
-  AddCategoryTimeDaysRow,
-  AddCategoryTimeDayTouchable,
-  AddCategoryTimeHeader,
-  AddCategoryTimeHeaderButton,
-  AddCategoryTimeHeaderText,
-  AddCategoryTimeModal,
-  AddCategoryTimeRow,
-  AddCategoryTimeSaveButton,
-  AddCategoryTimeTouchable,
-  AddCategoryTimeView,
-  LoadingContainer,
-} from '../../../components/TherapistCategory/styles';
+import {AddCategorieTime} from './components/modals/add-category-time';
 
 export function GerenciarConsultas() {
-  const theme = useTheme();
   const isFocused = useIsFocused();
   const {setAlert} = useAlert();
 
@@ -80,14 +51,18 @@ export function GerenciarConsultas() {
   const [categoriesList, setCategoriesList] = useState([]);
   const [openDropDown, setOpenDropdown] = useState(false);
 
-  const fetchMyInfo = async () => {
-    setLoading(true);
-    clearStates();
-    const {data} = await Api.get('/v1/user/pesquisar-minhas-categorias');
-    // console.log(data.data);
-    setCategorias(data.data);
-    setLoading(false);
-  };
+  const fetchMyInfo = useCallback(async () => {
+    try {
+      setLoading(true);
+      clearStates();
+      const {data} = await Api.get('/v1/user/pesquisar-minhas-categorias');
+
+      setCategorias(data.data);
+      setLoading(false);
+    } catch (error) {
+      setAlert('Erro', parseErrors('Não foi possível buscar as categorias!'));
+    }
+  }, [categorias]);
 
   const parseErrors = (errors: any) => {
     const errArr = Object.values(errors).map(err => err);
@@ -169,59 +144,65 @@ export function GerenciarConsultas() {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
-    //@ts-ignore
-    if (selectedCategory.length === 1) {
-      Api.post('/v1/user/adicionar-categoria', {
-        //@ts-ignore
-        categoria_id: selectedCategory[0],
-        tempo: 60,
-        descricao: categoryDescription,
-        horario_inicio: formatTimeString(beginTime),
-        horario_fim: formatTimeString(endTime),
-        dias_semana: JSON.stringify(selectedDays),
-        valor: selectedPrice,
-      })
-        .then(res => {
-          if (res.data.success) {
+    try {
+      setLoading(true);
+
+      //@ts-ignore
+      if (selectedCategory?.length === 1) {
+        const response = await Api.post('/v1/user/adicionar-categoria', {
+          //@ts-ignore
+          categoria_id: selectedCategory[0],
+          tempo: 60,
+          descricao: String(categoryDescription) ?? '',
+          horario_inicio: formatTimeString(beginTime),
+          horario_fim: formatTimeString(endTime),
+          dias_semana: JSON.stringify(selectedDays),
+          valor: String(selectedPrice),
+        });
+
+        if (response.data) {
+          if (response.data.success) {
             fetchMyInfo();
             fetchCategories();
             setOpenModal(false);
           }
-          if (res.data.error) {
-            setAlert('Erro', parseErrors(res.data.error));
+          if (response.data.error) {
+            setAlert('Erro', parseErrors(response.data.error));
           }
-          // console.log(res.data);
-        })
-        .catch(err => console.log(err));
-      setLoading(false);
-      return;
-    }
+        }
+        setLoading(false);
+        return;
+      }
 
-    //@ts-ignore
-    selectedCategory.forEach(selCat => {
-      setIsLoading(true);
-      Api.post('/v1/user/adicionar-categoria', {
-        categoria_id: selCat,
-        tempo: 60,
-        descricao: categoryDescription,
-        horario_inicio: formatTimeString(beginTime),
-        horario_fim: formatTimeString(endTime),
-        dias_semana: JSON.stringify(selectedDays),
-        valor: selectedPrice,
-      })
-        .then(res => {
-          if (res.data.error) {
-            setAlert('Erro', parseErrors(res.data.error));
-          }
+      //@ts-ignore
+      selectedCategory.forEach(selCat => {
+        setIsLoading(true);
+        Api.post('/v1/user/adicionar-categoria', {
+          categoria_id: selCat,
+          tempo: 60,
+          descricao: categoryDescription,
+          horario_inicio: formatTimeString(beginTime),
+          horario_fim: formatTimeString(endTime),
+          dias_semana: JSON.stringify(selectedDays),
+          valor: selectedPrice,
         })
-        .catch(err => console.log(err));
-    });
-    fetchMyInfo();
-    fetchCategories();
-    setIsLoading(false);
-    setOpenModal(false);
-    return;
+          .then(res => {
+            if (res.data.error) {
+              setAlert('Erro', parseErrors(res.data.error));
+            }
+          })
+          .catch(err => console.log(err));
+      });
+
+      fetchMyInfo();
+      fetchCategories();
+      setIsLoading(false);
+      setOpenModal(false);
+      return;
+    } catch (error) {
+      //@ts-ignore
+      setAlert('Erro', parseErrors(error.message));
+    }
   };
 
   const clearStates = () => {
@@ -246,199 +227,36 @@ export function GerenciarConsultas() {
   }, [isFocused]);
   return (
     <>
-      <AddCategoryTimeModal
-        onRequestClose={() => setOpenModal(false)}
-        visible={openModal}
-        transparent>
-        <AddCategoryTimeView>
-          <AddCategoryTimeCard>
-            <AddCategoryTimeHeader>
-              <AddCategoryTimeHeaderText>
-                Nova Categoria
-              </AddCategoryTimeHeaderText>
+      <AddCategorieTime
+        isVisible={openModal}
+        beginTime={beginTime}
+        categoriesList={categoriesList}
+        days={days}
+        endTime={endTime}
+        checkDaySelected={checkDaySelected}
+        formatTimeString={formatTimeString}
+        handleSubmit={handleSubmit}
+        isLoading={isLoading}
+        onTimeChangeBegin={onTimeChangeBegin}
+        onTimeChangeEnd={onTimeChangeEnd}
+        openDropDown={openDropDown}
+        openEndTimePicker={openEndTimePicker}
+        selectDay={selectDay}
+        selectedDays={selectedDays}
+        selectedBeginTime={selectedBeginTime}
+        selectedPrice={selectedPrice}
+        setSelectedPrice={selectedPrice}
+        selectedCategory={selectedCategory}
+        selectedEndTime={selectedEndTime}
+        setCategoryDescription={setCategoryDescription}
+        setOpenBeginTimePicker={setOpenBeginTimePicker}
+        setOpenDropdown={() => setOpenDropdown(true)}
+        setOpenEndTimePicker={setOpenEndTimePicker}
+        setOpenModal={setOpenModal}
+        setSelectedCategory={selectedCategory}
+        setCategoriesList={setCategoriesList}
+      />
 
-              <AddCategoryTimeHeaderButton onPress={() => setOpenModal(false)}>
-                <X size={`${RFValue(18)}px`} color={theme.colors.white} />
-              </AddCategoryTimeHeaderButton>
-            </AddCategoryTimeHeader>
-            {openBeginTimePicker ? (
-              <RNDateTimePicker
-                value={beginTime}
-                mode="time"
-                is24Hour={true}
-                onChange={onTimeChangeBegin}
-              />
-            ) : (
-              <></>
-            )}
-            {openEndTimePicker ? (
-              <RNDateTimePicker
-                value={endTime}
-                mode="time"
-                is24Hour={true}
-                onChange={onTimeChangeEnd}
-              />
-            ) : (
-              <></>
-            )}
-            <AddCategoryCardContent showsVerticalScrollIndicator={false}>
-              {isLoading ? (
-                <LoadingContainer>
-                  <ActivityIndicator
-                    size={'large'}
-                    color={theme.colors.orange}
-                  />
-                </LoadingContainer>
-              ) : (
-                <>
-                  <AddCategoryTimeRow>
-                    <DropDownPicker
-                      open={openDropDown}
-                      value={selectedCategory}
-                      items={categoriesList}
-                      setOpen={setOpenDropdown}
-                      setValue={setSelectedCategory}
-                      //@ts-ignore
-                      setItems={setCategoriesList}
-                      placeholder={
-                        categoriesList.length > 0
-                          ? 'Selecione uma categoria'
-                          : 'Sem categorias disponíveis'
-                      }
-                      disabled={categoriesList.length === 0}
-                      placeholderStyle={{textAlign: 'center'}}
-                      style={{borderColor: theme.colors.gray_50}}
-                      containerStyle={{width: RFValue(225)}}
-                      textStyle={{textAlign: 'center'}}
-                      arrowIconContainerStyle={{
-                        position: 'absolute',
-                        right: '5%',
-                        transform: [{scale: 1.2}],
-                      }}
-                      selectedItemContainerStyle={{
-                        backgroundColor: theme.colors.orange,
-                      }}
-                      dropDownContainerStyle={{
-                        borderColor: theme.colors.gray_50,
-                      }}
-                      selectedItemLabelStyle={{color: theme.colors.white}}
-                      showTickIcon={false}
-                      closeOnBackPressed
-                      multiple
-                      mode="BADGE"
-                      listMode="SCROLLVIEW"
-                      showBadgeDot={false}
-                      extendableBadgeContainer
-                      // searchable
-                      searchContainerStyle={{
-                        borderColor: theme.colors.gray_50,
-                      }}
-                      searchTextInputStyle={{
-                        borderColor: theme.colors.gray_50,
-                      }}
-                      itemSeparatorStyle={{
-                        backgroundColor: 'red',
-                        borderColor: 'red',
-                      }}
-                      searchPlaceholder="Pesquisar categoria..."
-                    />
-                  </AddCategoryTimeRow>
-                  <AddCategoryTimeRow>
-                    <AddCategoryFieldWrapper>
-                      <AddCategoryLabel>Horário Inicial</AddCategoryLabel>
-                      <AddCategoryTimeTouchable
-                        onPress={() => setOpenBeginTimePicker(true)}>
-                        <AddCategoryTime>
-                          {selectedBeginTime
-                            ? formatTimeString(beginTime)
-                            : '00:00'}
-                        </AddCategoryTime>
-                      </AddCategoryTimeTouchable>
-                    </AddCategoryFieldWrapper>
-
-                    <AddCategoryFieldWrapper>
-                      <AddCategoryLabel>Horário Final</AddCategoryLabel>
-                      <AddCategoryTimeTouchable
-                        onPress={() => setOpenEndTimePicker(true)}>
-                        <AddCategoryTime>
-                          {selectedEndTime
-                            ? formatTimeString(endTime)
-                            : '00:00'}
-                        </AddCategoryTime>
-                      </AddCategoryTimeTouchable>
-                    </AddCategoryFieldWrapper>
-                  </AddCategoryTimeRow>
-
-                  <AddCategoryFieldWrapper>
-                    <AddCategoryLabel>Dia da Semana</AddCategoryLabel>
-                    <AddCategoryTimeDaysRow>
-                      {days.map((day, index) => (
-                        <AddCategoryTimeDayTouchable
-                          //@ts-ignore
-                          selected={checkDaySelected(index)}
-                          onPress={() => selectDay(index)}
-                          key={index}>
-                          <AddCategoryTimeDay
-                            //@ts-ignore
-                            selected={checkDaySelected(index)}>
-                            {day}
-                          </AddCategoryTimeDay>
-                        </AddCategoryTimeDayTouchable>
-                      ))}
-                    </AddCategoryTimeDaysRow>
-                  </AddCategoryFieldWrapper>
-
-                  <AddCategoryFieldWrapper>
-                    <AddCategoryLabel>Particularidades</AddCategoryLabel>
-                    <Input
-                      color={theme.colors.white}
-                      width="auto"
-                      height="auto"
-                      multiline
-                      maxLength={300}
-                      textAlignVertical="top"
-                      placeholder="Escreva um pouco sobre a consulta"
-                      onChangeText={setCategoryDescription}
-                    />
-                  </AddCategoryFieldWrapper>
-
-                  <AddCategoryFieldWrapper>
-                    <AddCategoryLabel>Valor da Consulta</AddCategoryLabel>
-                    <ValueInput
-                      value={selectedPrice}
-                      placeholder="R$ 000,00"
-                      maxLength={12}
-                      blurOnSubmit
-                      onChangeText={(masked, unmasked) => {
-                        setSelectedPrice(unmasked);
-                      }}
-                      placeholderTextColor={theme.colors.gray_80}
-                      keyboardType="number-pad"
-                      mask={Masks.BRL_CURRENCY}
-                      autoCorrect={false}
-                    />
-                  </AddCategoryFieldWrapper>
-                </>
-              )}
-            </AddCategoryCardContent>
-
-            <WrapperButton>
-              <AddCategoryTimeSaveButton
-                disabled={
-                  isLoading ||
-                  !selectedBeginTime ||
-                  !selectedEndTime ||
-                  selectedDays.length === 0 ||
-                  typeof selectedCategory === 'undefined' ||
-                  selectedPrice === ''
-                }
-                onPress={handleSubmit}>
-                <AddCategoryTime>Salvar</AddCategoryTime>
-              </AddCategoryTimeSaveButton>
-            </WrapperButton>
-          </AddCategoryTimeCard>
-        </AddCategoryTimeView>
-      </AddCategoryTimeModal>
       {loading ? (
         <Loading />
       ) : categorias?.length === 0 ? (
@@ -450,7 +268,11 @@ export function GerenciarConsultas() {
           data={categorias}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
-            <TherapistCategory refresh={fetchMyInfo} data={item} />
+            <TherapistCategory
+              refresh={fetchMyInfo}
+              data={item}
+              onPress={() => fetchMyInfo()}
+            />
           )}
         />
       )}
@@ -460,7 +282,9 @@ export function GerenciarConsultas() {
             <AddButtonText>Adicionar</AddButtonText>
           </AddButton>
         </AddButtonContainer>
-      ) : null}
+      ) : (
+        <></>
+      )}
     </>
   );
 }

@@ -3,7 +3,6 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from 'styled-components';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/Entypo';
 import {styles} from './ClientRoutes/routes.styles';
 
 // Screen stack´s.
@@ -104,7 +103,6 @@ function OpenRoutes() {
             fontSize: 16,
           },
           headerShadowVisible: false,
-
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <CaretLeft size={24} color={theme.colors.orange_100} />

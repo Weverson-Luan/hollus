@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {useTheme} from 'styled-components';
 import {useNavigation} from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -10,19 +10,13 @@ import {UserPanel} from '../../screens/StackNavigation/UserPanel';
 
 // screens-bottom-tabs-authenticates
 import {AuthenticateBottomTabsNavigation} from './routes.BottomTabs';
-import {StackParamsList} from './routes';
 
-// styles
-import {HeaderDrawer} from '../../components/HeaderDrawer';
 import {stackNavigationList} from '../../services/navigation/stack-navigation';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {RFValue} from 'react-native-responsive-fontsize';
-import Icon from 'react-native-ionicons';
-import {styles} from './routes.styles';
 import {NavigationHeader} from '../../components/NavigationHeader';
 import {EditProfileClient} from '../../screens/StackNavigation/EditProfile/Client';
 
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {GerenciarConsultas} from '../../screens/StackNavigation/GerenciarConsultas';
 import {FaleConosco} from '../../screens/StackNavigation/FaleConosco';
 import {ScreenSearch} from '../../screens/BottomTabs/Search';
@@ -34,7 +28,6 @@ import {Cart} from '../../screens/StackNavigation/Cart';
 import {ProductSelected} from '../../screens/StackNavigation/ProductSelected';
 import {ResumeRequest} from '../../screens/StackNavigation/ResumeRequest';
 import {FormPayment} from '../../screens/StackNavigation/FormPayment';
-import {Chat} from '../../screens/BottomTabs/Chat';
 import {ChatList} from '../../screens/BottomTabs/ChatList';
 import {Addresses} from '../../screens/StackNavigation/Addresses';
 import {PaymentInfo} from '../../screens/StackNavigation/PaymentInfo';
@@ -44,6 +37,7 @@ import {
   ScheduleAppointment3,
   ScheduleAppointment4,
 } from '../../screens/StackNavigation/ScheduleAppointment';
+
 import {User} from 'phosphor-react-native';
 
 const Drawer = createDrawerNavigator();
@@ -76,7 +70,6 @@ export function ClientDrawerNavigation() {
 
 export function ClientStackProfileRoutes() {
   const theme = useTheme();
-  const navigation = useNavigation();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -142,8 +135,6 @@ export function ClientStackProfileRoutes() {
 }
 
 export function ClientStackSearchRoutes() {
-  const theme = useTheme();
-  const navigation = useNavigation();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -198,8 +189,6 @@ export function ClientStackSearchRoutes() {
 }
 
 export function ClientStackProductsRoutes() {
-  const theme = useTheme();
-  const navigation = useNavigation();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -249,11 +238,6 @@ export function ClientStackRoutesAuth() {
       screenOptions={{
         headerTitleAlign: 'center',
         headerShown: false,
-        // headerShadowVisible: true,
-        // headerTintColor: theme.colors.orange_100,
-        // headerTitleStyle: {
-        //   fontSize: 16,
-        // },
       }}>
       <Stack.Screen name="HomeAuth" component={ClientDrawerNavigation} />
       {stackNavigationList.map(screen => (

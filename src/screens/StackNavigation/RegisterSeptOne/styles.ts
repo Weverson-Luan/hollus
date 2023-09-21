@@ -1,6 +1,9 @@
 import { Text } from "react-native";
+
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+
 import styled from "styled-components/native";
+
 import theme from "../../../styles/colors/theme";
 
 export const Container = styled.ScrollView`
@@ -11,13 +14,11 @@ export const WrapperHeader = styled.View`
   width: 100%;
   height: 100px;
   background-color: ${({ theme }) => theme.colors.white};
-
   border-bottom-width: 1px;
   border-color: ${({ theme }) => theme.colors.gray_50};
 `;
 export const WrapperDescription = styled.View`
   width: 100%;
-
   margin-top: ${RFPercentage(-1)}px;
   margin-bottom: ${RFPercentage(2)}px;
 `;
@@ -35,9 +36,7 @@ export const WrapperButtons = styled.View`
   width: 100%;
   margin-bottom: 4px;
   padding: 24px;
-
   background-color: ${({ theme }) => theme.colors.white};
-
   border-top-width: 1px;
   border-color: ${({ theme }) => theme.colors.gray_50};
 `;
@@ -53,8 +52,7 @@ export const WrapperLabel = styled.View`
 `;
 export const WrapperLabelInput = styled.View`
   width: 100%;
-  background-color: transparent;
-  margin-bottom: 8px;
+ 
 
 `;
 export const LabelInput = styled.Text`
@@ -81,21 +79,17 @@ export const WrapperInput = styled.View`
   width: 100%;
   margin-bottom: 16px;
 `;
-
 export const SubLabel = styled(Text)`
   font-size: ${RFValue(10)}px;
   font-weight: normal;
   color: ${theme.colors.gray_80};
   margin-bottom: 10px;
 `;
-
 export const FieldsContainer = styled.View`
   width: 100%;
   padding-bottom: 76px;
 
-  
 `;
-
 export const SubmitButtonContainer = styled.View`
   width: 100%;
   height: 60px;
@@ -104,13 +98,11 @@ export const SubmitButtonContainer = styled.View`
   justify-content: center;
 
 `;
-
 export const WrapperConfirmePolicy = styled.View`
   width: 100%;
   padding: 10px;
   align-items: flex-start;
   background-color: transparent;
   flex-direction: row;
-
 
 `;

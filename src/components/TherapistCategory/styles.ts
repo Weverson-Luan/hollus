@@ -23,6 +23,11 @@ export const CategoryPhoto = styled.Image`
   width: ${RFValue(75)}px;
   border-radius: 10000000px;
 `;
+export const TitleLoading = styled.Text`
+  font-size: ${RFValue(16)}px;
+  color: ${props => props.theme.colors.gray_80};
+  font-weight: 400;
+`;
 
 export const CategoryInfoWrapper = styled.View`
   flex: 1;
@@ -164,7 +169,9 @@ export const AddCategoryTimeButtonTitle = styled.Text`
   margin-left: 6px;
 `;
 
-export const AddCategoryTimeModal = styled.Modal``;
+export const AddCategoryTimeModal = styled.Modal`
+  
+`;
 
 export const AddCategoryTimeView = styled.View`
   background-color: rgba(0, 0, 0, 0.3);
@@ -178,10 +185,15 @@ export const AddCategoryTimeCard = styled.View`
   border-radius: 10px;
   max-height: ${RFValue(450)}px;
   width: ${RFValue(300)}px;
-  overflow: hidden;
+
 `;
 
-export const AddCategoryCardContent = styled.ScrollView``;
+export const AddCategoryCardContent = styled.ScrollView`
+  margin-bottom: 40px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const AddCategoryTimeTouchable = styled.TouchableOpacity`
   background-color: ${({theme}) => theme.colors.orange};
@@ -202,9 +214,19 @@ export const AddCategoryTimeSaveButton = styled.TouchableOpacity`
   text-align: center;
   width: ${RFValue(280)}px;
   margin-bottom: 8px;
+  margin-top: 16px;
+  border-radius: 8px;
+`;
+
+export const WrapperRow = styled.View`
+  padding: ${RFValue(10)}px;
 `;
 
 export const AddCategoryFieldWrapper = styled.View`
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: ${RFValue(10)}px;
 `;
 
@@ -279,9 +301,8 @@ export const AddCategoryTimeDay = styled.Text`
 export const LoadingContainer = styled.View`
   background-color: ${props => props.theme.colors.white};
   height: ${RFValue(150)}px;
-  width: ${RFValue(150)}px;
+  width: 100%;
   justify-content: center;
-  margin: ${RFValue(20)}px;
 `;
 
 export const CategoryDetailsWrapper = styled.View`
