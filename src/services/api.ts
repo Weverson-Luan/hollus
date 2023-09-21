@@ -1,14 +1,9 @@
 /**
  * IMPORTS
  */
-import { useNavigation } from "@react-navigation/native";
+import {useEffect } from "react";
 import axios from "axios";
-import { useContext, useEffect } from "react";
-import { Alert } from "react-native";
-import { AuthContext } from "../context/AuthProvider";
 import useAlert from "../context/hooks/Alert/useAlert";
-import { useAuth } from "../context/hooks/Auth/useAuth";
-import { rootNavigationRef } from "../routes/RootNavigation";
 
 const Api = axios.create({
    baseURL: "https://api-hollus.worktabsystems.com.br/api",
@@ -16,6 +11,7 @@ const Api = axios.create({
 });
 const AxiosInterceptor = ({ children, auth }: any) => {
   const { setAlert } = useAlert();
+
   useEffect(() => {
     const resInterceptor = (response: any) => {
       return response;

@@ -1,43 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import {useTheme} from 'styled-components';
 
 //icons
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Entypo from 'react-native-vector-icons/Entypo';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-//components
 
 //styled-components
 import {
   Container,
-  Content,
-  ImageTherapist,
-  WrapperInfo,
-  Title,
-  WrapperHeader,
-  ContentPonts,
-  TitlePonts,
-  WrapperLocation,
-  WrapperLocationHeader,
-  WrapperLocatinIcon,
   TitleAboutQuery,
-  TitleLocationMap,
-  SubTitleLocation,
   WrapperButton,
   ContentButton,
   TextButton,
   WarningContainer,
   WarningText,
   WarningSubText,
-  ProfileButton,
-  ProfileButtonText,
 } from './styles';
 import {ActivityIndicator, PermissionsAndroid, View} from 'react-native';
-import {Form, Formik, useFormik} from 'formik';
+import {Formik} from 'formik';
 import {EditProfileSchema} from './schema';
 import {RFValue} from 'react-native-responsive-fontsize';
 import axios from 'axios';
@@ -58,8 +38,7 @@ import {
   PhotoTouchable,
   PhotoWrapper,
 } from '../Client/styles';
-// import * as ImagePicker from "expo-image-picker";
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+
 import useAlert from '../../../../context/hooks/Alert/useAlert';
 import {Loading} from '../../../../components/Loading';
 
@@ -128,14 +107,27 @@ export function EditProfileTherapist() {
     }`;
   };
   const handleCepSearch = async () => {
-    // console.log("searching cep");
-    setLoadingCep(true);
-    const res = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-    !res.data.erro
-      ? (setEnderecoInfo(res.data), handleNewValue('endereco_cep', cep))
-      : null;
-    setLoadingCep(false);
-    // console.log(res.data);
+    console.log('searching cep', cep?.length);
+    try {
+      if (cep?.length === 8 || cep?.length > 8) {
+        setLoadingCep(true);
+        const responseCep = await axios.get(
+          `https://viacep.com.br/ws/${cep}/json/`,
+        );
+
+        console.log('searching cep', responseCep.data);
+        if (responseCep.data) {
+          setEnderecoInfo(responseCep.data);
+          handleNewValue('endereco_cep', cep);
+        }
+        setLoadingCep(false);
+        // console.log(res.data);
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.log('*8', error);
+    }
   };
 
   useEffect(() => {
@@ -264,9 +256,7 @@ export function EditProfileTherapist() {
         },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the camera');
       } else {
-        console.log('Camera permission denied');
       }
     } catch (err) {
       console.warn(err);
@@ -284,28 +274,32 @@ export function EditProfileTherapist() {
       ) : (
         <Formik
           initialValues={{
-            nome: myInfo?.nome,
-            email: myInfo?.email,
-            password: myInfo?.password,
-            sobre: myInfo?.sobre,
-            experiencias: myInfo?.experiencias,
+            nome: myInfo?.nome ?? '',
+            email: myInfo?.email ?? '',
+            password: myInfo?.password ?? '',
+            sobre: myInfo?.sobre ?? '',
+            experiencias: myInfo?.experiencias ?? '',
             formacao: myInfo?.formacao,
-            endereco_logradouro: myInfo?.endereco_logradouro,
-            endereco_numero: myInfo?.endereco_numero,
-            endereco_complemento: myInfo?.endereco_complemento,
-            endereco_bairro: myInfo?.endereco_bairro,
-            endereco_cidade: myInfo?.endereco_cidade,
-            endereco_estado: myInfo?.endereco_estado,
+            endereco_logradouro: myInfo?.endereco_logradouro ?? '',
+            endereco_numero: myInfo?.endereco_numero ?? '',
+            endereco_complemento: myInfo?.endereco_complemento ?? '',
+            endereco_bairro: myInfo?.endereco_bairro ?? '',
+            endereco_cidade: myInfo?.endereco_cidade ?? '',
+            endereco_estado: myInfo?.endereco_estado ?? '',
             endereco_cep: myInfo?.endereco_cep,
-            endereco_completo: `${myInfo.endereco_logradouro}${
-              myInfo.endereco_numero ? ', número ' + myInfo.endereco_numero : ''
-            }${
-              myInfo.endereco_complemento
-                ? ', ' + myInfo.endereco_complemento + ','
-                : ','
-            } ${myInfo.endereco_bairro}, ${myInfo.endereco_cidade} - ${
-              myInfo.endereco_estado
-            }`,
+            endereco_completo: myInfo.endereco_logradouro
+              ? `${myInfo.endereco_logradouro}${
+                  myInfo.endereco_numero
+                    ? ', número ' + myInfo.endereco_numero
+                    : ''
+                }${
+                  myInfo.endereco_complemento
+                    ? ', ' + myInfo.endereco_complemento + ','
+                    : ','
+                } ${myInfo.endereco_bairro}, ${myInfo.endereco_cidade} - ${
+                  myInfo.endereco_estado
+                }`
+              : '',
             sobre_consulta: myInfo?.sobre_consulta,
             cpf: myInfo?.cpf,
             rg: myInfo?.rg,
@@ -648,7 +642,7 @@ export function EditProfileTherapist() {
                     ]}
                     autoCorrect={false}
                   />
-                  <View>
+                  <View style={{marginBottom: 16}}>
                     <TitleAboutQuery
                       style={{
                         textAlign: 'center',
@@ -657,9 +651,7 @@ export function EditProfileTherapist() {
                       Informações profissionais
                     </TitleAboutQuery>
                   </View>
-                  {/* <ProfileButton>
-                    <ProfileButtonText>Enviar certificado</ProfileButtonText>
-                  </ProfileButton> */}
+
                   <LabelInput>
                     Sobre a consulta
                     {errors.sobre_consulta && touched.sobre_consulta ? (
@@ -762,44 +754,7 @@ export function EditProfileTherapist() {
                       Localização
                     </TitleAboutQuery>
                   </View>
-                  <LabelInput>
-                    Endereço Completo
-                    {errors.endereco_completo && touched.endereco_completo ? (
-                      <LabelInput style={{color: theme.colors.red}}>
-                        {/**@ts-ignore */}
-                        {errors.endereco_completo}
-                      </LabelInput>
-                    ) : null}
-                  </LabelInput>
-                  <Input
-                    defaultValue={values.endereco_completo}
-                    value={
-                      values.endereco_completo === ''
-                        ? values.endereco_cep &&
-                          !errors.endereco_cep &&
-                          !loadingCep &&
-                          enderecoInfo
-                          ? handleFormatAddress(
-                              values.endereco_numero,
-                              values.endereco_complemento,
-                            )
-                          : loadingCep
-                          ? 'Buscando pelo CEP...'
-                          : ''
-                        : values.endereco_completo
-                    }
-                    multiline
-                    onBlur={handleBlur('endereco_completo')}
-                    placeholder="Insira o CEP..."
-                    onChangeText={handleChange('endereco_completo')}
-                    placeholderTextColor={theme.colors.gray_80}
-                    editable={false}
-                    style={{padding: 10}}
-                    width={'100%'}
-                    height="70px"
-                    color={theme.colors.white}
-                    autoCorrect={false}
-                  />
+
                   <View
                     style={{
                       flexDirection: 'row',
@@ -859,6 +814,7 @@ export function EditProfileTherapist() {
                             borderRadius: RFValue(4),
                             borderWidth: 1,
                             borderColor: theme.colors.gray_50,
+                            color: theme.colors.gray_80,
                           }}
                           mask={[
                             /\d/,
@@ -920,7 +876,7 @@ export function EditProfileTherapist() {
                     defaultValue={values.endereco_complemento}
                     value={values.endereco_complemento}
                     onBlur={handleBlur('endereco_complemento')}
-                    placeholder=""
+                    placeholder="Informe complemento..."
                     onChangeText={value => {
                       setFieldValue('endereco_complemento', value);
                       handleNewValue('endereco_complemento', value);
@@ -933,6 +889,47 @@ export function EditProfileTherapist() {
                     autoCorrect={false}
                   />
                 </View>
+                {enderecoInfo.bairro && (
+                  <>
+                    <LabelInput>
+                      Endereço Completo
+                      {errors.endereco_completo && touched.endereco_completo ? (
+                        <LabelInput style={{color: theme.colors.red}}>
+                          {/**@ts-ignore */}
+                          {errors.endereco_completo}
+                        </LabelInput>
+                      ) : null}
+                    </LabelInput>
+                    <Input
+                      value={
+                        values.endereco_completo === ''
+                          ? values.endereco_cep &&
+                            !errors.endereco_cep &&
+                            !loadingCep &&
+                            enderecoInfo
+                            ? handleFormatAddress(
+                                values.endereco_numero,
+                                values.endereco_complemento,
+                              )
+                            : loadingCep
+                            ? 'Buscando pelo CEP...'
+                            : ''
+                          : values.endereco_completo
+                      }
+                      multiline
+                      onBlur={handleBlur('endereco_completo')}
+                      placeholder="Aguandando..."
+                      onChangeText={handleChange('endereco_completo')}
+                      placeholderTextColor={theme.colors.gray_80}
+                      editable={false}
+                      style={{padding: 10}}
+                      width={'100%'}
+                      height="70px"
+                      color={theme.colors.white}
+                      autoCorrect={false}
+                    />
+                  </>
+                )}
               </Container>
               <WrapperButton>
                 <ContentButton>

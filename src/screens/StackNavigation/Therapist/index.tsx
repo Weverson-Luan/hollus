@@ -1,13 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useTheme} from 'styled-components';
-import {
-  Alert,
-  FlatList,
-  Linking,
-  Platform,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {Linking, Text, TouchableOpacity} from 'react-native';
 
 import {Button} from '../../../components/Button';
 import {
@@ -30,20 +23,12 @@ import {
   SubTitleAcademicFormation,
   WrapperLocation,
   WrapperLocationHeader,
-  WrapperLocationIcon,
   TitleLocationMap,
   TitleLocation,
   SubTitleLocation,
   WrapperAboutQuery,
   TitleAboutQuery,
   SubTitleAboutQuery,
-  WrapperClassification,
-  TitleClassification,
-  WrapperClassificationHeader,
-  ContentClassification,
-  WrapperClassificationIcon,
-  SubTitleClassification,
-  SubTitleClassificationPont,
   TitleComment,
   WrapperComment,
   WrapperCommentHeader,
@@ -55,7 +40,6 @@ import {
   WrapperButton,
   TextButton,
   Row,
-  CategoryIcon,
   WrapperCategories,
   RowExpand,
   Col,
@@ -70,16 +54,14 @@ import {ActivityIndication} from '../../../components/Spinner';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import useAlert from '../../../context/hooks/Alert/useAlert';
 import MandalaSVG from '../../../assets/svg/mandala.svg';
-import {
-  DotsThreeOutline,
-  DotsThreeOutlineVertical,
-  StopCircle,
-} from 'phosphor-react-native';
+import {CaretDown, CaretUp, StopCircle} from 'phosphor-react-native';
+import {handleReturnString} from '../../../utils/handle-return-string';
 
 export function Therapist({navigation, route}: any) {
   const theme = useTheme();
 
   const [therapistInfo, setTherapistInfo] = useState<ITherapist | any>();
+  console.log('set Ther', therapistInfo);
   const [loading, setLoading] = useState(true);
   const [expandCategories, setExpandCategories] = useState(false);
 
@@ -91,10 +73,8 @@ export function Therapist({navigation, route}: any) {
 
       // caso api não retorne um data e por que tivemos um problema interno
       if (res.data) {
-        // console.log('res.data', res.data);
         setTherapistInfo(res.data);
       } else {
-        console.log('res.data', res);
         setMessageError('Problemas interno, feche o app e tente novamente.');
       }
     } catch (error) {
@@ -150,20 +130,22 @@ export function Therapist({navigation, route}: any) {
 
                   <WrapperAbout>
                     <TitleAbout>Sobre o terapeuta</TitleAbout>
-                    <SubTitleAbout>{therapistInfo?.sobre}</SubTitleAbout>
+                    <SubTitleAbout>
+                      {handleReturnString(therapistInfo?.sobre)}
+                    </SubTitleAbout>
                   </WrapperAbout>
 
                   <WrapperExperience>
                     <TitleExperience>Experiências</TitleExperience>
                     <SubTitleExperience>
-                      {therapistInfo?.experiencias}
+                      {handleReturnString(therapistInfo?.experiencias)}
                     </SubTitleExperience>
                   </WrapperExperience>
 
                   <WrapperAcademicFormation>
                     <TitleAcademicFormation>Formação</TitleAcademicFormation>
                     <SubTitleAcademicFormation>
-                      {therapistInfo?.formacao}
+                      {handleReturnString(therapistInfo?.formacao)}
                     </SubTitleAcademicFormation>
                   </WrapperAcademicFormation>
 
@@ -188,7 +170,7 @@ export function Therapist({navigation, route}: any) {
                       ) : null}
                     </WrapperLocationHeader>
                     <SubTitleLocation>
-                      {therapistInfo?.endereco_completo}
+                      {handleReturnString(therapistInfo?.endereco_completo)}
                     </SubTitleLocation>
 
                     <SubTitleLocation>
@@ -199,7 +181,7 @@ export function Therapist({navigation, route}: any) {
                   <WrapperAboutQuery>
                     <TitleAboutQuery>Sobre a consulta</TitleAboutQuery>
                     <SubTitleAboutQuery>
-                      {therapistInfo?.sobre_consulta ?? 'Sem informação'}
+                      {handleReturnString(therapistInfo?.sobre_consulta)}
                     </SubTitleAboutQuery>
                   </WrapperAboutQuery>
                   <WrapperCategories>
@@ -230,6 +212,11 @@ export function Therapist({navigation, route}: any) {
                         {therapistInfo?.categorias.length > 2 ? (
                           <RowExpand>
                             <TouchableOpacity
+                              style={{
+                                flexDirection: 'row',
+                                height: 30,
+                                alignItems: 'center',
+                              }}
                               onPress={() =>
                                 setExpandCategories(!expandCategories)
                               }>
@@ -237,12 +224,18 @@ export function Therapist({navigation, route}: any) {
                                 {expandCategories
                                   ? 'Mostrar menos'
                                   : 'Mostrar tudo'}{' '}
-                                <FontAwesome5Icon
-                                  name={
-                                    expandCategories ? 'caret-up' : 'caret-down'
-                                  }
-                                />
                               </Text>
+                              {expandCategories ? (
+                                <CaretUp
+                                  size={18}
+                                  color={theme.colors.gray_80}
+                                />
+                              ) : (
+                                <CaretDown
+                                  size={18}
+                                  color={theme.colors.gray_80}
+                                />
+                              )}
                             </TouchableOpacity>
                           </RowExpand>
                         ) : null}

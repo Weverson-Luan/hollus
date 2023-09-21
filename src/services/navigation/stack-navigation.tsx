@@ -1,27 +1,20 @@
-import { AuthenticateBottomTabsNavigation } from "../../routes/routes.BottomTabs";
-import { DrawerNavigation } from "../../routes/routes.Drawer";
-import { ChatList } from "../../screens/BottomTabs/ChatList";
-import { Addresses } from "../../screens/StackNavigation/Addresses";
-import { AppointmentClient } from "../../screens/StackNavigation/Appointment/Client";
-import { Cart } from "../../screens/StackNavigation/Cart";
-import { EditProfileClient } from "../../screens/StackNavigation/EditProfile/Client";
-import { FaleConosco } from "../../screens/StackNavigation/FaleConosco";
-import { Filter } from "../../screens/StackNavigation/Filter";
-import { FilterProducts } from "../../screens/StackNavigation/FilterProducts";
-import { FormPayment } from "../../screens/StackNavigation/FormPayment";
-import { PaymentInfo } from "../../screens/StackNavigation/PaymentInfo";
-import { ProductSelected } from "../../screens/StackNavigation/ProductSelected";
-import { Register } from "../../screens/StackNavigation/Register";
-import { ResumeRequest } from "../../screens/StackNavigation/ResumeRequest";
+import {AppointmentClient} from '../../screens/StackNavigation/Appointment/Client';
+import {Cart} from '../../screens/StackNavigation/Cart';
+import {FaleConosco} from '../../screens/StackNavigation/FaleConosco';
+import {Filter} from '../../screens/StackNavigation/Filter';
+import {FilterProducts} from '../../screens/StackNavigation/FilterProducts';
+import {ProductSelected} from '../../screens/StackNavigation/ProductSelected';
+import {ResumeRequest} from '../../screens/StackNavigation/ResumeRequest';
 import {
   ScheduleAppointment1,
   ScheduleAppointment2,
   ScheduleAppointment3,
   ScheduleAppointment4,
-} from "../../screens/StackNavigation/ScheduleAppointment";
-import { ScheduleConsultation } from "../../screens/StackNavigation/ScheduleConsultation";
-import { SignIn } from "../../screens/StackNavigation/SignIn";
-import { Therapist } from "../../screens/StackNavigation/Therapist";
+} from '../../screens/StackNavigation/ScheduleAppointment';
+
+import {ScheduleConsultation} from '../../screens/StackNavigation/ScheduleConsultation';
+
+import {Therapist} from '../../screens/StackNavigation/Therapist';
 
 export const stackNavigationList = [
   // {
@@ -56,27 +49,27 @@ export const stackNavigationList = [
   // },
   {
     id: 18,
-    name: "Therapist",
+    name: 'Therapist',
     component: Therapist,
-    header: "Terapeuta",
+    header: 'Terapeuta',
   },
   {
     id: 19,
-    name: "Appointment",
+    name: 'Appointment',
     component: AppointmentClient,
-    header: "Consulta",
+    header: 'Consulta',
   },
   {
     id: 20,
-    name: "ScheduleConsultation",
+    name: 'ScheduleConsultation',
     component: ScheduleConsultation,
-    header: "Agendar Consulta",
+    header: 'Agendar Consulta',
   },
   {
     id: 21,
-    name: "ProductSelected",
+    name: 'ProductSelected',
     component: ProductSelected,
-    header: "Loja",
+    header: 'Loja',
   },
   // {
   //   id: 22,
@@ -98,56 +91,56 @@ export const stackNavigationList = [
   // },
   {
     id: 27,
-    name: "Filter",
+    name: 'Filter',
     component: Filter,
-    header: "Filtros de busca",
+    header: 'Filtros de busca',
   },
   {
     id: 28,
-    name: "FilterProducts",
+    name: 'FilterProducts',
     component: FilterProducts,
-    header: "Filtros",
+    header: 'Filtros',
   },
   {
     id: 29,
-    name: "ShoppingCart",
+    name: 'ShoppingCart',
     component: Cart,
-    header: "Cesta de Compras",
+    header: 'Cesta de Compras',
   },
   {
     id: 30,
-    name: "ResumeRequest",
+    name: 'ResumeRequest',
     component: ResumeRequest,
-    header: "Cesta de Compras",
+    header: 'Cesta de Compras',
   },
   {
     id: 31,
-    name: "FaleConosco",
+    name: 'FaleConosco',
     component: FaleConosco,
-    header: "",
+    header: '',
   },
   {
     id: 32,
-    name: "ScheduleAppointment1",
+    name: 'ScheduleAppointment1',
     component: ScheduleAppointment1,
-    header: "Agendar Consulta",
+    header: 'Agendar Consulta',
   },
   {
     id: 33,
-    name: "ScheduleAppointment2",
+    name: 'ScheduleAppointment2',
     component: ScheduleAppointment2,
-    header: "Agendar Consulta",
+    header: 'Agendar Consulta',
   },
   {
     id: 34,
-    name: "ScheduleAppointment3",
+    name: 'ScheduleAppointment3',
     component: ScheduleAppointment3,
-    header: "Agendar Consulta",
+    header: 'Agendar Consulta',
   },
   {
     id: 35,
-    name: "ScheduleAppointment4",
+    name: 'ScheduleAppointment4',
     component: ScheduleAppointment4,
-    header: "Confirmar Consulta",
+    header: 'Confirmar Consulta',
   },
 ];

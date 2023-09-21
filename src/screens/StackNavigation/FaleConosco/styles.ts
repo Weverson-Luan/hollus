@@ -12,6 +12,7 @@ interface Selected extends View {
   cardCredit?: boolean;
 }
 export const Main = styled.View`
+  width: 100%;
   background-color: ${({ theme }) => theme.colors.white};
   flex: 1;
   justify-content: space-around;

@@ -20,12 +20,6 @@ export const WrapperHeaderIcon = styled.View`
   align-items: center;
   justify-content: center;
 `;
-export const WrapperSelect = styled.View`
-  width: 100%;
-  flex-direction: row-reverse;
-  align-items: flex-start;
-  padding: 12px;
-`;
 export const WrapperHeaderDescription = styled.View`
   width: 100%;
   margin-top: 30px;
@@ -49,12 +43,10 @@ export const ContainerMain = styled.View`
 `;
 export const WrapperInput = styled.View`
   width: 100%;
-
 `;
 export const LabelText = styled.Text`
   color: ${({ theme }) => theme.colors.black};
   font-size: ${RFPercentage(2)}px;
-
   margin-bottom: 6px;
 `;
 export const WrapperForget = styled.TouchableOpacity`

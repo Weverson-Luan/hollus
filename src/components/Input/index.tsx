@@ -1,6 +1,7 @@
 import React from 'react';
 import {TextInputProps} from 'react-native';
-import {MaskInputProps} from 'react-native-mask-input';
+
+// styles
 import {Container, TextInputForm} from './styles';
 
 interface InputProps extends TextInputProps {

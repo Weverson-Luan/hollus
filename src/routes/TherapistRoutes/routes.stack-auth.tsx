@@ -1,110 +1,79 @@
 import React from 'react';
 import {useTheme} from 'styled-components';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 
 //icons
 import Icon from 'react-native-vector-icons/Entypo';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-//icons SVG
-import LogoHollusSVG from '../../assets/svg/logo-dark.svg';
-import {StackParamsList} from './routes';
+import {User} from 'phosphor-react-native';
 
 //screens-stacks-authenticates
 
 //screen-bottomTabs-authenticates
 import {Chat} from '../../screens/BottomTabs/Chat';
 import {ChatList} from '../../screens/BottomTabs/ChatList';
+import {Dashboard} from '../../screens/BottomTabs/Dashboard';
 
-import LogoPNG from '../../assets/logo.png';
-
-import {WrapperDrawer, DrawerButton, styles} from './routes.styles';
-import {AuthenticateBottomTabsNavigation} from './routes.BottomTabs';
+import {Cart} from '../../screens/StackNavigation/Cart';
 import {UserPanel} from '../../screens/StackNavigation/UserPanel';
 import {Therapist} from '../../screens/StackNavigation/Therapist';
 import {EditProfileTherapist} from '../../screens/StackNavigation/EditProfile/Therapist';
 import {AppointmentTherapist} from '../../screens/StackNavigation/Appointment/Therapist';
 import {TherapistInfo} from '../../screens/StackNavigation/TherapistInfo';
-import {HeaderDrawer} from '../../components/HeaderDrawer';
 import {GerenciarConsultas} from '../../screens/StackNavigation/GerenciarConsultas';
 import {RegisterTherapistStep2} from '../../screens/StackNavigation/RegisterTherapist';
-import {Dashboard} from '../../screens/BottomTabs/Dashboard';
 import {FaleConosco} from '../../screens/StackNavigation/FaleConosco';
 import {NavigationHeader} from '../../components/NavigationHeader';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {RFValue} from 'react-native-responsive-fontsize';
 import {Filter} from '../../screens/StackNavigation/Filter';
 import {ScreenSearch} from '../../screens/BottomTabs/Search';
 import {ScreenProducts} from '../../screens/BottomTabs/Products';
 import {FilterProducts} from '../../screens/StackNavigation/FilterProducts';
-import {Cart} from '../../screens/StackNavigation/Cart';
 import {ProductSelected} from '../../screens/StackNavigation/ProductSelected';
 import {ResumeRequest} from '../../screens/StackNavigation/ResumeRequest';
 import {FormPayment} from '../../screens/StackNavigation/FormPayment';
-import {User} from 'phosphor-react-native';
+
+import {styles} from './routes.styles';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
+/**
+ *
+ *rotas Drawer autenticadas
+ */
 function TherapistRoutesDrawerAuth() {
   const theme = useTheme();
-  const navigation = useNavigation();
 
   return (
     <Drawer.Navigator
       screenOptions={{
+        headerTitleAlign: 'center',
         headerStyle: {
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.gray_25,
         },
-        headerTitleAlign: 'center',
-        headerLeft: () => <></>,
-        // headerLeft: () => (
-        //   <WrapperDrawer>
-        //     <DrawerButton
-        //       onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        //     >
-        //       <Icon
-        //         name="menu"
-        //         size={38}
-        //         color={theme.colors.orange_100}
-        //         style={{ marginLeft: 24 }}
-        //       />
-        //     </DrawerButton>
-        //   </WrapperDrawer>
-        // ),
+
         headerTitle: () => (
           <Image
             source={require('../../assets/logo-full.png')}
             style={{height: 50, width: 150}}
           />
         ),
-        // header: () => <HeaderDrawer notification />,
-        // headerRight: () => (
-        //   <WrapperDrawer>
-        //     <DrawerButton>
-        //       <Ionicons
-        //         name="notifications"
-        //         size={26}
-        //         color={theme.colors.orange_100}
-        //         style={styles.iconNotification}
-        //       />
-        //     </DrawerButton>
-        //   </WrapperDrawer>
-        // ),
       }}>
-      {/* <Drawer.Screen name="Home" component={AuthenticateBottomTabsNavigation} /> */}
       <Drawer.Screen name="Painel do usuário" component={UserPanel} />
     </Drawer.Navigator>
   );
 }
 
+/**
+ *
+ *rotas perfils autenticadas
+ */
 function TherapistStackProfileRoutes() {
   const theme = useTheme();
-  const navigation = useNavigation();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -163,9 +132,11 @@ function TherapistStackProfileRoutes() {
   );
 }
 
+/**
+ *
+ *rotas bsucas() autenticadas
+ */
 function TherapistStackSearchRoutes() {
-  const theme = useTheme();
-  const navigation = useNavigation();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -194,9 +165,11 @@ function TherapistStackSearchRoutes() {
   );
 }
 
+/**
+ *
+ *rotas de produtos autenticadas
+ */
 function TherapistStackProductsRoutes() {
-  const theme = useTheme();
-  const navigation = useNavigation();
   return (
     <Stack.Navigator
       screenOptions={{
@@ -238,6 +211,10 @@ function TherapistStackProductsRoutes() {
   );
 }
 
+/**
+ *
+ *rotas terapeutas autenticadas
+ */
 function TherapistStackRoutesAuth() {
   const theme = useTheme();
   const navigation = useNavigation();
@@ -300,164 +277,12 @@ function TherapistStackRoutesAuth() {
         }}
       />
 
-      <Stack.Screen name="Chat" component={Chat} />
-
-      {/* <Stack.Screen
-        name="Products"
-        component={ScreenProducts}
-        options={{
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Produtos</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-        }}
-      />
-
       <Stack.Screen
-        name="ProductSelected"
-        component={ProductSelected}
+        name="GerenciarConsultas"
+        component={GerenciarConsultas}
         options={{
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Produto selecionado</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-        }}
-      />
-
-      <Stack.Screen
-        name="Car"
-        component={Car}
-        options={{
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Carrinho</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-          headerRight: () => (
-            <View style={styles.containerHeader}>
-              <TouchableOpacity>
-                <Text style={styles.titleClean}>Limpar</Text>
-              </TouchableOpacity>
-            </View>
-          ),
-        }}
-      />
-
-      <Stack.Screen
-        name="ResumeRequest"
-        component={ResumeRequest}
-        options={{
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Resumo do pedido</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-        }}
-      />
-      <Stack.Screen
-        name="FormPayment"
-        component={FormPayment}
-        options={{
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Forma de pagamento</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-        }}
-      /> */}
-
-      {/* <Stack.Screen
-        name="EditProfile"
-        component={EditProfileTherapist}
-        options={{
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Editar perfil</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("TherapistInfo")}
-            >
-              <Text style={styles.rightHeaderText}>Ver perfil</Text>
-            </TouchableOpacity>
-          ),
-          headerShadowVisible: false,
-        }}
-      /> */}
-      {/* <Stack.Screen
-        name="TherapistInfo"
-        component={TherapistInfo}
-        options={{
-          headerShown: true,
-          headerTitleAlign: "center",
+          headerShown: false,
+          headerTitleAlign: 'center',
           headerTitle: () => (
             <View style={styles.containerHeader}>
               <Text style={styles.title}>Terapeuta</Text>
@@ -473,29 +298,9 @@ function TherapistStackRoutesAuth() {
           },
           headerShadowVisible: false,
         }}
-      /> */}
-      {/* <Stack.Screen
-        name="GerenciarConsultas"
-        component={GerenciarConsultas}
-        options={{
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Gerenciar Horários</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-        }}
-      /> */}
+      />
+
+      <Stack.Screen name="Chat" component={Chat} />
 
       <Stack.Screen
         name="RegisterTherapistStep2"
@@ -520,28 +325,6 @@ function TherapistStackRoutesAuth() {
           ),
         }}
       />
-      {/* <Stack.Screen
-        name="Categories"
-        component={Categories}
-        options={{
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <View style={styles.containerHeader}>
-              <Text style={styles.title}>Categorias de consultas</Text>
-            </View>
-          ),
-          headerTintColor: theme.colors.white,
-          headerTitleStyle: {
-            fontSize: 18,
-            color: theme.colors.white,
-          },
-          headerStyle: {
-            backgroundColor: theme.colors.orange_100,
-          },
-          headerShadowVisible: false,
-        }}
-      /> */}
     </Stack.Navigator>
   );
 }

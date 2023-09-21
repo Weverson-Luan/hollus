@@ -53,9 +53,7 @@ export function Register() {
           height="45px"
           background_color={theme.colors.white}
           border
-          onPress={() => navigation.navigate('RegisterTherapist')}
-          // onPress={() => navigation.navigate("RegisterTherapistStep2")}
-        >
+          onPress={() => navigation.navigate('RegisterTherapist')}>
           <TitleAm>Sou um profissional</TitleAm>
         </Button>
 

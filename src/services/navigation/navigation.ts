@@ -59,12 +59,12 @@ const navigationListTherapist = [
     name_Icon: "calendar",
     route: 'GerenciarConsultas'
   },
-  {
-    id: "4",
-    name: "Histórico de consultas",
-    name_Icon: "history",
-    route: 'Consultas'
-  },
+  // {
+  //   id: "4",
+  //   name: "Histórico de consultas",
+  //   name_Icon: "history",
+  //   route: 'Consultas'
+  // },
   {
     id: "7",
     name: "Fale conosco",

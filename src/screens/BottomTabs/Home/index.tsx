@@ -1,40 +1,21 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {useTheme} from 'styled-components';
-
-//icons
-import Entypo from 'react-native-vector-icons/Entypo';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-//typings
-import {ITherapies} from '../../../dtos/therepies-dto';
+import React, {useState, useRef, useCallback} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
 
 //components
 import {ActivityIndication} from '../../../components/Spinner';
-import {HeaderDrawer} from '../../../components/HeaderDrawer';
-
-//services
-import {useTherapist} from '../../../context/hooks/Therapist/useTherapist';
 
 import {
   Container,
-  ImageLogo,
-  WrapperActivityIndication,
   WrapperCardQuery,
   WrapperIcon,
-  ContenInfoMain,
   ContentInfo,
-  WrapperInfo,
   WrapperInfoProfile,
-  WrapperInfoDescriptionLocation,
   WrapperInfoDescription,
   ImageProfile,
   TitleQuery,
-  SubTitle,
   WrapperText,
   Title,
   TitleName,
-  TitleMore,
   FlatListImage,
   BoxImage,
   WrapperImage,
@@ -43,37 +24,32 @@ import {
   WrapperCardQueryRow,
   BorderRow,
 } from './styles';
-import {Api} from '../../../services/api';
-import axios from 'axios';
+
 import {
   getNews,
   getNextAppointment,
   getRecommended,
 } from '../../../context/hooks/Home/useHome';
-import {ModalNews} from '../../../components/ModalNews';
+
 import ActionSheet, {ActionSheetRef} from 'react-native-actions-sheet';
-import {useFocusEffect, useIsFocused} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RFValue} from 'react-native-responsive-fontsize';
-import useAlert from '../../../context/hooks/Alert/useAlert';
 import {DotsThreeOutlineVertical} from 'phosphor-react-native';
 import {Loading} from '../../../components/Loading';
 
 export function Home({navigation}: any) {
-  const theme = useTheme();
   const [news, setNews] = useState<any>();
+  const {navigate} = useNavigation();
   const [appointment, setAppointment] = useState<any>();
   const [rec, setRec] = useState();
-  const therapies = useTherapist() as any;
   const [isLoading, setIsLoading] = useState(true);
 
   const [recommendedLoading, setRecommendedLoading] = useState(true);
 
   const [newsLoading, setNewsLoading] = useState(true);
-  const [appointmentLoading, setAppointmentLoading] = useState(true);
+  const [appointmentLoading, setAppointmentLoading] = useState(false);
   const [noticia, selectNoticia] = useState<any>();
   const actionSheetRef = useRef<ActionSheetRef>(null);
-  const isFocused = useIsFocused();
-  const {setAlert} = useAlert();
 
   const months = [
     'Janeiro',
@@ -109,14 +85,17 @@ export function Home({navigation}: any) {
 
   async function handleGetAppointments() {
     try {
+      setAppointmentLoading(true);
       const response = await getNextAppointment();
       response.success && setAppointment(response.data);
     } catch (error) {
       //tratamento de error
     } finally {
+      setAppointmentLoading(false);
       setIsLoading(false);
     }
   }
+
   async function handleGetNews() {
     try {
       const response = await getNews();

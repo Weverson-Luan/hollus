@@ -26,7 +26,7 @@ export const LabelText = styled.Text`
   color: ${({ theme }) => theme.colors.black};
   font-size: ${RFPercentage(2)}px;
   margin-bottom: 6px;
-  text-align: start;
+  text-align: justify;
 `;
 export const WrapperButton = styled.View`
   width: 100%;

@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {FlatList, View} from 'react-native';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {Check, Clock, CurrencyDollar, X} from 'phosphor-react-native';
-
+import {Check, Clock, X} from 'phosphor-react-native';
+import {ScrollView} from 'react-native-virtualized-view';
 // components
 import {Button} from '../../../components/Button';
 import {Loading} from '../../../components/Loading';
@@ -27,7 +27,6 @@ import {
 import theme from '../../../styles/colors/theme';
 
 import {
-  Container,
   WrapperText,
   Title,
   WrapperInfoScheduling,
@@ -43,18 +42,13 @@ import {
   WrapperButton,
   TextTitleButton,
   WrapperResume,
-  InfoLineSchedulingMoney,
-  ContentIconMoney,
-  TextInfoValueSchedulingMoney,
-  TextSchedulingMoney,
-  InfoLineSchedulingClock,
-  ContentIconClock,
-  TextInfoValueSchedulingClock,
-  TextSchedulingClock,
 } from './styles';
+import useAlert from '../../../context/hooks/Alert/useAlert';
+import {TherapistCategory} from '../../../components/TherapistCategory';
 
 export function Dashboard() {
   const navigation = useNavigation();
+  const {setAlert} = useAlert();
 
   const [atendimentos, setAtendimentos] = useState<IAtendimentosProps>(
     {} as IAtendimentosProps,
@@ -63,6 +57,9 @@ export function Dashboard() {
   const [dadosConsulta, setDadosConsulta] = useState<IConsultaProps>();
 
   const [spaces, setSpaces] = useState<ISpacosProps>({} as ISpacosProps);
+
+  const [categories, setCategories] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const isFocused = useIsFocused();
@@ -118,11 +115,33 @@ export function Dashboard() {
     }
   };
 
+  const parseErrors = (errors: any) => {
+    const errArr = Object.values(errors).map(err => err);
+    //@ts-ignore
+    return errArr[0][0];
+  };
+
+  /**
+   * BUSCAR CONSULTAS
+   */
+  const fetchMyInfo = async () => {
+    try {
+      setIsLoading(true);
+
+      const {data} = await Api.get('/v1/user/pesquisar-minhas-categorias');
+
+      setCategories(data.data);
+    } catch (error) {
+      setAlert('Erro', parseErrors('Não foi possível buscar as categorias!'));
+    }
+  };
+
   useEffect(() => {
     if (isFocused) {
       fetchAtendimentos();
       fetchDadosConsulta();
       fetchSpaces();
+      fetchMyInfo();
     }
   }, [isFocused]);
 
@@ -131,7 +150,8 @@ export function Dashboard() {
       {isLoading ? (
         <Loading />
       ) : (
-        <Container>
+        <ScrollView
+          style={{width: '100%', flex: 1, backgroundColor: theme.colors.white}}>
           <WrapperText>
             <Title>Histórico de atendimento no mês</Title>
           </WrapperText>
@@ -177,7 +197,7 @@ export function Dashboard() {
                 height="40px"
                 background_color="#FFF"
                 border={true}
-                onPress={() => navigation.navigate('Consultas')}>
+                onPress={() => navigation.navigate('ConsultasTherapist')}>
                 <TextTitleButton>Histórico completo</TextTitleButton>
               </Button>
             </WrapperButton>
@@ -189,30 +209,17 @@ export function Dashboard() {
             <View />
           ) : (
             <WrapperResume>
-              <InfoLineSchedulingMoney>
-                <ContentIconMoney>
-                  <CurrencyDollar size={18} color={theme.colors.gray_150} />
-                  <TextInfoValueSchedulingMoney>
-                    Valor:
-                  </TextInfoValueSchedulingMoney>
-                </ContentIconMoney>
-                <TextSchedulingMoney>
-                  R$ {dadosConsulta?.categorias[0].terapeutas[0].pivot?.valor}
-                </TextSchedulingMoney>
-              </InfoLineSchedulingMoney>
-
-              <InfoLineSchedulingClock>
-                <ContentIconClock>
-                  <Clock size={16} color="black" />
-                  <TextInfoValueSchedulingClock>
-                    Tempo de duração
-                  </TextInfoValueSchedulingClock>
-                </ContentIconClock>
-                <TextSchedulingClock>
-                  {dadosConsulta?.categorias[0]?.terapeutas[0].pivot?.tempo}{' '}
-                  minutos
-                </TextSchedulingClock>
-              </InfoLineSchedulingClock>
+              <FlatList
+                data={categories as any}
+                keyExtractor={item => item.id}
+                renderItem={({item}) => (
+                  <TherapistCategory
+                    refresh={fetchMyInfo}
+                    data={item}
+                    onPress={() => {}}
+                  />
+                )}
+              />
             </WrapperResume>
           )}
 
@@ -222,7 +229,7 @@ export function Dashboard() {
             keyExtractor={item => item?.id}
             renderItem={({item}) => <Card data={item} />}
           />
-        </Container>
+        </ScrollView>
       )}
     </>
   );

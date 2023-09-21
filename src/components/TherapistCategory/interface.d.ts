@@ -34,7 +34,8 @@ interface ITherapistCategoryProps {
     usuario_id: number;
     valor: number;
   };
-  refresh: any;
+  refresh: ()=> void;
+  onPress: ()=> void;
 }
 /**
  * EXPORTS
