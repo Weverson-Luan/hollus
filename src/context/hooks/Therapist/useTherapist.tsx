@@ -3,10 +3,10 @@
  */
 import {useContext} from 'react';
 import {Api} from '../../../services/api';
-import {AuthContext} from '../../AuthProvider';
+import {TherapistContext} from '../../therapist';
 
 const useTherapist = () => {
-  const context = useContext(AuthContext);
+  const context = useContext(TherapistContext);
 
   return context;
 };

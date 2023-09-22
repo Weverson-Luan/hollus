@@ -35,7 +35,7 @@ interface ITherapistCategoryProps {
     valor: number;
   };
   refresh: ()=> void;
-  onPress: ()=> void;
+  isIconArrow?: boolean;
 }
 /**
  * EXPORTS

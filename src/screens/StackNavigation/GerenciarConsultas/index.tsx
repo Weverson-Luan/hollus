@@ -26,11 +26,17 @@ import {
   AddButtonText,
   AddButtonContainer,
 } from './styles';
+
 import {AddCategorieTime} from './components/modals/add-category-time';
+import {useTherapist} from '../../../context/hooks/Therapist/useTherapist';
+import {handleGetTherapistCategoriesList} from '../../../domain/use-cases/therapies';
+import {useAuth} from '../../../context/hooks/Auth/useAuth';
 
 export function GerenciarConsultas() {
   const isFocused = useIsFocused();
   const {setAlert} = useAlert();
+  const {token} = useAuth();
+  const {therapie, handleGetTherapistInfo} = useTherapist();
 
   const [loading, setLoading] = useState(false);
   const [categorias, setCategorias] = useState<any[]>([]);
@@ -50,19 +56,6 @@ export function GerenciarConsultas() {
   const [categoryDescription, setCategoryDescription] = useState('');
   const [categoriesList, setCategoriesList] = useState([]);
   const [openDropDown, setOpenDropdown] = useState(false);
-
-  const fetchMyInfo = useCallback(async () => {
-    try {
-      setLoading(true);
-      clearStates();
-      const {data} = await Api.get('/v1/user/pesquisar-minhas-categorias');
-
-      setCategorias(data.data);
-      setLoading(false);
-    } catch (error) {
-      setAlert('Erro', parseErrors('Não foi possível buscar as categorias!'));
-    }
-  }, [categorias]);
 
   const parseErrors = (errors: any) => {
     const errArr = Object.values(errors).map(err => err);
@@ -130,17 +123,31 @@ export function GerenciarConsultas() {
   };
 
   const fetchCategories = async () => {
-    const {data} = await Api.get('/v1/user/pesquisar-categorias');
-    //@ts-ignore
-    let arr = [];
-    data.data.forEach((cat: any) => {
-      arr.push({
-        label: cat.nome,
-        value: cat.id,
-      });
-    });
-    //@ts-ignore
-    setCategoriesList(arr);
+    try {
+      setLoading(true);
+      const {data} = await handleGetTherapistCategoriesList(String(token));
+      console.log('CATEGORIA', data);
+
+      //@ts-ignore
+      let arrayCategorieList = [];
+
+      if (data.length > 0) {
+        data.forEach((cat: any) => {
+          arrayCategorieList.push({
+            label: cat.nome,
+            value: cat.id,
+          });
+        });
+
+        //@ts-ignore
+        setCategoriesList(arrayCategorieList);
+      } else {
+        setCategoriesList([]);
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -162,7 +169,7 @@ export function GerenciarConsultas() {
 
         if (response.data) {
           if (response.data.success) {
-            fetchMyInfo();
+            handleGetTherapistInfo();
             fetchCategories();
             setOpenModal(false);
           }
@@ -194,7 +201,7 @@ export function GerenciarConsultas() {
           .catch(err => console.log(err));
       });
 
-      fetchMyInfo();
+      await handleGetTherapistInfo();
       fetchCategories();
       setIsLoading(false);
       setOpenModal(false);
@@ -221,7 +228,6 @@ export function GerenciarConsultas() {
 
   useEffect(() => {
     if (isFocused) {
-      fetchMyInfo();
       fetchCategories();
     }
   }, [isFocused]);
@@ -250,40 +256,35 @@ export function GerenciarConsultas() {
         selectedEndTime={selectedEndTime}
         setCategoryDescription={setCategoryDescription}
         setOpenBeginTimePicker={setOpenBeginTimePicker}
-        setOpenDropdown={() => setOpenDropdown(true)}
+        setOpenDropdown={() => console.log('kk')}
         setOpenEndTimePicker={setOpenEndTimePicker}
         setOpenModal={setOpenModal}
         setSelectedCategory={selectedCategory}
         setCategoriesList={setCategoriesList}
       />
 
-      {loading ? (
+      {isLoading ? (
         <Loading />
-      ) : categorias?.length === 0 ? (
+      ) : therapie?.length === 0 ? (
         <EmptyMessageContainer>
           <EmptyMessage>Sem horários ainda</EmptyMessage>
         </EmptyMessageContainer>
       ) : (
         <FlatList
-          data={categorias}
+          data={therapie}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
-            <TherapistCategory
-              refresh={fetchMyInfo}
-              data={item}
-              onPress={() => fetchMyInfo()}
-            />
+            <TherapistCategory refresh={handleGetTherapistInfo} data={item} />
           )}
         />
       )}
-      {categoriesList.length > 0 ? (
+
+      {categoriesList.length > 0 && (
         <AddButtonContainer>
           <AddButton onPress={() => setOpenModal(true)}>
             <AddButtonText>Adicionar</AddButtonText>
           </AddButton>
         </AddButtonContainer>
-      ) : (
-        <></>
       )}
     </>
   );

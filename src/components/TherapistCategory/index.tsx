@@ -76,14 +76,17 @@ import {
   CategoryDescriptionTextInput,
 } from './styles';
 import {Box} from '../Box';
+import {handleGetTherapistAddHours} from '../../domain/use-cases/therapies';
+import {useAuth} from '../../context/hooks/Auth/useAuth';
 
 export function TherapistCategory({
   data,
   refresh,
-  onPress,
+  isIconArrow = true,
 }: ITherapistCategoryProps) {
   const theme = useTheme();
   const {setAlert} = useAlert();
+  const {token} = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [expand, setExpand] = useState(false);
@@ -180,22 +183,24 @@ export function TherapistCategory({
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    await Api.post('v1/user/horario/adicionar', {
-      dia_semana: JSON.stringify(selectedDays),
-      horario_inicio: formatTimeString(beginTime),
-      horario_fim: formatTimeString(endTime),
-      terapeuta_categoria_id: data.id,
-    })
-      .then(res => {
-        if (res.data.success) {
-          setOpenModal(false);
-          refresh();
-        }
-        // console.log(res.data);
-      })
-      .catch(err => console.log(err));
-    setIsLoading(false);
+    try {
+      //resposta da criação
+      const responseAddHours = await Api.post('v1/user/horario/adicionar', {
+        dia_semana: JSON.stringify(selectedDays),
+        horario_inicio: formatTimeString(beginTime),
+        horario_fim: formatTimeString(endTime),
+        terapeuta_categoria_id: data.id,
+      });
+
+      if (responseAddHours.data.success) {
+        setOpenModal(false);
+        refresh();
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+
     return;
   };
 
@@ -219,6 +224,8 @@ export function TherapistCategory({
       .catch(err => console.log(err));
     setAlert('Descrição alterada', 'Descrição alterada com sucesso!');
     setIsLoading(false);
+    setOpenDescriptionModal(false);
+
     refresh();
   };
 
@@ -251,7 +258,14 @@ export function TherapistCategory({
         visible={openDescriptionModal}
         transparent>
         <EditCategoryDescriptionView>
-          <AddCategoryTimeCard>
+          <Box
+            width="350px"
+            height="250px"
+            backgroundColor={theme.colors.white}
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            borderRadius={8}>
             <AddCategoryTimeHeader>
               <AddCategoryTimeHeaderText>
                 Editar Descrição
@@ -276,7 +290,7 @@ export function TherapistCategory({
                 <AddCategoryTime>Salvar</AddCategoryTime>
               </AddCategoryTimeSaveButton>
             )}
-          </AddCategoryTimeCard>
+          </Box>
         </EditCategoryDescriptionView>
       </EditCategoryDescriptionModal>
 
@@ -285,7 +299,11 @@ export function TherapistCategory({
         visible={openModal}
         transparent>
         <AddCategoryTimeView>
-          <AddCategoryTimeCard>
+          <Box
+            backgroundColor={theme.colors.white}
+            borderRadius={8}
+            width="350px"
+            height="250px">
             <AddCategoryTimeHeader>
               <AddCategoryTimeHeaderText>
                 Novo Horário
@@ -383,7 +401,7 @@ export function TherapistCategory({
                 </Box>
               </>
             )}
-          </AddCategoryTimeCard>
+          </Box>
         </AddCategoryTimeView>
       </AddCategoryTimeModal>
 
@@ -399,17 +417,19 @@ export function TherapistCategory({
         <CategoryInfoWrapper>
           <TitleWrapper>
             <CategoryTitle>{data.categoria?.nome}</CategoryTitle>
-            <CategoryOptionToggle
-              onPress={() => {
-                setShowDescricao(!showDescricao);
-                setExpand(!expand);
-              }}>
-              {expand ? (
-                <CaretDoubleUp size={16} />
-              ) : (
-                <CaretDoubleDown size={16} />
-              )}
-            </CategoryOptionToggle>
+            {isIconArrow && (
+              <CategoryOptionToggle
+                onPress={() => {
+                  setShowDescricao(!showDescricao);
+                  setExpand(!expand);
+                }}>
+                {expand ? (
+                  <CaretDoubleUp size={16} />
+                ) : (
+                  <CaretDoubleDown size={16} />
+                )}
+              </CategoryOptionToggle>
+            )}
           </TitleWrapper>
           <CategoryDescription textBreakStrategy="highQuality">
             {showDescricao ? (
@@ -498,7 +518,6 @@ export function TherapistCategory({
 
                         onPress={() => {
                           handleDelete(true);
-                          onPress();
                         }}>
                         Excluir
                         {selectedTimes.length === 1

@@ -60,7 +60,7 @@ export function RegisterSeptOne() {
       setLoading(true);
       const response = await Api.post('/register', values);
 
-      if (response.data.success) {
+      if (response.data) {
         navigation.navigate('SignIn');
         setAlert('Cadastro', response.data.message);
       } else {
@@ -425,10 +425,8 @@ export function RegisterSeptOne() {
                       )}
                     </View>
 
-                    <WrapperConfirmePolicy>
-                      <TouchableOpacity
-                        onPress={() => {}}
-                        style={{marginRight: 10}}>
+                    <WrapperConfirmePolicy onPress={() => setModal(true)}>
+                      <View style={{marginRight: 10}}>
                         {values.policiesAccept ? (
                           <CheckSquare
                             weight="fill"
@@ -441,7 +439,7 @@ export function RegisterSeptOne() {
                             size={RFValue(20)}
                           />
                         )}
-                      </TouchableOpacity>
+                      </View>
                       <LabelInput>
                         Confirmo que li e concordo com os{' '}
                         <TouchableOpacity onPress={() => setModal(true)}>
@@ -465,7 +463,9 @@ export function RegisterSeptOne() {
                       <Button
                         width="100%"
                         height="45px"
-                        background_color={theme.colors.orange}
+                        background_color={
+                          !isValid ? theme.colors.gray_80 : theme.colors.orange
+                        }
                         onPress={() => handleSubmit()}
                         disabled={!isValid || loading}>
                         <TitleSearchTherapy>

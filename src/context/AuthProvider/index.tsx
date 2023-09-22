@@ -20,10 +20,13 @@ import {
 import {handleGetTherapist} from '../hooks/Therapist/util';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {Api} from '../../services/api';
+import {parse} from 'react-native-svg';
 
 const AuthContext = createContext<IContext>({} as IContext);
+
 const AuthProvider = ({children}: IAuthProvider) => {
   const [user, setUser] = useState<IUser | null>();
+  const [token, setToken] = useState('');
 
   const [therapies, setTherapies] = useState<ITherapies>(
     therapiesMocked as any,
@@ -35,35 +38,38 @@ const AuthProvider = ({children}: IAuthProvider) => {
   const handlePersistLogin = async () => {
     try {
       const res = await handlePersistLoginRequest();
-      if (res.success) {
-        setUser(res.user);
+
+      if (res?.success) {
+        setUser(res?.user);
+        setLoading(false);
         return res.success;
       }
       return res.success;
     } catch (error) {
       //tratamento de error
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleUser = async () => {
     try {
-      const user = await handleGetUserLocalStorage();
+      const user: any = await AsyncStorageLib.getItem('user');
 
-      if (user) {
+      if (user !== null) {
+        const formatedUser = JSON.parse(user);
         setUser(user);
+        setToken(formatedUser.token);
         const response = await handlePersistLogin();
+
         if (response) {
+          setLoading(false);
           setSuccessLogin(true);
         } else {
           setSuccessLogin(false);
         }
       }
+      setLoading(false);
     } catch (error) {
       //tratamento de error
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -78,15 +84,18 @@ const AuthProvider = ({children}: IAuthProvider) => {
   const handleAuthentication = async (email: string, password: string) => {
     try {
       const response = await handleLoginRequest(email, password);
+
       if (response?.token) {
+        setToken(response.token);
         setUser(response.usuario);
         handleSetUserLocalStorage(response);
         setSuccessLogin(true);
-        // console.log(response);
       }
       return response;
     } catch (error) {
       return;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,6 +106,7 @@ const AuthProvider = ({children}: IAuthProvider) => {
     // handleSetUserLocalStorage(null);
     await AsyncStorageLib.removeItem('token');
     await AsyncStorageLib.removeItem('user');
+    setToken('');
   };
 
   return (
@@ -111,6 +121,7 @@ const AuthProvider = ({children}: IAuthProvider) => {
         handleGetUser,
         successLogin,
         isLoading,
+        token,
       }}>
       {children}
     </AuthContext.Provider>

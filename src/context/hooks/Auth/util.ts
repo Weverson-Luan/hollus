@@ -57,13 +57,22 @@ const handleGetUserLocalStorage = async () => {
   // console.log('getting user');
   if(!responseJson){
     return null;
-  };
+  }else{
+    const user = JSON.parse(responseJson);
 
-  const user = JSON.parse(responseJson);
+    return user;
+  }
 
-  return user;
+ 
 };
-
+const handleGetToken = async ()=> {
+  const responseJson = await AsyncStorageLib.getItem('token');
+  // console.log('getting user');
+  if(!responseJson){
+    return null;
+  };
+  return responseJson;
+}
 const handleLogoutInterceptor = async () => {
   // handleSetUserLocalStorage(null);
   await AsyncStorageLib.removeItem("token");
@@ -74,4 +83,4 @@ const handleLogoutInterceptor = async () => {
 /**
  * EXPORTS
  */
-export { handleLoginRequest, handlePersistLoginRequest, handleSetUserLocalStorage, handleGetUserLocalStorage, handleLogoutInterceptor };
+export { handleLoginRequest, handleGetToken, handlePersistLoginRequest, handleSetUserLocalStorage, handleGetUserLocalStorage, handleLogoutInterceptor };

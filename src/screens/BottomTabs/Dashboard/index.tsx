@@ -45,10 +45,14 @@ import {
 } from './styles';
 import useAlert from '../../../context/hooks/Alert/useAlert';
 import {TherapistCategory} from '../../../components/TherapistCategory';
+import {useAuth} from '../../../context/hooks/Auth/useAuth';
+import {useTherapist} from '../../../context/hooks/Therapist/useTherapist';
 
 export function Dashboard() {
   const navigation = useNavigation();
   const {setAlert} = useAlert();
+  const {token} = useAuth();
+  const {therapie, handleGetTherapistInfo, isLoading} = useTherapist();
 
   const [atendimentos, setAtendimentos] = useState<IAtendimentosProps>(
     {} as IAtendimentosProps,
@@ -60,7 +64,7 @@ export function Dashboard() {
 
   const [categories, setCategories] = useState([]);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(true);
 
   const isFocused = useIsFocused();
 
@@ -86,7 +90,7 @@ export function Dashboard() {
    */
   const fetchDadosConsulta = async () => {
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       const {data} = await Api.get<IResponseApiConsulta>(
         '/v1/home/dados-consulta',
       );
@@ -103,7 +107,7 @@ export function Dashboard() {
    */
   const fetchSpaces = async () => {
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       const {data} = await Api.get<IResponseApiSpacos>(
         'v1/home/locais-atendimento',
       );
@@ -124,24 +128,13 @@ export function Dashboard() {
   /**
    * BUSCAR CONSULTAS
    */
-  const fetchMyInfo = async () => {
-    try {
-      setIsLoading(true);
-
-      const {data} = await Api.get('/v1/user/pesquisar-minhas-categorias');
-
-      setCategories(data.data);
-    } catch (error) {
-      setAlert('Erro', parseErrors('Não foi possível buscar as categorias!'));
-    }
-  };
 
   useEffect(() => {
     if (isFocused) {
+      handleGetTherapistInfo(token);
       fetchAtendimentos();
       fetchDadosConsulta();
       fetchSpaces();
-      fetchMyInfo();
     }
   }, [isFocused]);
 
@@ -210,13 +203,13 @@ export function Dashboard() {
           ) : (
             <WrapperResume>
               <FlatList
-                data={categories as any}
+                data={therapie as any}
                 keyExtractor={item => item.id}
                 renderItem={({item}) => (
                   <TherapistCategory
-                    refresh={fetchMyInfo}
+                    refresh={handleGetTherapistInfo}
                     data={item}
-                    onPress={() => {}}
+                    isIconArrow={false}
                   />
                 )}
               />

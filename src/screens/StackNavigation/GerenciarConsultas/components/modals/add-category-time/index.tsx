@@ -132,7 +132,7 @@ const AddCategorieTime = ({
           ) : (
             <></>
           )}
-          <AddCategoryCardContent showsVerticalScrollIndicator={false}>
+          <AddCategoryCardContent>
             {isLoading ? (
               <LoadingContainer>
                 <ActivityIndicator size={'large'} color={theme.colors.orange} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from 'react';
 import {
   AddCategoryFieldWrapper,
   AddCategoryLabel,
@@ -8,18 +8,18 @@ import {
   AddCategoryTimeDaysRow,
   AddCategoryTimeRow,
   AddCategoryTimeTouchable,
-} from "../TherapistCategory/styles";
+} from '../TherapistCategory/styles';
 import {
   CategoryTitleText,
   CategoryTitleWrapper,
   CategoryWrapper,
-} from "./styles";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { formatTimeString } from "../../utils/formatdate";
-import useAlert from "../../context/hooks/Alert/useAlert";
-export const CardCategoria = ({ data, onChangeValue }) => {
+} from './styles';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import {formatTimeString} from '../../utils/formatdate';
+import useAlert from '../../context/hooks/Alert/useAlert';
+export const CardCategoria = ({data, onChangeValue}) => {
   const initialCatState = {
-    nome: "",
+    nome: '',
     id: null,
     beginTime: new Date(),
     endTime: new Date(),
@@ -33,11 +33,11 @@ export const CardCategoria = ({ data, onChangeValue }) => {
   const [openBeginTimePicker, setOpenBeginTimePicker] = useState(false);
   const [openEndTimePicker, setOpenEndTimePicker] = useState(false);
 
-  const defaultDays = ["D", "S", "T", "Q", "Q", "S", "S"];
+  const defaultDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
   const [selectedDays, setSelectedDays] = useState(data?.days);
 
-  const { setAlert } = useAlert();
+  const {setAlert} = useAlert();
 
   useEffect(() => {
     // console.log("useeff");
@@ -51,10 +51,10 @@ export const CardCategoria = ({ data, onChangeValue }) => {
   const handleChange = (key, value) => {
     let temp = catDetails;
     temp[key] = value;
-    if (key === "beginTime") {
+    if (key === 'beginTime') {
       temp.changedBeginTime = true;
     }
-    if (key === "endTime") {
+    if (key === 'endTime') {
       temp.changedEndTime = true;
     }
     setCatDetails({
@@ -70,24 +70,24 @@ export const CardCategoria = ({ data, onChangeValue }) => {
     // onChangeDetails(catDetails);
   };
 
-  const checkDaySelected = (dayIndex) => {
+  const checkDaySelected = dayIndex => {
     return dayIndex in selectedDays;
   };
 
-  const selectDay = (i) => {
+  const selectDay = i => {
     var temp = selectedDays.slice();
     temp[i] = !temp[i];
     // if(temp.every(t => t === false)){
     //   set
     // }
     setSelectedDays(temp);
-    handleChange("days", temp);
+    handleChange('days', temp);
     return;
   };
 
   const toggleOpenTimePicker = (time, show = true) => {
     if (show) {
-      if (time === "begin") {
+      if (time === 'begin') {
         setOpenBeginTimePicker(true);
         return;
       }
@@ -97,7 +97,7 @@ export const CardCategoria = ({ data, onChangeValue }) => {
   };
 
   const onTimeChangeBegin = async (event, selectedTime) => {
-    if (typeof selectedTime === "undefined") {
+    if (typeof selectedTime === 'undefined') {
       setOpenBeginTimePicker(false);
       return;
     }
@@ -111,21 +111,21 @@ export const CardCategoria = ({ data, onChangeValue }) => {
     newTime.setHours(selectedTime.getHours());
     newTime.setMinutes(selectedTime.getMinutes());
 
-    handleChange("beginTime", newTime);
+    handleChange('beginTime', newTime);
 
     setOpenBeginTimePicker(false);
   };
 
   const onTimeChangeEnd = async (event, selectedTime) => {
-    if (typeof selectedTime === "undefined") {
+    if (typeof selectedTime === 'undefined') {
       setOpenEndTimePicker(false);
       return;
     }
 
     if (selectedTime.getTime() < catDetails.beginTime.getTime()) {
       setAlert(
-        "Erro",
-        "Selecione um horário final para depois do horário inicial!"
+        'Erro',
+        'Selecione um horário final para depois do horário inicial!',
       );
       return;
     }
@@ -135,7 +135,7 @@ export const CardCategoria = ({ data, onChangeValue }) => {
     newTime.setHours(selectedTime.getHours());
     newTime.setMinutes(selectedTime.getMinutes());
 
-    handleChange("endTime", newTime);
+    handleChange('endTime', newTime);
 
     setOpenEndTimePicker(false);
   };
@@ -169,22 +169,21 @@ export const CardCategoria = ({ data, onChangeValue }) => {
         <AddCategoryFieldWrapper>
           <AddCategoryLabel>Horário Inicial</AddCategoryLabel>
           <AddCategoryTimeTouchable
-            onPress={() => toggleOpenTimePicker("begin")}
-          >
+            onPress={() => toggleOpenTimePicker('begin')}>
             <AddCategoryTime>
               {catDetails?.changedBeginTime
                 ? formatTimeString(catDetails?.beginTime)
-                : "00:00"}
+                : '00:00'}
             </AddCategoryTime>
           </AddCategoryTimeTouchable>
         </AddCategoryFieldWrapper>
         <AddCategoryFieldWrapper>
           <AddCategoryLabel>Horário Final</AddCategoryLabel>
-          <AddCategoryTimeTouchable onPress={() => toggleOpenTimePicker("end")}>
+          <AddCategoryTimeTouchable onPress={() => toggleOpenTimePicker('end')}>
             <AddCategoryTime>
               {catDetails?.changedEndTime
                 ? formatTimeString(catDetails?.endTime)
-                : "00:00"}
+                : '00:00'}
             </AddCategoryTime>
           </AddCategoryTimeTouchable>
         </AddCategoryFieldWrapper>
@@ -196,8 +195,7 @@ export const CardCategoria = ({ data, onChangeValue }) => {
             <AddCategoryTimeDayTouchable
               selected={day}
               //   selected={false}
-              onPress={() => selectDay(dayIndex)}
-            >
+              onPress={() => selectDay(dayIndex)}>
               {/* <AddCategoryTimeDay selected={cat?.days.includes(dayIndex)}> */}
               <AddCategoryTimeDay selected={day}>
                 {defaultDays[dayIndex]}

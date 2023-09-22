@@ -10,20 +10,22 @@ import theme from './src/styles/colors/theme';
 import {CustomAlert} from './src/components/CustomAlert';
 import {AppRoutes} from './src/routes';
 import {AlertProvider} from './src/context/Alert';
+import {TherapistProvider} from './src/context/therapist';
 
 function App() {
   return (
     <NativeBaseProvider>
       <SheetProvider>
         <AuthProvider>
-          <AlertProvider>
-            <ThemeProvider theme={theme}>
-              <StatusBar barStyle={'light-content'} />
-
-              <CustomAlert />
-              <AppRoutes />
-            </ThemeProvider>
-          </AlertProvider>
+          <TherapistProvider>
+            <AlertProvider>
+              <ThemeProvider theme={theme}>
+                <StatusBar barStyle={'light-content'} />
+                <CustomAlert />
+                <AppRoutes />
+              </ThemeProvider>
+            </AlertProvider>
+          </TherapistProvider>
         </AuthProvider>
       </SheetProvider>
     </NativeBaseProvider>

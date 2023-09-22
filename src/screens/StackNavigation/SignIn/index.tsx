@@ -46,7 +46,7 @@ export function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleOnLogin = async (email: string, password: string) => {
     try {
@@ -63,10 +63,6 @@ export function SignIn() {
       setAlert('Erro ao fazer login', 'E-mail ou senha inválidos');
     }
   };
-
-  useEffect(() => {
-    !auth.successLogin ? setLoading(false) : null;
-  }, []);
 
   return (
     <>

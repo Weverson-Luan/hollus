@@ -98,7 +98,7 @@ export const SubmitButtonContainer = styled.View`
   justify-content: center;
 
 `;
-export const WrapperConfirmePolicy = styled.View`
+export const WrapperConfirmePolicy = styled.TouchableOpacity`
   width: 100%;
   padding: 10px;
   align-items: flex-start;
