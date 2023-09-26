@@ -62,7 +62,13 @@ export const CategoryPrice = styled.Text`
   flex: 1;
 `;
 export const CategoryOptionToggle = styled.TouchableOpacity`
+  width: 40px;
+  height: 40px;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-end;
   right: 0;
+  
 `;
 export const CategoryTimeWrapper = styled.View`
   flex: 1;
