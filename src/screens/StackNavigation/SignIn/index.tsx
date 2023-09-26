@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {KeyboardAvoidingView} from 'react-native';
 import {useTheme} from 'styled-components';
 import {useNavigation} from '@react-navigation/native';

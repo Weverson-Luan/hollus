@@ -21,7 +21,7 @@ import {
   AddCategoryTimeView,
   LoadingContainer,
   WrapperRow,
-} from '../../../../../../components/TherapistCategory/styles';
+} from './styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {ActivityIndicator} from 'react-native';
 import {useTheme} from 'styled-components';

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FlatList} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 
@@ -39,9 +39,7 @@ export function GerenciarConsultas() {
   const {therapie, handleGetTherapistInfo} = useTherapist();
 
   const [loading, setLoading] = useState(false);
-  const [categorias, setCategorias] = useState<any[]>([]);
   const [openModal, setOpenModal] = useState(false);
-  const [selectedTimes, setSelectedTimes] = useState([]);
   const [selectedBeginTime, setSelectedBeginTime] = useState(false);
   const [beginTime, setBeginTime] = useState(new Date());
   const [selectedEndTime, setSelectedEndTime] = useState(false);
@@ -66,38 +64,38 @@ export function GerenciarConsultas() {
   const days = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
   const onTimeChangeBegin = async (event: any, selectedTime: any) => {
-    // if (typeof selectedTime === 'undefined') {
-    //   setOpenBeginTimePicker(false);
-    //   return;
-    // }
-    // if (selectedBeginTime && selectedEndTime) {
-    //   setSelectedEndTime(false);
-    // }
-    // beginTime.setHours(selectedTime?.getHours() - 3);
-    // beginTime.setMinutes(selectedTime?.getMinutes());
-    // setSelectedBeginTime(true);
-    // setOpenBeginTimePicker(false);
+    if (typeof selectedTime === 'undefined') {
+      setOpenBeginTimePicker(false);
+      return;
+    }
+    if (selectedBeginTime && selectedEndTime) {
+      setSelectedEndTime(false);
+    }
+    beginTime.setHours(selectedTime?.getHours() - 3);
+    beginTime.setMinutes(selectedTime?.getMinutes());
+    setSelectedBeginTime(true);
+    setOpenBeginTimePicker(false);
   };
 
   const onTimeChangeEnd = async (event: any, selectedTime: any) => {
-    // if (typeof selectedTime === 'undefined') {
-    //   setOpenEndTimePicker(false);
-    //   return;
-    // }
-    // const correctedTime = new Date();
-    // correctedTime.setHours(selectedTime?.getHours() - 3);
-    // correctedTime.setMinutes(selectedTime?.getMinutes());
-    // if (selectedBeginTime && correctedTime?.getTime() < beginTime?.getTime()) {
-    //   setAlert(
-    //     'Erro',
-    //     'Selecione um horário final para depois do horário inicial!',
-    //   );
-    //   return;
-    // }
-    // endTime.setHours(selectedTime.getHours() - 3);
-    // endTime.setMinutes(selectedTime.getMinutes());
-    // setSelectedEndTime(true);
-    // setOpenEndTimePicker(false);
+    if (typeof selectedTime === 'undefined') {
+      setOpenEndTimePicker(false);
+      return;
+    }
+    const correctedTime = new Date();
+    correctedTime.setHours(selectedTime?.getHours() - 3);
+    correctedTime.setMinutes(selectedTime?.getMinutes());
+    if (selectedBeginTime && correctedTime?.getTime() < beginTime?.getTime()) {
+      setAlert(
+        'Erro',
+        'Selecione um horário final para depois do horário inicial!',
+      );
+      return;
+    }
+    endTime.setHours(selectedTime.getHours() - 3);
+    endTime.setMinutes(selectedTime.getMinutes());
+    setSelectedEndTime(true);
+    setOpenEndTimePicker(false);
   };
 
   const selectDay = (index: any) => {
@@ -208,20 +206,6 @@ export function GerenciarConsultas() {
       //@ts-ignore
       setAlert('Erro', parseErrors(error.message));
     }
-  };
-
-  const clearStates = () => {
-    setSelectedTimes([]);
-    setSelectedBeginTime(false);
-    setSelectedEndTime(false);
-    setEndTime(new Date());
-    setBeginTime(new Date());
-    setSelectedDays([]);
-    setOpenBeginTimePicker(false);
-    setOpenEndTimePicker(false);
-    setSelectedCategory(null);
-    setSelectedPrice('');
-    setCategoryDescription('');
   };
 
   useEffect(() => {
