@@ -24,6 +24,9 @@ import {
   Trash,
 } from 'phosphor-react-native';
 
+import {Box} from '../Box';
+import {useTherapist} from '../../context/hooks/Therapist/useTherapist';
+
 //styled-components
 import {
   CategoryWrapper,
@@ -50,18 +53,15 @@ import {
   AddCategoryTimeButtonTitle,
   AddCategoryTimeModal,
   AddCategoryTimeView,
-  AddCategoryTimeCard,
   AddCategoryTimeTouchable,
   AddCategoryTime,
   AddCategoryLabel,
   AddCategoryFieldWrapper,
-  AddCategoryTimeRow,
   AddCategoryTimeSaveButton,
   AddCategoryTimeHeader,
   AddCategoryTimeDayTouchable,
   AddCategoryTimeDay,
   AddCategoryTimeDaysRow,
-  LoadingContainer,
   CategoryTimeTitleHeader,
   CategoryHeaderEdit,
   CategoryTimeSelect,
@@ -74,10 +74,8 @@ import {
   EditCategoryDescriptionModal,
   EditCategoryDescriptionView,
   CategoryDescriptionTextInput,
+  CategoryTextLoding,
 } from './styles';
-import {Box} from '../Box';
-import {handleGetTherapistAddHours} from '../../domain/use-cases/therapies';
-import {useAuth} from '../../context/hooks/Auth/useAuth';
 
 export function TherapistCategory({
   data,
@@ -86,7 +84,7 @@ export function TherapistCategory({
 }: ITherapistCategoryProps) {
   const theme = useTheme();
   const {setAlert} = useAlert();
-  const {token} = useAuth();
+  const {handleGetTherapistInfo} = useTherapist();
 
   const [isLoading, setIsLoading] = useState(false);
   const [expand, setExpand] = useState(false);
@@ -100,46 +98,53 @@ export function TherapistCategory({
   const [openBeginTimePicker, setOpenBeginTimePicker] = useState(false);
   const [openEndTimePicker, setOpenEndTimePicker] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [selectedTimes, setSelectedTimes] = useState([]);
+  const [selectedTimes, setSelectedTimes] = useState<any>([]);
   const [categoriaDescricao, setCategoriaDescricao] = useState('');
   const [showDescricao, setShowDescricao] = useState(false);
 
   const days = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
-  const onTimeChangeBegin = async (event: any, selectedTime: any) => {
-    if (typeof selectedTime === 'undefined') {
+  const onTimeChangeBegin = async (_event: any, selectedTime: Date | any) => {
+    if (selectedTime === null || selectedTime === undefined) {
       setOpenBeginTimePicker(false);
       return;
+    } else {
+      beginTime?.setHours(selectedTime?.getHours() - 3),
+        beginTime?.setMinutes(selectedTime?.getMinutes());
+      setSelectedBeginTime(true);
+      setOpenBeginTimePicker(false);
+      console.log('selected inicio time: ');
     }
-    if (selectedBeginTime && selectedEndTime) {
-      setSelectedEndTime(false);
-    }
-    beginTime.setHours(selectedTime.getHours() - 3);
-    beginTime.setMinutes(selectedTime.getMinutes());
-    setSelectedBeginTime(true);
-    setOpenBeginTimePicker(false);
   };
 
-  const onTimeChangeEnd = async (event: any, selectedTime: any) => {
-    if (typeof selectedTime === 'undefined') {
+  const onTimeChangeEnd = async (
+    _event: any,
+    selectedTime: Date | undefined,
+  ) => {
+    if (selectedTime === null || selectedTime === undefined) {
       setOpenEndTimePicker(false);
       return;
-    }
-    const correctedTime = new Date();
-    correctedTime.setHours(selectedTime.getHours() - 3);
-    correctedTime.setMinutes(selectedTime.getMinutes());
+    } else {
+      const correctedTime = new Date();
 
-    if (selectedBeginTime && correctedTime.getTime() < beginTime.getTime()) {
-      setAlert(
-        'Erro',
-        'Selecione um horário final para depois do horário inicial!',
-      );
-      return;
+      correctedTime?.setHours(selectedTime?.getHours() - 3);
+      correctedTime?.setMinutes(selectedTime?.getMinutes());
+
+      if (
+        selectedBeginTime &&
+        correctedTime?.getTime() < beginTime?.getTime()
+      ) {
+        setAlert(
+          'Erro',
+          'Selecione um horário final para depois do horário inicial!',
+        );
+        return;
+      }
+      endTime?.setHours(selectedTime?.getHours() - 3);
+      endTime?.setMinutes(selectedTime?.getMinutes());
+      setSelectedEndTime(true);
+      setOpenEndTimePicker(false);
     }
-    endTime.setHours(selectedTime.getHours() - 3);
-    endTime.setMinutes(selectedTime.getMinutes());
-    setSelectedEndTime(true);
-    setOpenEndTimePicker(false);
   };
 
   const selectDay = (index: any) => {
@@ -170,7 +175,7 @@ export function TherapistCategory({
       setSelectedTimes(selectedTimes => [...selectedTimes, time.id]);
       return;
     }
-    const timeRemoved = selectedTimes.filter(item => item !== time.id);
+    const timeRemoved = selectedTimes.filter((item: any) => item !== time.id);
     setSelectedTimes(timeRemoved);
   };
 
@@ -184,6 +189,7 @@ export function TherapistCategory({
 
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       //resposta da criação
       const responseAddHours = await Api.post('v1/user/horario/adicionar', {
         dia_semana: JSON.stringify(selectedDays),
@@ -204,29 +210,42 @@ export function TherapistCategory({
     return;
   };
 
-  const handleDelete = async (confirmed: any) => {
-    selectedTimes.forEach(async item => {
-      await Api.delete('/v1/user/horario/remover/' + item)
-        .then(res => console.log(res.data))
-        .catch(err => console.log(err));
-    });
-    await refresh();
-    setAlert('Horários excluídos', 'Horários excluídos com sucesso!');
+  const handleDelete = async () => {
+    try {
+      if (selectedTimes) {
+        setIsLoading(true);
+        selectedTimes.forEach(async (item: any) => {
+          await Api.delete('/v1/user/horario/remover/' + item);
+        });
+        handleGetTherapistInfo();
+        setAlert('Horários excluídos', 'Horários excluídos com sucesso!');
+      }
+    } catch (error) {
+      setAlert('Horários', 'Não foi possível excluír horários!');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleEditDescription = async () => {
-    setIsLoading(true);
-    await Api.post('/v1/user/horario/salvar-descricao', {
-      terapia_id: data.horarios[0].terapeuta_categoria_id,
-      descricao: categoriaDescricao,
-    })
-      .then(res => console.log(res.data))
-      .catch(err => console.log(err));
-    setAlert('Descrição alterada', 'Descrição alterada com sucesso!');
-    setIsLoading(false);
-    setOpenDescriptionModal(false);
+    try {
+      setIsLoading(true);
 
-    refresh();
+      await Api.post('/v1/user/horario/salvar-descricao', {
+        terapia_id: data?.horarios[0]?.terapeuta_categoria_id,
+        descricao: categoriaDescricao,
+      });
+
+      setAlert('Descrição alterada', 'Descrição alterada com sucesso!');
+
+      setOpenDescriptionModal(false);
+
+      refresh();
+    } catch (error) {
+      setAlert('Descrição', 'Não foi possível editar descrição!');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const clearStates = () => {
@@ -312,26 +331,31 @@ export function TherapistCategory({
                 <X size={RFValue(16)} color={theme.colors.white} />
               </AddCategoryTimeHeaderButton>
             </AddCategoryTimeHeader>
-            {openBeginTimePicker ? (
+            {openBeginTimePicker && (
               <RNDateTimePicker
                 value={beginTime}
                 mode="time"
                 is24Hour={true}
                 onChange={onTimeChangeBegin}
               />
-            ) : null}
-            {openEndTimePicker ? (
+            )}
+            {openEndTimePicker && (
               <RNDateTimePicker
                 value={endTime}
                 mode="time"
                 is24Hour={true}
                 onChange={onTimeChangeEnd}
               />
-            ) : null}
+            )}
             {isLoading ? (
-              <LoadingContainer>
-                <ActivityIndicator size={'large'} color={theme.colors.orange} />
-              </LoadingContainer>
+              <Box
+                width="100%"
+                flexDirection={'column'}
+                alignItems={'center'}
+                justifyContent={'center'}>
+                <ActivityIndicator size={'small'} color={theme.colors.orange} />
+                <CategoryTextLoding>Carregando...</CategoryTextLoding>
+              </Box>
             ) : (
               <>
                 <Box
@@ -457,8 +481,8 @@ export function TherapistCategory({
         </CategoryInfoWrapper>
       </CategoryWrapper>
 
-      {expand ? (
-        data.horarios.length > 0 ? (
+      {expand &&
+        (data.horarios.length > 0 ? (
           <CategoryDetailsWrapper>
             <CategoryDescriptionEditButton
               onPress={() => setOpenDescriptionModal(true)}>
@@ -474,7 +498,17 @@ export function TherapistCategory({
                 </CategoryHeaderEdit>
               </CategoryTimeTitleHeader>
               {isLoading ? (
-                <ActivityIndicator size={'large'} color={theme.colors.orange} />
+                <Box
+                  width="100%"
+                  flexDirection={'column'}
+                  alignItems={'center'}
+                  justifyContent={'center'}>
+                  <ActivityIndicator
+                    size={'small'}
+                    color={theme.colors.orange}
+                  />
+                  <CategoryTextLoding>Carregando...</CategoryTextLoding>
+                </Box>
               ) : (
                 <CategoryTimesContainer>
                   <CategoryTimeTitleRow>
@@ -513,23 +547,35 @@ export function TherapistCategory({
                       type="danger"
                       onPress={() => setOpenModal(true)}>
                       <Trash size={RFValue(16)} color={theme.colors.white} />
-                      <AddCategoryTimeButtonTitle
-                        //@ts-ignore
 
-                        onPress={() => {
-                          handleDelete(true);
-                        }}>
-                        Excluir
-                        {selectedTimes.length === 1
-                          ? ' selecionado'
-                          : ' selecionados'}
-                      </AddCategoryTimeButtonTitle>
+                      {isLoading ? (
+                        <ActivityIndicator
+                          size={'large'}
+                          color={theme.colors.orange}
+                        />
+                      ) : (
+                        <AddCategoryTimeButtonTitle
+                          //@ts-ignore
+
+                          onPress={() => {
+                            handleDelete();
+                          }}>
+                          Excluir
+                          {selectedTimes.length === 1
+                            ? ' selecionado'
+                            : ' selecionados'}
+                        </AddCategoryTimeButtonTitle>
+                      )}
                     </AddCategoryTimeButton>
                   ) : (
                     <AddCategoryTimeButton onPress={() => setOpenModal(true)}>
-                      <AddCategoryTimeButtonTitle>
-                        Adicionar
-                      </AddCategoryTimeButtonTitle>
+                      {isLoading ? (
+                        <ActivityIndicator color={'#fff'} size={24} />
+                      ) : (
+                        <AddCategoryTimeButtonTitle>
+                          Adicionar
+                        </AddCategoryTimeButtonTitle>
+                      )}
                     </AddCategoryTimeButton>
                   )}
                 </CategoryTimesContainer>
@@ -543,8 +589,7 @@ export function TherapistCategory({
               <AddCategoryTimeButtonTitle>Adicionar</AddCategoryTimeButtonTitle>
             </AddCategoryTimeButton>
           </CategoryTimeWrapper>
-        )
-      ) : null}
+        ))}
     </CategoryContainer>
   );
 }

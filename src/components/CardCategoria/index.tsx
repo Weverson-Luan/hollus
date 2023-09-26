@@ -96,33 +96,28 @@ export const CardCategoria = ({data, onChangeValue}) => {
     }
   };
 
-  const onTimeChangeBegin = async (event, selectedTime) => {
+  const onTimeChangeBegin = async (event: any, selectedTime: any) => {
     if (typeof selectedTime === 'undefined') {
       setOpenBeginTimePicker(false);
       return;
     }
-    // if (currentCategory.beginTime !== "" && currentCategory.endTime !== "") {
-    //   setSelectedEndTime(false);
-    // }
-
-    // let newTime = moment(new Date()).tz("America/Sao_Paulo");
 
     let newTime = new Date();
-    newTime.setHours(selectedTime.getHours());
-    newTime.setMinutes(selectedTime.getMinutes());
+    newTime?.setHours(selectedTime?.getHours());
+    newTime?.setMinutes(selectedTime?.getMinutes());
 
     handleChange('beginTime', newTime);
 
     setOpenBeginTimePicker(false);
   };
 
-  const onTimeChangeEnd = async (event, selectedTime) => {
+  const onTimeChangeEnd = async (event: any, selectedTime: any) => {
     if (typeof selectedTime === 'undefined') {
       setOpenEndTimePicker(false);
       return;
     }
 
-    if (selectedTime.getTime() < catDetails.beginTime.getTime()) {
+    if (selectedTime?.getTime() < catDetails.beginTime?.getTime()) {
       setAlert(
         'Erro',
         'Selecione um horário final para depois do horário inicial!',
@@ -132,8 +127,8 @@ export const CardCategoria = ({data, onChangeValue}) => {
 
     let newTime = new Date();
 
-    newTime.setHours(selectedTime.getHours());
-    newTime.setMinutes(selectedTime.getMinutes());
+    newTime?.setHours(selectedTime?.getHours());
+    newTime?.setMinutes(selectedTime?.getMinutes());
 
     handleChange('endTime', newTime);
 

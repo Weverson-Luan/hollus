@@ -8,21 +8,16 @@ import {OpenRoutes} from './routes.Stack';
 import {AuthenticateBottomTabsNavigation} from './TherapistRoutes/routes.BottomTabs';
 
 import {AuthenticateBottomTabsNavigation as ClientBottomTabs} from './ClientRoutes/routes.BottomTabs';
-import {Loading} from '../components/Loading';
 
 interface IUserRoleNavigationProps {
   role_id: number;
 }
 const UserRoleNavigation = ({role_id}: IUserRoleNavigationProps) => {
-  if (role_id !== undefined) {
-    return role_id === 3 ? (
-      <AuthenticateBottomTabsNavigation />
-    ) : (
-      <ClientBottomTabs />
-    );
-  } else {
-    return <Loading />;
-  }
+  return role_id === 3 ? (
+    <AuthenticateBottomTabsNavigation />
+  ) : (
+    <ClientBottomTabs />
+  );
 };
 
 export function AppRoutes() {

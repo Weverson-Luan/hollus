@@ -12,7 +12,6 @@ import {ITherapies} from '../../dtos/therepies-dto';
 
 //utils
 import {
-  handleGetUserLocalStorage,
   handleLoginRequest,
   handlePersistLoginRequest,
   handleSetUserLocalStorage,
@@ -20,7 +19,6 @@ import {
 import {handleGetTherapist} from '../hooks/Therapist/util';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {Api} from '../../services/api';
-import {parse} from 'react-native-svg';
 
 const AuthContext = createContext<IContext>({} as IContext);
 
@@ -103,7 +101,6 @@ const AuthProvider = ({children}: IAuthProvider) => {
     Api.defaults.headers.common['Authorization'] = '';
     setUser(null);
     setSuccessLogin(false);
-    // handleSetUserLocalStorage(null);
     await AsyncStorageLib.removeItem('token');
     await AsyncStorageLib.removeItem('user');
     setToken('');

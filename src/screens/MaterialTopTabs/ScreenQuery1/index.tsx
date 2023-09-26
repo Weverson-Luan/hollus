@@ -52,8 +52,6 @@ export function ScreenQuery({navigation}: any) {
 
   const fetchProximas = async () => {
     const res = await Api.get('v1/consulta/proximas');
-
-    console.log('Fetched', res.data.data);
     setProximasConsultas(res.data.data);
   };
 

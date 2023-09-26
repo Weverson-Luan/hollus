@@ -117,6 +117,11 @@ export const CategoryTimeDay = styled.Text`
   font-size: ${RFValue(14)}px;
   width: 50%;
 `;
+export const CategoryTextLoding = styled.Text`
+  font-size: ${RFValue(14)}px;
+  color: ${({theme})=> theme.colors.gray_90};
+  margin-bottom: 24px;
+`;
 export const CategoryTimeBegin = styled.Text`
   font-size: ${RFValue(14)}px;
   flex: 1;

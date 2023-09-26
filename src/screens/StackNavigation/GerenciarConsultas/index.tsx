@@ -66,39 +66,38 @@ export function GerenciarConsultas() {
   const days = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
   const onTimeChangeBegin = async (event: any, selectedTime: any) => {
-    if (typeof selectedTime === 'undefined') {
-      setOpenBeginTimePicker(false);
-      return;
-    }
-    if (selectedBeginTime && selectedEndTime) {
-      setSelectedEndTime(false);
-    }
-    beginTime.setHours(selectedTime.getHours() - 3);
-    beginTime.setMinutes(selectedTime.getMinutes());
-    setSelectedBeginTime(true);
-    setOpenBeginTimePicker(false);
+    // if (typeof selectedTime === 'undefined') {
+    //   setOpenBeginTimePicker(false);
+    //   return;
+    // }
+    // if (selectedBeginTime && selectedEndTime) {
+    //   setSelectedEndTime(false);
+    // }
+    // beginTime.setHours(selectedTime?.getHours() - 3);
+    // beginTime.setMinutes(selectedTime?.getMinutes());
+    // setSelectedBeginTime(true);
+    // setOpenBeginTimePicker(false);
   };
 
   const onTimeChangeEnd = async (event: any, selectedTime: any) => {
-    if (typeof selectedTime === 'undefined') {
-      setOpenEndTimePicker(false);
-      return;
-    }
-    const correctedTime = new Date();
-    correctedTime.setHours(selectedTime.getHours() - 3);
-    correctedTime.setMinutes(selectedTime.getMinutes());
-
-    if (selectedBeginTime && correctedTime.getTime() < beginTime.getTime()) {
-      setAlert(
-        'Erro',
-        'Selecione um horário final para depois do horário inicial!',
-      );
-      return;
-    }
-    endTime.setHours(selectedTime.getHours() - 3);
-    endTime.setMinutes(selectedTime.getMinutes());
-    setSelectedEndTime(true);
-    setOpenEndTimePicker(false);
+    // if (typeof selectedTime === 'undefined') {
+    //   setOpenEndTimePicker(false);
+    //   return;
+    // }
+    // const correctedTime = new Date();
+    // correctedTime.setHours(selectedTime?.getHours() - 3);
+    // correctedTime.setMinutes(selectedTime?.getMinutes());
+    // if (selectedBeginTime && correctedTime?.getTime() < beginTime?.getTime()) {
+    //   setAlert(
+    //     'Erro',
+    //     'Selecione um horário final para depois do horário inicial!',
+    //   );
+    //   return;
+    // }
+    // endTime.setHours(selectedTime.getHours() - 3);
+    // endTime.setMinutes(selectedTime.getMinutes());
+    // setSelectedEndTime(true);
+    // setOpenEndTimePicker(false);
   };
 
   const selectDay = (index: any) => {
@@ -126,7 +125,6 @@ export function GerenciarConsultas() {
     try {
       setLoading(true);
       const {data} = await handleGetTherapistCategoriesList(String(token));
-      console.log('CATEGORIA', data);
 
       //@ts-ignore
       let arrayCategorieList = [];
